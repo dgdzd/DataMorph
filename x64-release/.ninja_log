@@ -1,0 +1,24 @@
+# ninja log v6
+17	1264	7589073982921871	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+10	1191	7589073982816764	CMakeFiles/DataMorph.dir/main.cpp.obj	f912d64f1aa23065
+1170	1384	7589065683360654	DataMorph.exe	3e9f5679776a33bc
+23	603	7589074936291900	CMakeFiles/DataMorph.dir/dependencies/src/glad/glad.c.obj	98abc0e50b0261c1
+604	800	7589074942239249	DataMorph.exe	9f0aec09610c30b
+29	1088	7589075888195414	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1089	1296	7589075898677671	DataMorph.exe	9f0aec09610c30b
+35	1062	7589077865242414	CMakeFiles/DataMorph.dir/main.cpp.obj	f912d64f1aa23065
+1063	1278	7589077875477480	DataMorph.exe	9f0aec09610c30b
+30	1087	7589078943222944	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1088	1252	7589078953875794	DataMorph.exe	9f0aec09610c30b
+11	1081	7589080322307226	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1083	1242	7589080333130728	DataMorph.exe	9f0aec09610c30b
+34	1122	7589080821439366	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1123	1325	7589080832236397	DataMorph.exe	9f0aec09610c30b
+49	1213	7589082270650625	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1214	1376	7589082282228857	DataMorph.exe	9f0aec09610c30b
+48	1233	7589083581520004	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1234	1442	7589083593437581	DataMorph.exe	9f0aec09610c30b
+34	1218	7589083728580574	CMakeFiles/DataMorph.dir/src/app.cpp.obj	e202502a8d46ddab
+1219	1387	7589083740477399	DataMorph.exe	9f0aec09610c30b
+75	1202	7589083967975319	CMakeFiles/DataMorph.dir/main.cpp.obj	f912d64f1aa23065
+1203	1414	7589083979239011	DataMorph.exe	9f0aec09610c30b
