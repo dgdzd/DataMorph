@@ -7,9 +7,21 @@ project("DataMorph")
 
 set(MAIN_FILE "main.cpp")
 set(PROJECT_SOURCES 
-		src/app.cpp
+		src/App.cpp
+		src/core/imgui_extension.cpp
+		src/Constants.cpp
 )
-set(DEPENDENCIES_SOURCES dependencies/src/glad/glad.c)
+set(DEPENDENCIES_SOURCES 
+		dependencies/src/glad/glad.c
+		dependencies/src/imgui/imgui.cpp
+		dependencies/src/imgui/imgui_demo.cpp
+		dependencies/src/imgui/imgui_draw.cpp
+		dependencies/src/imgui/imgui_impl_glfw.cpp
+		dependencies/src/imgui/imgui_impl_opengl3.cpp
+		dependencies/src/imgui/imgui_tables.cpp
+		dependencies/src/imgui/imgui_widgets.cpp
+		dependencies/include/imgui/misc/freetype/imgui_freetype.cpp
+)
 
 file(GLOB LIBS_LIB "dependencies/libs/*.lib")
 
@@ -17,6 +29,7 @@ file(GLOB LIBS_LIB "dependencies/libs/*.lib")
 add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES})
 
 target_include_directories(DataMorph PUBLIC include/)
+target_include_directories(DataMorph PRIVATE dependencies/include/imgui)
 target_include_directories(DataMorph PRIVATE dependencies/include)
 
 target_link_libraries(DataMorph PRIVATE ${LIBS_LIB})

@@ -30,31 +30,37 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 17,
+				"line" : 29,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 22,
+				"line" : 35,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 19,
+				"line" : 31,
 				"parent" : 0
 			},
 			{
 				"command" : 2,
 				"file" : 0,
-				"line" : 20,
+				"line" : 32,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 33,
 				"parent" : 0
 			},
 			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 25,
+				"line" : 38,
 				"parent" : 0
 			}
 		]
@@ -76,6 +82,10 @@
 				},
 				{
 					"backtrace" : 4,
+					"path" : "C:/Users/noahc/projets/cpp/DataMorph/dependencies/include/imgui"
+				},
+				{
+					"backtrace" : 5,
 					"path" : "C:/Users/noahc/projets/cpp/DataMorph/dependencies/include"
 				}
 			],
@@ -84,14 +94,24 @@
 			{
 				"backtraces" : 
 				[
-					5
+					6
 				],
 				"standard" : "20"
 			},
 			"sourceIndexes" : 
 			[
 				0,
-				1
+				1,
+				2,
+				3,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12
 			]
 		},
 		{
@@ -109,13 +129,17 @@
 				},
 				{
 					"backtrace" : 4,
+					"path" : "C:/Users/noahc/projets/cpp/DataMorph/dependencies/include/imgui"
+				},
+				{
+					"backtrace" : 5,
 					"path" : "C:/Users/noahc/projets/cpp/DataMorph/dependencies/include"
 				}
 			],
 			"language" : "C",
 			"sourceIndexes" : 
 			[
-				2
+				4
 			]
 		}
 	],
@@ -164,7 +188,17 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				11,
+				12
 			]
 		}
 	],
@@ -179,13 +213,73 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
-			"path" : "src/app.cpp",
+			"path" : "src/App.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/core/imgui_extension.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/Constants.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 1,
 			"path" : "dependencies/src/glad/glad.c",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_demo.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_draw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_impl_glfw.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_impl_opengl3.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_tables.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/src/imgui/imgui_widgets.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "dependencies/include/imgui/misc/freetype/imgui_freetype.cpp",
 			"sourceGroupIndex" : 0
 		}
 	],

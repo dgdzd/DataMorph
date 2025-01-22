@@ -2,18 +2,21 @@
 //
 
 #include <iostream>
-#include <app.h>
+#include <App.h>
 #include <GLFW/glfw3.h>
-
-using namespace std;
+#include <gui/MainFrame.h>
+#include <gui/UpdateFrame.h>
 
 int main()
 {
 	DataMorph* app = DataMorph::getInstance();
 	if (app->initialize() != 0) {
-		cout << "Error while initializing the app.\n";
+		std::cout << "Error while initializing the app.\n";
 		return -1;
 	}
+
+	DataMorph::getInstance()->addLayer(new MainFrame());
+	DataMorph::getInstance()->addLayer(new UpdateFrame());
 
 	while (!app->shouldClose) {
 		app->update();

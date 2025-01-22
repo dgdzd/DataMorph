@@ -1,4 +1,4 @@
-#include <app.h>
+#include <App.h>
 #include <iostream>
 
 DataMorph* DataMorph::inst;
@@ -26,7 +26,7 @@ int DataMorph::initialize() {
 		return code;
 	}
 
-	this->window = glfwCreateWindow(800, 500, this->name.c_str(), NULL, NULL);
+	this->window = glfwCreateWindow(1, 1, this->name.c_str(), NULL, NULL);
 
 	if (!this->window) {
 		std::cout << "Failed to initialize window\n";
@@ -36,9 +36,27 @@ int DataMorph::initialize() {
 	glfwMakeContextCurrent(this->window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-		std::cout << "Failed to initialize GLAD.";
+		std::cout << "Failed to initialize GLAD.\n";
 		return 0;
 	}
+
+	IMGUI_CHECKVERSION();
+
+	if (!ImGui::CreateContext()) {
+		std::cout << "Failed to initialize ImGui.\n";
+		return -1;
+	}
+
+	this->io = &ImGui::GetIO();
+
+	this->io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	this->io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	this->baseFont = this->io->Fonts->AddFontFromFileTTF("..\\resources\\fonts\\Segoe UI.ttf", 16.0f);
+
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
+	ImGui_ImplOpenGL3_Init("#version 330");
 
 	/* Initializes the viewport */
 	glViewport(0, 0, 800, 500);
@@ -56,7 +74,8 @@ int DataMorph::init_libs() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, false);
-	glfwWindowHint(GLFW_DECORATED, true);
+	glfwWindowHint(GLFW_DECORATED, false);
+	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, true);
 	glfwWindowHint(GLFW_SAMPLES, 4);
 
 	#ifdef __APPLE__
@@ -64,7 +83,7 @@ int DataMorph::init_libs() {
 	#endif
 
 	if (FT_Init_FreeType(&ftlib)) {
-		std::cout << "Failed to initialize Freetype.";
+		std::cout << "Failed to initialize Freetype.\n";
 		return -1;
 	}
 
@@ -74,13 +93,50 @@ int DataMorph::init_libs() {
 void DataMorph::update() {
 	this->shouldClose = glfwWindowShouldClose(this->window);
 
-	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	// GUI Rendering
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+	for (Frame* layer : this->layers) {
+		ImGuiStyle defaultStyle = ImGui::GetStyle();
+		*(&ImGui::GetStyle()) = layer->style;
+		if (!layer->p_open) {
+			this->layers.erase(std::remove(this->layers.begin(), this->layers.end(), layer), this->layers.end());
+			continue;
+		}
+		layer->onPreRender();
+		if (ImGui::Begin(layer->name.c_str(), &layer->p_open, layer->wflags)) {
+			layer->onRender();
+		}
+		ImGui::End();
+		layer->onPostRender();
+		*(&ImGui::GetStyle()) = defaultStyle;
+	}
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	if (this->io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(this->window);
+	}
+
 
 	glfwSwapBuffers(this->window);
 	glfwPollEvents();
 }
 
 void DataMorph::terminate() {
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	glfwTerminate();
+}
+
+void DataMorph::addLayer(Frame* layer) {
+	this->layers.push_back(layer);
 }
