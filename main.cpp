@@ -4,19 +4,20 @@
 #include <iostream>
 #include <App.h>
 #include <GLFW/glfw3.h>
-#include <gui/MainFrame.h>
-#include <gui/UpdateFrame.h>
+#include <gui/MainWindow.h>
+#include <gui/UpdateWindow.h>
 
 int main()
 {
 	DataMorph* app = DataMorph::getInstance();
+	app->setIcon("..\\resources\\icon.png");
 	if (app->initialize() != 0) {
 		std::cout << "Error while initializing the app.\n";
 		return -1;
 	}
 
-	DataMorph::getInstance()->addLayer(new MainFrame());
-	DataMorph::getInstance()->addLayer(new UpdateFrame());
+	app->addLayer(new MainWindow());
+	app->addLayer(new UpdateWindow());
 
 	while (!app->shouldClose) {
 		app->update();

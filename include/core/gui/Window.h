@@ -1,12 +1,12 @@
-#ifndef DM_LAYER_H
-#define DM_LAYER_H
+#ifndef DM_WINDOW_H
+#define DM_WINDOW_H
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 #include <string>
 
-class Frame {
+class Window {
 public:
 	std::string name;
 	bool p_open;

@@ -11,14 +11,15 @@
 #include FT_FREETYPE_H
 #include <string>
 #include <vector>
-#include <core/gui/Frame.h>
+#include <core/gui/Window.h>
 
 class DataMorph {
 	static DataMorph* inst;
 	FT_Library ftlib;
 	ImGuiIO* io;
 	ImFont* baseFont;
-	std::vector<Frame*> layers;
+	std::vector<Window*> layers;
+	std::vector<Window*> m_toAdd;
 
 	DataMorph();
 
@@ -34,7 +35,8 @@ public:
 	int initialize();
 	void update();
 	void terminate();
-	void addLayer(Frame* layer);
+	void addLayer(Window* layer);
+	void setIcon(const char* path);
 };
 
 #endif

@@ -1,0 +1,48 @@
+#ifndef DM_MAINWINDOW_H
+#define DM_MAINWINDOW_H
+
+#include <core/gui/Window.h>
+#include <core/imgui_extension.h>
+#include <App.h>
+#include <imgui_internal.h>
+#include <string>
+
+using namespace ImGui;
+
+struct Project {
+	std::string name;
+	std::string path;
+
+	Project() {
+		this->name = "";
+		this->path = "";
+	}
+};
+
+struct State {
+	bool hasOpenProject;
+	Project* openProject;
+
+	State() {
+		this->hasOpenProject = false;
+		this->openProject = nullptr;
+	}
+};
+
+class MainWindow : public Window {
+	ImFont* font20;
+	ImFont* font23;
+	ImFont* font64;
+	State* state;
+
+public:
+	MainWindow();
+
+	void onAttach() override;
+	void onDetach() override;
+	void onPreRender() override;
+	void onPostRender() override;
+	void onRender() override;
+};
+
+#endif

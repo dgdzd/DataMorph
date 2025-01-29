@@ -10,6 +10,10 @@ set(PROJECT_SOURCES
 		src/App.cpp
 		src/core/imgui_extension.cpp
 		src/Constants.cpp
+		src/gui/MainWindow.cpp
+		src/gui/UpdateWindow.cpp
+		src/gui/NewProjectWindow.cpp
+		src/FontManager.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

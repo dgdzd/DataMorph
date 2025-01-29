@@ -1,5 +1,9 @@
 #include <App.h>
+#include <FontManager.h>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
 #include <iostream>
+#include <string>
 
 DataMorph* DataMorph::inst;
 
@@ -54,6 +58,13 @@ int DataMorph::initialize() {
 
 	this->baseFont = this->io->Fonts->AddFontFromFileTTF("..\\resources\\fonts\\Segoe UI.ttf", 16.0f);
 
+	FontManager* fm = FontManager::getInstance();
+	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 20, "font20");
+	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 23, "font23");
+	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 64, "font64");
+
+	this->io->Fonts->Build();
+
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
@@ -96,15 +107,23 @@ void DataMorph::update() {
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	// Adding new windows
+	for (Window* layer : this->m_toAdd) {
+		this->layers.push_back(layer);
+		layer->onAttach();
+	}
+	this->m_toAdd.clear();
+
 	// GUI Rendering
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
-	for (Frame* layer : this->layers) {
+	for (Window* layer : this->layers) {
 		ImGuiStyle defaultStyle = ImGui::GetStyle();
 		*(&ImGui::GetStyle()) = layer->style;
 		if (!layer->p_open) {
 			this->layers.erase(std::remove(this->layers.begin(), this->layers.end(), layer), this->layers.end());
+			layer->onDetach();
 			continue;
 		}
 		layer->onPreRender();
@@ -137,6 +156,13 @@ void DataMorph::terminate() {
 	glfwTerminate();
 }
 
-void DataMorph::addLayer(Frame* layer) {
-	this->layers.push_back(layer);
+void DataMorph::addLayer(Window* layer) {
+	this->m_toAdd.push_back(layer);
+}
+
+void DataMorph::setIcon(const char* path) {
+	GLFWimage icon;
+	icon.pixels = stbi_load(path, &icon.width, &icon.height, 0, 4);
+	glfwSetWindowIcon(this->window, 1, &icon);
+	stbi_image_free(icon.pixels);
 }
