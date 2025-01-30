@@ -11,6 +11,7 @@ MainWindow::MainWindow() {
 	this->font23 = nullptr;
 	this->font64 = nullptr;
 	this->p_open = true;
+	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
 	this->state = new State();
@@ -48,18 +49,10 @@ void MainWindow::onRender() {
 				DataMorph::getInstance()->addLayer(new NewProjectWindow());
 			}
 			if (MenuItem("Open project", "Ctrl+O")) {
-				this->state->hasOpenProject = true;
-				this->state->openProject = new Project();
-				this->state->openProject->name = "Open project";
 			}
 			if (MenuItem("Save project", "Ctrl+S")) {
-				if (this->state->hasOpenProject) {
-					this->state->openProject->name = "Saved project";
-				}
 			}
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
-				this->state->hasOpenProject = false;
-				this->state->openProject = nullptr;
 			}
 			EndMenu();
 		}

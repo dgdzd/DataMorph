@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <gui/MainWindow.h>
 #include <gui/UpdateWindow.h>
+#include <Utils.h>
 
 int main()
 {

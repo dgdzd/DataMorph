@@ -127,7 +127,7 @@ void DataMorph::update() {
 			continue;
 		}
 		layer->onPreRender();
-		if (ImGui::Begin(layer->name.c_str(), &layer->p_open, layer->wflags)) {
+		if (ImGui::Begin(layer->name.c_str(), layer->showCloseButton ? &layer->p_open : (bool*)0, layer->wflags)) {
 			layer->onRender();
 		}
 		ImGui::End();

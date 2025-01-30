@@ -9,6 +9,7 @@
 class Window {
 public:
 	std::string name;
+	bool showCloseButton;
 	bool p_open;
 	ImGuiStyle style;
 	ImGuiWindowFlags wflags;

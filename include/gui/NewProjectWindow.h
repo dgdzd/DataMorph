@@ -6,6 +6,8 @@
 #include <App.h>
 #include <imgui_internal.h>
 #include <string>
+#include <vector>
+#include <utility>
 
 using namespace ImGui;
 
@@ -13,6 +15,9 @@ class NewProjectWindow : public Window {
 	ImFont* font20;
 	ImFont* font23;
 	ImFont* font64;
+	std::vector<char*> inputs;
+	std::vector<std::string> magnitudes;
+	std::vector<std::string> units;
 
 public:
 	NewProjectWindow();

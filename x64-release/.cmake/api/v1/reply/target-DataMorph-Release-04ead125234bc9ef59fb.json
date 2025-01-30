@@ -30,19 +30,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
-				"line" : 33,
+				"line" : 34,
 				"parent" : 0
 			},
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 39,
-				"parent" : 0
-			},
-			{
-				"command" : 2,
-				"file" : 0,
-				"line" : 35,
+				"line" : 40,
 				"parent" : 0
 			},
 			{
@@ -58,9 +52,15 @@
 				"parent" : 0
 			},
 			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
 				"command" : 3,
 				"file" : 0,
-				"line" : 42,
+				"line" : 43,
 				"parent" : 0
 			}
 		]
@@ -108,14 +108,15 @@
 				5,
 				6,
 				7,
-				9,
+				8,
 				10,
 				11,
 				12,
 				13,
 				14,
 				15,
-				16
+				16,
+				17
 			]
 		},
 		{
@@ -143,7 +144,7 @@
 			"language" : "C",
 			"sourceIndexes" : 
 			[
-				8
+				9
 			]
 		}
 	],
@@ -206,7 +207,8 @@
 				13,
 				14,
 				15,
-				16
+				16,
+				17
 			]
 		}
 	],
@@ -258,6 +260,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "src/FontManager.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/Utils.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{

@@ -113,6 +113,14 @@ build CMakeFiles\DataMorph.dir\src\FontManager.cpp.obj: CXX_COMPILER__DataMorph_
   TARGET_COMPILE_PDB = CMakeFiles\DataMorph.dir\
   TARGET_PDB = DataMorph.pdb
 
+build CMakeFiles\DataMorph.dir\src\Utils.cpp.obj: CXX_COMPILER__DataMorph_unscanned_Release C$:\Users\noahc\projets\cpp\DataMorph\src\Utils.cpp || cmake_object_order_depends_target_DataMorph
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG -std:c++20
+  INCLUDES = -IC:\Users\noahc\projets\cpp\DataMorph\include -IC:\Users\noahc\projets\cpp\DataMorph\dependencies\include\imgui -IC:\Users\noahc\projets\cpp\DataMorph\dependencies\include
+  OBJECT_DIR = CMakeFiles\DataMorph.dir
+  OBJECT_FILE_DIR = CMakeFiles\DataMorph.dir\src
+  TARGET_COMPILE_PDB = CMakeFiles\DataMorph.dir\
+  TARGET_PDB = DataMorph.pdb
+
 build CMakeFiles\DataMorph.dir\dependencies\src\glad\glad.c.obj: C_COMPILER__DataMorph_unscanned_Release C$:\Users\noahc\projets\cpp\DataMorph\dependencies\src\glad\glad.c || cmake_object_order_depends_target_DataMorph
   FLAGS = /DWIN32 /D_WINDOWS /W3 /MD /O2 /Ob2 /DNDEBUG
   INCLUDES = -IC:\Users\noahc\projets\cpp\DataMorph\include -IC:\Users\noahc\projets\cpp\DataMorph\dependencies\include\imgui -IC:\Users\noahc\projets\cpp\DataMorph\dependencies\include
@@ -193,7 +201,7 @@ build CMakeFiles\DataMorph.dir\dependencies\include\imgui\misc\freetype\imgui_fr
 #############################################
 # Link the executable DataMorph.exe
 
-build DataMorph.exe: CXX_EXECUTABLE_LINKER__DataMorph_Release CMakeFiles\DataMorph.dir\main.cpp.obj CMakeFiles\DataMorph.dir\src\App.cpp.obj CMakeFiles\DataMorph.dir\src\core\imgui_extension.cpp.obj CMakeFiles\DataMorph.dir\src\Constants.cpp.obj CMakeFiles\DataMorph.dir\src\gui\MainWindow.cpp.obj CMakeFiles\DataMorph.dir\src\gui\UpdateWindow.cpp.obj CMakeFiles\DataMorph.dir\src\gui\NewProjectWindow.cpp.obj CMakeFiles\DataMorph.dir\src\FontManager.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\glad\glad.c.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_demo.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_draw.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_impl_glfw.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_impl_opengl3.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_tables.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_widgets.cpp.obj CMakeFiles\DataMorph.dir\dependencies\include\imgui\misc\freetype\imgui_freetype.cpp.obj | C$:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\freetype.lib C$:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\glfw3.lib
+build DataMorph.exe: CXX_EXECUTABLE_LINKER__DataMorph_Release CMakeFiles\DataMorph.dir\main.cpp.obj CMakeFiles\DataMorph.dir\src\App.cpp.obj CMakeFiles\DataMorph.dir\src\core\imgui_extension.cpp.obj CMakeFiles\DataMorph.dir\src\Constants.cpp.obj CMakeFiles\DataMorph.dir\src\gui\MainWindow.cpp.obj CMakeFiles\DataMorph.dir\src\gui\UpdateWindow.cpp.obj CMakeFiles\DataMorph.dir\src\gui\NewProjectWindow.cpp.obj CMakeFiles\DataMorph.dir\src\FontManager.cpp.obj CMakeFiles\DataMorph.dir\src\Utils.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\glad\glad.c.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_demo.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_draw.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_impl_glfw.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_impl_opengl3.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_tables.cpp.obj CMakeFiles\DataMorph.dir\dependencies\src\imgui\imgui_widgets.cpp.obj CMakeFiles\DataMorph.dir\dependencies\include\imgui\misc\freetype\imgui_freetype.cpp.obj | C$:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\freetype.lib C$:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\glfw3.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /O2 /Ob2 /DNDEBUG
   LINK_FLAGS = /machine:x64 /INCREMENTAL:NO /subsystem:console
   LINK_LIBRARIES = C:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\freetype.lib  C:\Users\noahc\projets\cpp\DataMorph\dependencies\libs\glfw3.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib

@@ -10,6 +10,7 @@ UpdateWindow::UpdateWindow() {
 	this->font23 = nullptr;
 	this->font64 = nullptr;
 	this->p_open = true;
+	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoDocking;
 }
