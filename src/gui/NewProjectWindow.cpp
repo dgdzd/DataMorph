@@ -50,12 +50,12 @@ void NewProjectWindow::onRender() {
 		if (BeginTabItem("Manual data entry")) {
 			SetCurrentFont(this->font64);
 			SetWindowFontScale(0.4f);
-			Text("Enter magnitudes and units :");
+			Text("Enter name and units :");
 
 			SetCurrentFont(this->font23);
 			SetWindowFontScale(1.0f);
 
-			InputText("Magnitude", this->inputs[0], 64);
+			InputText("Name", this->inputs[0], 64);
 			InputText("Unit (optional)", this->inputs[1], 64);
 			BeginDisabled(this->inputs[0][0] == '\0');
 			{
