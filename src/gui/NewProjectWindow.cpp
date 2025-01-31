@@ -50,7 +50,7 @@ void NewProjectWindow::onRender() {
 		if (BeginTabItem("Manual data entry")) {
 			SetCurrentFont(this->font64);
 			SetWindowFontScale(0.4f);
-			Text("Enter name and units :");
+			Text("Enter name and unit :");
 
 			SetCurrentFont(this->font23);
 			SetWindowFontScale(1.0f);
@@ -100,6 +100,10 @@ void NewProjectWindow::onRender() {
 			}
 			TextWrapped("You will be able to modify or add more magnitudes and units even after the project creation. "
 						"Since then, each magnitude will be assigned a column in a table.");
+			if (Button("Create Project")) {
+				Text("You submitted data ! ");
+				EndTabItem();
+			}
 
 			EndTabItem();
 		}
