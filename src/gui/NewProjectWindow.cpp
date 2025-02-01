@@ -98,7 +98,7 @@ void NewProjectWindow::onRender() {
 				}
 				EndChild();
 			}
-			TextWrapped("You will be able to modify or add more magnitudes and units even after the project creation. "
+			TextWrapped("You will be able to modify or add more names and units even after the project creation. "
 						"Since then, each magnitude will be assigned a column in a table.");
 			if (Button("Create Project")) {
 				Text("You submitted data ! ");
