@@ -116,12 +116,7 @@ void NewProjectWindow::onRender() {
 		InputText("32 characters max", this->project_name, 32);
 
 		if (Button("Create Project")) {
-			if (this->project_name == "") {
-				//trucs
-			}
-			else {
-				this->p_open = false;
-			}
+			this->p_open = false;
 			//ouvrir une nouvelle fenetre puis faire un tableau
 		}
 	}
