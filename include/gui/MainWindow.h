@@ -14,14 +14,18 @@ struct Project {
 	std::string path;
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
-	std::vector<std::vector<double*>> array2D(symbols.size(), std::vector<double*>(1, nullptr));
+	std::vector<std::vector<double*>> values;
 
 	Project(std::string name, std::string path) {
 		this->name = name;
 		this->path = path;
 		this->units = {};
 		this->symbols = {};
-		this->values = {};
+		this->values = std::vector<std::vector<double*>>(symbols.size(), std::vector<double*>(1, nullptr));
+		double newValue = 0.0;
+		for (int i = 0; i < this->values.size(); i++) {
+			this-> values[i][0] = new double(newValue);
+		}
 	}
 };
 
@@ -39,6 +43,7 @@ class MainWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	State* state;
+	int max_rows;
 
 public:
 	MainWindow();

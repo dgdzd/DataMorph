@@ -16,6 +16,7 @@ MainWindow::MainWindow() {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
 	this->state = new State();
+	this->max_rows = 1;
 }
 
 void MainWindow::onAttach() {
@@ -118,11 +119,11 @@ void MainWindow::onRender() {
 				TableSetupColumn(symbol.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < this->max_rows; i++) {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					InputDouble("", pr->values[j]);
+					InputDouble("", pr->values[j][i]);
 				}
 			}
 			EndTable();
