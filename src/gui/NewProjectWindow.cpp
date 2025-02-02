@@ -100,19 +100,9 @@ void NewProjectWindow::onRender() {
 			}
 			TextWrapped("You will be able to modify or add more names and units even after the project creation. "
 						"Since then, each magnitude will be assigned a column in a table.");
-
-			if (CollapsingHeader("See table")) {
-				if (BeginTable("Data", magnitudes.size())) {
-					for (int i = 0; i < magnitudes.size(); i++) {
-						std::string s = std::to_string(i);
-						const char *string = s.c_str();
-						TableSetupColumn(string);
-					}
-				}
-			}
 			
 			if (Button("Create Project")) {
-				Text("You submitted data ! ");
+				End();
 			}
 
 			EndTabItem();
