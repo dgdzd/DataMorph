@@ -102,6 +102,8 @@ void NewProjectWindow::onRender() {
 						"Since then, each magnitude will be assigned a column in a table.");
 			
 			if (Button("Create Project")) {
+				EndTabItem();
+				EndTabBar();
 				End();
 			}
 
