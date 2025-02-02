@@ -17,6 +17,7 @@ NewProjectWindow::NewProjectWindow() {
 	this->inputs = { new char[100] {""}, new char[100] {""} };
 	this->units = std::vector<std::string>();
 	this->magnitudes = std::vector<std::string>();
+	this->project_name;
 }
 
 void NewProjectWindow::onAttach() {
@@ -98,14 +99,10 @@ void NewProjectWindow::onRender() {
 				}
 				EndChild();
 			}
-			TextWrapped("You will be able to modify or add more names and units even after the project creation. "
-						"Since then, each magnitude will be assigned a column in a table.");
-			
-			if (Button("Create Project")) {
-				EndTabItem();
-				EndTabBar();
-				End();
-			}
+
+			TextWrapped("Note : You will be able to modify or add more names and units even after the project creation. "
+						"Since then, each variable will be assigned a column in a table.");
+
 
 			EndTabItem();
 		}
@@ -114,5 +111,12 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 		EndTabBar();
+
+		Text("Enter Project Name");
+		InputText("32 characters max", project_name, 32);
+
+		if (Button("Create Project")) {
+			this->p_open = false;
+		}
 	}
 }
