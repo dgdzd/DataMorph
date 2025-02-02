@@ -33,6 +33,7 @@ public:
 
 	static DataMorph* getInstance();
 	int initialize();
+	Window* getLayer(int id);
 	void update();
 	void terminate();
 	void addLayer(Window* layer);

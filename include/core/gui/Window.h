@@ -19,6 +19,7 @@ public:
 	virtual void onPreRender() = 0;
 	virtual void onPostRender() = 0;
 	virtual void onRender() = 0;
+	virtual void message(std::string header, ...) = 0;
 };
 
 #endif

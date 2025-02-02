@@ -64,3 +64,7 @@ void UpdateWindow::onRender() {
 	}
 	EndChild();
 }
+
+void UpdateWindow::message(std::string header, ...) {
+	// TODO
+}

@@ -12,10 +12,14 @@ using namespace ImGui;
 struct Project {
 	std::string name;
 	std::string path;
+	std::vector<std::string> symbols;
+	std::vector<std::string> units;
 
-	Project() {
-		this->name = "";
-		this->path = "";
+	Project(std::string name, std::string path) {
+		this->name = name;
+		this->path = path;
+		this->units = {};
+		this->symbols = {};
 	}
 };
 
@@ -24,7 +28,6 @@ struct State {
 	Project* openProject;
 
 	State() {
-		this->hasOpenProject = false;
 		this->openProject = nullptr;
 	}
 };
@@ -43,6 +46,7 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void message(std::string header, ...) override;
 };
 
 #endif

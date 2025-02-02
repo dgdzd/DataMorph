@@ -16,7 +16,7 @@ class NewProjectWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	std::vector<char*> inputs;
-	std::vector<std::string> magnitudes;
+	std::vector<std::string> symbols;
 	std::vector<std::string> units;
 	char project_name[32] = "Untitled-1";
 
@@ -28,6 +28,7 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void message(std::string header, ...) override;
 };
 
 #endif

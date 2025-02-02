@@ -827,28 +827,19 @@ char const* info_arch = "INFO" ":" "arch[" ARCHITECTURE_ID "]";
 
 
 
-#define C_STD_99 199901L
-#define C_STD_11 201112L
-#define C_STD_17 201710L
-#define C_STD_23 202311L
-
-#ifdef __STDC_VERSION__
-#  define C_STD __STDC_VERSION__
-#endif
-
 #if !defined(__STDC__) && !defined(__clang__)
 # if defined(_MSC_VER) || defined(__ibmxl__) || defined(__IBMC__)
 #  define C_VERSION "90"
 # else
 #  define C_VERSION
 # endif
-#elif C_STD > C_STD_17
+#elif __STDC_VERSION__ > 201710L
 # define C_VERSION "23"
-#elif C_STD > C_STD_11
+#elif __STDC_VERSION__ >= 201710L
 # define C_VERSION "17"
-#elif C_STD > C_STD_99
+#elif __STDC_VERSION__ >= 201000L
 # define C_VERSION "11"
-#elif C_STD >= C_STD_99
+#elif __STDC_VERSION__ >= 199901L
 # define C_VERSION "99"
 #else
 # define C_VERSION "90"

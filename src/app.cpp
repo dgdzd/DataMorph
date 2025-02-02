@@ -101,6 +101,10 @@ int DataMorph::init_libs() {
 	return 0;
 }
 
+Window* DataMorph::getLayer(int id) {
+	return this->layers[id];
+}
+
 void DataMorph::update() {
 	this->shouldClose = glfwWindowShouldClose(this->window);
 

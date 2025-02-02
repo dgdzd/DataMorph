@@ -2,6 +2,7 @@
 #include <gui/NewProjectWindow.h>
 #include <FontManager.h>
 #include <iostream>
+#include <vector>
 
 using namespace ImGui;
 
@@ -77,26 +78,60 @@ void MainWindow::onRender() {
 		EndMenuBar();
 	}
 
-	if (!this->state->hasOpenProject) {
+	if (!this->state->openProject) {
 		this->name = "DataMorph - Inactive";
 	}
 	else {
 		this->name = "DataMorph - " + this->state->openProject->name;
 	}
+	this->name += "###MainWindow"; // Pour définir un ID constant "MainWindow" pour la fenêtre
 
-	PushClipRect(titlebar.Min, titlebar.Max, false); // Start editing titlebar area
+	if (!this->state->openProject) {
+		PushFont(this->font64);
+		SetWindowFontScale(0.5f);
+		CenteredText("Welcome to DataMorph");
+		PopFont();
 
-	PopClipRect(); // Stop editing titlebar area
+		Dummy(ImVec2(0.0f, 50.0f));
 
-	PushFont(this->font64);
-	SetWindowFontScale(0.5f);
-	CenteredText("Welcome to DataMorph");
-	PopFont();
+		PushFont(this->font20);
+		SetWindowFontScale(1.0f);
+		Text("Version 0.0.1");
+		PopFont();
+	}
+	else {
+		Project* pr = this->state->openProject;
+		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit)) {
+			for (std::string symbol : pr->symbols) {
+				TableSetupColumn(symbol.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
+			}
+			TableHeadersRow();
+			for (int i = 0; i < 4; i++) {
+				TableNextRow();
+				for (int j = 0; j < pr->symbols.size(); j++) {
+					TableNextColumn();
+					Text("0");
+				}
+			}
+			EndTable();
+		}
+	}
+}
 
-	Dummy(ImVec2(0.0f, 50.0f));
+void MainWindow::message(std::string header, ...) {
+	va_list args;
+	va_start(args, header);
 
-	PushFont(this->font20);
-	SetWindowFontScale(1.0f);
-	Text("Version 0.0.1");
-	PopFont();
+	if (header == "new_project_t1") {
+		std::string name = va_arg(args, std::string);
+		Project* project = new Project(name, "");
+		project->symbols = va_arg(args, std::vector<std::string>);
+		project->units = va_arg(args, std::vector<std::string>);
+		
+		this->state->openProject = project;
+		std::cout << "Project created : " << name << std::endl;
+	}
+	else {
+		throw std::invalid_argument("Invalid header : " + header);
+	}
 }

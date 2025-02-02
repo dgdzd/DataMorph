@@ -21,6 +21,7 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void message(std::string header, ...) override;
 };
 
 #endif
