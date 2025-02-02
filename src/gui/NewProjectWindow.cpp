@@ -117,6 +117,7 @@ void NewProjectWindow::onRender() {
 
 		if (Button("Create Project")) {
 			this->p_open = false;
+			//ouvrir une nouvelle fenetre puis faire un tableau
 		}
 	}
 }
