@@ -123,7 +123,14 @@ void MainWindow::onRender() {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					InputDouble("", pr->values[j][i]);
+					if (i < pr->values.size() && j < pr->values[i].size() && pr->values[i][j] != nullptr) {
+						InputDouble("", pr->values[i][j]);
+					} 
+					else {
+						double newValue = 0.0;
+						pr->values[i][j] = new double(newValue);
+						InputDouble("", pr->values[i][j]);
+					}
 				}
 			}
 			EndTable();
