@@ -54,8 +54,19 @@ void MainWindow::onRender() {
 			if (MenuItem("Save project", "Ctrl+S")) {
 			}
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
+				this->p_open = true;
 			}
 			EndMenu();
+		}
+		if (BeginMenu("Table")) {
+			if (MenuItem("Add Variable")) {
+			}
+			if (MenuItem("Add Line")) {
+			}
+			if (MenuItem("Delete Variable")) {
+			}
+			if (MenuItem("Delete Line")) {
+			}
 		}
 		if (BeginMenu("Edit")) {
 			if (MenuItem("Undo", "Ctrl+Z")) {}
@@ -84,7 +95,7 @@ void MainWindow::onRender() {
 	else {
 		this->name = "DataMorph - " + this->state->openProject->name;
 	}
-	this->name += "###MainWindow"; // Pour définir un ID constant "MainWindow" pour la fenêtre
+	this->name += "###MainWindow"; // Pour dï¿½finir un ID constant "MainWindow" pour la fenï¿½tre
 
 	if (!this->state->openProject) {
 		PushFont(this->font64);
