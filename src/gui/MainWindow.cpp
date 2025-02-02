@@ -54,7 +54,7 @@ void MainWindow::onRender() {
 			if (MenuItem("Save project", "Ctrl+S")) {
 			}
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
-				this->p_open = true;
+				this->p_open = false;
 			}
 			EndMenu();
 		}
@@ -67,6 +67,7 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Delete Line")) {
 			}
+			EndMenu();
 		}
 		if (BeginMenu("Edit")) {
 			if (MenuItem("Undo", "Ctrl+Z")) {}
@@ -121,7 +122,7 @@ void MainWindow::onRender() {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					Text("0");
+					InputDouble("", pr->values[j]);
 				}
 			}
 			EndTable();

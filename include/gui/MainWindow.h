@@ -14,12 +14,14 @@ struct Project {
 	std::string path;
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
+	std::vector<std::vector<double*>> array2D(symbols.size(), std::vector<double*>(1, nullptr));
 
 	Project(std::string name, std::string path) {
 		this->name = name;
 		this->path = path;
 		this->units = {};
 		this->symbols = {};
+		this->values = {};
 	}
 };
 
