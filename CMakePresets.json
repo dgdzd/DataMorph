@@ -1,4 +1,4 @@
-﻿{
+{
     "version": 3,
     "configurePresets": [
         {
@@ -56,6 +56,14 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "main_truc",
+            "description": "",
+            "displayName": "",
+            "configurePreset": "x64-release"
         }
     ]
 }

@@ -62,9 +62,7 @@ void MainWindow::onRender() {
 			if (MenuItem("Add Variable")) {
 				if (this->state->openProject) {
 					Project* pr = this->state->openProject;
-					BeginPopupModal("#new_symbol");
-					Text("YES"); //doesn't work : the popup close itself after creation :(
-					EndPopup();
+					OpenPopup("##new_s");
 				}
 			}
 			if (MenuItem("Delete Variable")) {
@@ -92,6 +90,14 @@ void MainWindow::onRender() {
 		EndMenuBar();
 	}
 
+	if (BeginPopupModal("##new_s", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		Text("YES"); //doesn't work : the popup close itself after creation :(
+		if (Button("Cancel")) {
+			CloseCurrentPopup();
+		}
+		EndPopup();
+	}
+
 	if (!this->state->openProject) {
 		this->name = "DataMorph - Inactive";
 	}
@@ -117,7 +123,10 @@ void MainWindow::onRender() {
 		Project* pr = this->state->openProject;
 		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(110.0f*pr->symbols.size(), 0.0f))) {
 			for (int i = 0; i < pr->symbols.size(); i++) {
-				std::string header = pr->symbols[i] + " ( " + pr->units[i] + " ) ";
+				std::string header = pr->symbols[i];
+				if (pr->units[i] != "") {
+					std::string header = pr->symbols[i] + " ( " + pr->units[i] + " ) ";
+				}
 				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
