@@ -6,6 +6,57 @@
 
 using namespace ImGui;
 
+
+// We define this class locally because it is only used in this file
+class NewVarPopup : public Window {
+	static NewVarPopup* inst;
+	MainWindow* parent;
+	char* newSymbol;
+	char* newUnit;
+
+public:
+	NewVarPopup(MainWindow* parent) {
+		this->parent = parent;
+		this->name = "Add a column";
+		this->p_open = true;
+		this->showCloseButton = true;
+		this->style = ImGui::GetStyle();
+		this->wflags = ImGuiWindowFlags_NoCollapse;
+		this->newSymbol = new char[32] {""};
+		this->newUnit = new char[32] {""};
+	}
+	void onRender() override {
+		Project* pr = parent->state->openProject;
+		Text("Symbol");
+		InputText("##1", newSymbol, 32);
+		Text("Unit");
+		InputText("##2", newUnit, 32);
+		if (Button("Add")) {
+			pr->symbols.push_back(newSymbol);
+			pr->units.push_back(newUnit);
+			pr->addColumn();
+			parent->state->popups[name] = false;
+			CloseCurrentPopup();
+		}
+		SameLine();
+		if (Button("Cancel")) {
+			parent->state->popups[name] = false;
+			CloseCurrentPopup();
+		}
+		EndPopup();
+	}
+
+	static NewVarPopup* getInstance(MainWindow* mw) {
+		if (!inst) {
+			inst = new NewVarPopup(mw);
+		}
+		return inst;
+	}
+};
+
+NewVarPopup* NewVarPopup::inst = nullptr;
+
+
 MainWindow::MainWindow() {
 	this->name = "DataMorph";
 	this->font20 = nullptr;
@@ -40,6 +91,8 @@ void MainWindow::onPostRender() {
 void MainWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
+	Project* pr = this->state->openProject;
+	State* state = this->state;
 	SetWindowFontScale(1.0f);
 
 	SetWindowSize(ImVec2(1200.0f, 700.0f));
@@ -60,9 +113,8 @@ void MainWindow::onRender() {
 		}
 		if (BeginMenu("Table")) {
 			if (MenuItem("Add Variable")) {
-				if (this->state->openProject) {
-					Project* pr = this->state->openProject;
-					OpenPopup("##new_s");
+				if (pr) {
+					state->popups["Add a column"] = true;
 				}
 			}
 			if (MenuItem("Delete Variable")) {
@@ -90,12 +142,30 @@ void MainWindow::onRender() {
 		EndMenuBar();
 	}
 
-	if (BeginPopupModal("##new_s", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-		Text("YES"); //doesn't work : the popup close itself after creation :(
-		if (Button("Cancel")) {
-			CloseCurrentPopup();
+	// The context menu (on right click)
+	if (BeginPopupContextWindow()) {
+		if (MenuItem("Add row")) {
+			pr->addRow();
+		}
+		if (MenuItem("Remove row")) {
+			if (pr->values.size() > 0) {
+				pr->removeRow();
+			}
 		}
 		EndPopup();
+	}
+
+	if (pr) {
+		for (auto& [key, value] : state->popups) {
+			if (value) {
+				OpenPopup(key.c_str());
+			}
+		}
+	}
+
+	NewVarPopup* nvp = NewVarPopup::getInstance(this);
+	if (BeginPopupModal(nvp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		nvp->onRender();
 	}
 
 	if (!this->state->openProject) {
@@ -104,7 +174,7 @@ void MainWindow::onRender() {
 	else {
 		this->name = "DataMorph - " + this->state->openProject->name;
 	}
-	this->name += "###MainWindow"; // Pour d�finir un ID constant "MainWindow" pour la fen�tre
+	this->name += "###MainWindow"; // Pour définir un ID constant "MainWindow" pour la fenêtre
 
 	if (!this->state->openProject) {
 		PushFont(this->font64);
@@ -125,31 +195,29 @@ void MainWindow::onRender() {
 			for (int i = 0; i < pr->symbols.size(); i++) {
 				std::string header = pr->symbols[i];
 				if (pr->units[i] != "") {
-					std::string header = pr->symbols[i] + " ( " + pr->units[i] + " ) ";
+					header += " (in " + pr->units[i] + ")";
 				}
 				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
-			for (int i = 0; i < pr->values_rows; i++) {
+			for (int i = 0; i < pr->values.size(); i++) {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
 					SetNextItemWidth(100);
-					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[j][i], 0.0, 0.0, "%.4f", ImGuiInputTextFlags_AlwaysOverwrite);
+					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[i][j], 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
 				}
 			}
 			EndTable();
 		}
 
 		if (Button("+")) {
-			pr->values_rows += 1;
-			pr->resize_values(pr->values_rows, pr->symbols.size());
+			pr->addRow();
 		}
 		SameLine();
 		if (Button("-")) {
-			if (pr->values_rows > 0) {
-				pr->values_rows -= 1;
-				pr->resize_values(pr->values_rows, pr->symbols.size());
+			if (pr->values.size() > 0) {
+				pr->removeRow();
 			}
 		}
 	}

@@ -114,6 +114,7 @@ void NewProjectWindow::onRender() {
 
 		if (BeginTabItem("Fluid Simulation")) {
 			Text("not yet ! ");
+			EndTabItem();
 		}
 		EndTabBar();
 

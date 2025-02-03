@@ -14,12 +14,12 @@ public:
 	ImGuiStyle style;
 	ImGuiWindowFlags wflags;
 
-	virtual void onAttach() = 0;
-	virtual void onDetach() = 0;
-	virtual void onPreRender() = 0;
-	virtual void onPostRender() = 0;
+	virtual void onAttach() {};
+	virtual void onDetach() {};
+	virtual void onPreRender() {};
+	virtual void onPostRender() {};
 	virtual void onRender() = 0;
-	virtual void message(std::string header, ...) = 0;
+	virtual void message(std::string header, ...) {};
 };
 
 #endif

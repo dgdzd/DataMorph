@@ -58,12 +58,4 @@
             }
         }
     ],
-    "buildPresets": [
-        {
-            "name": "main_truc",
-            "description": "",
-            "displayName": "",
-            "configurePreset": "x64-release"
-        }
-    ]
 }

@@ -6,6 +6,7 @@
 #include <App.h>
 #include <imgui_internal.h>
 #include <string>
+#include <map>
 #include <iostream>
 
 using namespace ImGui;
@@ -16,7 +17,6 @@ struct Project {
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
 	std::vector<std::vector<double>> values;
-	int values_rows;
 
 	Project(std::string name, std::string path) {
 		this->name = name;
@@ -24,21 +24,37 @@ struct Project {
 		this->units = {};
 		this->symbols = {};
 		this->values = {};
-		this->values_rows = 1;
 	}
 
 	void initValues() {
-		double newValue = 0.0;
-		for (int i = 0; i < this->units.size(); i++) {
-			std::cout << "a\n";
-			this->values.push_back({ 0 });
+		this->values = { std::vector<double>(this->symbols.size(), 0.0) };
+		
+	}
+
+	void addRow() {
+		this->values.push_back(std::vector<double>(this->symbols.size(), 0.0));
+	}
+
+	void removeRow() {
+		this->values.pop_back();
+	}
+
+	void addColumn() {
+		for (int i = 0; i < this->values.size(); i++) {
+			this->values[i].push_back(0.0);
 		}
 	}
 
-	void resize_values(int rows, int columns) {
+	void removeColumn() {
+		for (int i = 0; i < this->values.size(); i++) {
+			this->values[i].pop_back();
+		}
+	}
+
+	/*void resize_values(int rows, int columns) {
 		for (int i; i < values.size(); i++) {
 			for (int j; j < values[i].size(); j++) {
-				this->values[i][j] = *new double(this->values[i][j]);
+				this->values[i][j] = this->values[i][j];
 			}
 		}
 		this->values.resize(columns);
@@ -46,12 +62,13 @@ struct Project {
 		for (int i; i < rows; i++) {
 			this->values.resize(rows);
 		}
-	}
+	}*/
 };
 
 struct State {
 	bool hasOpenProject;
 	Project* openProject;
+	std::map<std::string, bool> popups;
 
 	State() {
 		this->openProject = nullptr;
@@ -62,9 +79,9 @@ class MainWindow : public Window {
 	ImFont* font20;
 	ImFont* font23;
 	ImFont* font64;
+public:
 	State* state;
 
-public:
 	MainWindow();
 
 	void onAttach() override;
