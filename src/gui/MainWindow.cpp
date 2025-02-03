@@ -123,7 +123,7 @@ void MainWindow::onRender() {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					//need to fix this part
+					//need to fix this part bc window close itself :(
 					InputDouble("", pr->values[j][i]);
 				}
 			}
