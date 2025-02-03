@@ -6,6 +6,7 @@
 #include <App.h>
 #include <imgui_internal.h>
 #include <string>
+#include <iostream>
 
 using namespace ImGui;
 
@@ -14,17 +15,21 @@ struct Project {
 	std::string path;
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
-	std::vector<std::vector<double*>> values;
+	std::vector<std::vector<double>> values;
 
 	Project(std::string name, std::string path) {
 		this->name = name;
 		this->path = path;
 		this->units = {};
 		this->symbols = {};
-		this->values = std::vector<std::vector<double*>>(symbols.size(), std::vector<double*>(1, nullptr));
-		for (int i = 0; i < this->symbols.size(); i++) {
-			double newValue = 0.0;
-			this-> values[i][0] = new double(newValue);
+		this->values = {};
+	}
+
+	void initValues() {
+		double newValue = 0.0;
+		for (int i = 0; i < this->units.size(); i++) {
+			std::cout << "a\n";
+			this->values.push_back({ 0 });
 		}
 	}
 };

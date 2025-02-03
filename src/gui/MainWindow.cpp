@@ -114,7 +114,7 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit)) {
+		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(110.0f*pr->symbols.size(), 0.0f))) {
 			for (std::string symbol : pr->symbols) {
 				TableSetupColumn(symbol.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
@@ -123,8 +123,8 @@ void MainWindow::onRender() {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					//need to fix this part bc window close itself :(
-					InputDouble("", pr->values[j][i]);
+					SetNextItemWidth(100);
+					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[j][i], 0.0, 0.0, "%.4f", ImGuiInputTextFlags_AlwaysOverwrite);
 				}
 			}
 			EndTable();
@@ -141,6 +141,7 @@ void MainWindow::message(std::string header, ...) {
 		Project* project = new Project(name, "");
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
+		project->initValues();
 		
 		this->state->openProject = project;
 		std::cout << "Project created : " << name << std::endl;
