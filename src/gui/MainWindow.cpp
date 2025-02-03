@@ -123,14 +123,9 @@ void MainWindow::onRender() {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
-					if (i < pr->values.size() && j < pr->values[i].size() && pr->values[i][j] != nullptr) {
-						InputDouble("", pr->values[i][j]);
-					} 
-					else {
-						double newValue = 0.0;
-						pr->values[i][j] = new double(newValue);
-						InputDouble("", pr->values[i][j]);
-					}
+					SetNextItemWidth(100);
+					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[j][i], 0.0, 0.0, "%.4f", ImGuiInputTextFlags_AlwaysOverwrite);
+					
 				}
 			}
 			EndTable();
@@ -147,6 +142,7 @@ void MainWindow::message(std::string header, ...) {
 		Project* project = new Project(name, "");
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
+		project->initValues();
 		
 		this->state->openProject = project;
 		std::cout << "Project created : " << name << std::endl;
