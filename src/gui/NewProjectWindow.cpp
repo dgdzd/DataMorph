@@ -111,6 +111,10 @@ void NewProjectWindow::onRender() {
 			Text("idk");
 			EndTabItem();
 		}
+
+		if (BeginTabItem("Fluid Simulation")) {
+			Text("not yet ! ");
+		}
 		EndTabBar();
 
 		Text("Enter Project Name");
