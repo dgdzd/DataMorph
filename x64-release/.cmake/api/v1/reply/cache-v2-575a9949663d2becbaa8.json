@@ -126,11 +126,7 @@
 					"value" : "No help, variable specified on the command line."
 				}
 			],
-<<<<<<<< HEAD:x64-release/.cmake/api/v1/reply/cache-v2-575a9949663d2becbaa8.json
 			"type" : "STRING",
-========
-			"type" : "UNINITIALIZED",
->>>>>>>> 93eb3fae898a6c79c9ab4aaa3f56353c21906f4a:x64-release/.cmake/api/v1/reply/cache-v2-fe2017aaa6f0287787d7.json
 			"value" : "cl.exe"
 		},
 		{
@@ -242,11 +238,7 @@
 					"value" : "No help, variable specified on the command line."
 				}
 			],
-<<<<<<<< HEAD:x64-release/.cmake/api/v1/reply/cache-v2-575a9949663d2becbaa8.json
 			"type" : "STRING",
-========
-			"type" : "UNINITIALIZED",
->>>>>>>> 93eb3fae898a6c79c9ab4aaa3f56353c21906f4a:x64-release/.cmake/api/v1/reply/cache-v2-fe2017aaa6f0287787d7.json
 			"value" : "cl.exe"
 		},
 		{

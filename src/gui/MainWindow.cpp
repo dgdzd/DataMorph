@@ -114,7 +114,7 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit)) {
+		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(110.0f*pr->symbols.size(), 0.0f))) {
 			for (std::string symbol : pr->symbols) {
 				TableSetupColumn(symbol.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
@@ -125,7 +125,6 @@ void MainWindow::onRender() {
 					TableNextColumn();
 					SetNextItemWidth(100);
 					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[j][i], 0.0, 0.0, "%.4f", ImGuiInputTextFlags_AlwaysOverwrite);
-					
 				}
 			}
 			EndTable();
