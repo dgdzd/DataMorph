@@ -1,12 +1,12 @@
 # ninja log v6
 43	2478	7602233919880917	CMakeFiles/DataMorph.dir/src/Constants.cpp.obj	1e1679eb9e41eb53
+32	2437	7602699378210041	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
+32	6083	7602233919761242	CMakeFiles/DataMorph.dir/src/app.cpp.obj	927db12421ecc8bd
 37	2506	7602233919821083	CMakeFiles/DataMorph.dir/src/core/imgui_extension.cpp.obj	becaf17377958c69
-23	3631	7602233919681450	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
+23	1947	7602699378115793	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
 53	3826	7602233919970680	CMakeFiles/DataMorph.dir/src/gui/UpdateWindow.cpp.obj	62e104ca9eda1115
-48	4023	7602233919920813	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
 2507	4721	7602233944515041	CMakeFiles/DataMorph.dir/src/FontManager.cpp.obj	cd4af76d205e6fb6
 3826	5006	7602233957709741	CMakeFiles/DataMorph.dir/dependencies/src/glad/glad.c.obj	a9e337c944e0e5ae
-32	6083	7602233919761242	CMakeFiles/DataMorph.dir/src/app.cpp.obj	927db12421ecc8bd
 3632	6684	7602233955764948	CMakeFiles/DataMorph.dir/src/Utils.cpp.obj	67dbad2aacdcfd9e
 2480	7775	7602233944245756	CMakeFiles/DataMorph.dir/src/gui/NewProjectWindow.cpp.obj	13c7f395313f55cd
 6083	8337	7602233980279372	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui_impl_glfw.cpp.obj	317591e388ab834f
@@ -17,9 +17,7 @@
 8338	14653	7602234002829059	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui_widgets.cpp.obj	59c00bc6b9125e3
 4024	16594	7602233959694440	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui.cpp.obj	707a85b8900095e2
 4721	22693	7602233966655817	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui_demo.cpp.obj	3fdf8cc6f06b81f1
-22693	22965	7602234146376120	DataMorph.exe	f87292ed39ca8e6e
-26	2125	7602290475077701	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
-35	2311	7602290475157494	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
-2311	2523	7602290497916616	DataMorph.exe	f87292ed39ca8e6e
-41	1830	7602294286213613	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
-1831	2025	7602294304115946	DataMorph.exe	f87292ed39ca8e6e
+2438	3027	7602699402266059	DataMorph.exe	f87292ed39ca8e6e
+20	1491	7602743753724631	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
+27	1854	7602743753794447	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
+1855	2078	7602743772075572	DataMorph.exe	f87292ed39ca8e6e

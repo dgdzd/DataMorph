@@ -22,8 +22,8 @@ struct Project {
 		this->units = {};
 		this->symbols = {};
 		this->values = std::vector<std::vector<double*>>(symbols.size(), std::vector<double*>(1, nullptr));
-		double newValue = 0.0;
-		for (int i = 0; i < this->values.size(); i++) {
+		for (int i = 0; i < this->symbols.size(); i++) {
+			double newValue = 0.0;
 			this-> values[i][0] = new double(newValue);
 		}
 	}
