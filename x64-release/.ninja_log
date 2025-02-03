@@ -1,9 +1,9 @@
 # ninja log v6
 43	2478	7602233919880917	CMakeFiles/DataMorph.dir/src/Constants.cpp.obj	1e1679eb9e41eb53
-27	1854	7602743753794447	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
+22	1745	7602889994942950	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
 32	6083	7602233919761242	CMakeFiles/DataMorph.dir/src/app.cpp.obj	927db12421ecc8bd
 37	2506	7602233919821083	CMakeFiles/DataMorph.dir/src/core/imgui_extension.cpp.obj	becaf17377958c69
-20	1491	7602743753724631	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
+27	2883	7602885328912621	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
 53	3826	7602233919970680	CMakeFiles/DataMorph.dir/src/gui/UpdateWindow.cpp.obj	62e104ca9eda1115
 2507	4721	7602233944515041	CMakeFiles/DataMorph.dir/src/FontManager.cpp.obj	cd4af76d205e6fb6
 3826	5006	7602233957709741	CMakeFiles/DataMorph.dir/dependencies/src/glad/glad.c.obj	a9e337c944e0e5ae
@@ -17,13 +17,4 @@
 8338	14653	7602234002829059	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui_widgets.cpp.obj	59c00bc6b9125e3
 4024	16594	7602233959694440	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui.cpp.obj	707a85b8900095e2
 4721	22693	7602233966655817	CMakeFiles/DataMorph.dir/dependencies/src/imgui/imgui_demo.cpp.obj	3fdf8cc6f06b81f1
-1855	2078	7602743772075572	DataMorph.exe	f87292ed39ca8e6e
-27	2883	7602885328912621	CMakeFiles/DataMorph.dir/main.cpp.obj	70a0ee03c785d443
-36	3169	7602885328992407	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
-3203	4035	7602885360658867	DataMorph.exe	f87292ed39ca8e6e
-23	1929	7602887399671602	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
-1930	2140	7602887418740630	DataMorph.exe	f87292ed39ca8e6e
-19	1649	7602888026907150	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
-1650	1863	7602888043215974	DataMorph.exe	f87292ed39ca8e6e
-22	1745	7602889994942950	CMakeFiles/DataMorph.dir/src/gui/MainWindow.cpp.obj	b466d7b2385a5a98
 1746	1961	7602890012186847	DataMorph.exe	f87292ed39ca8e6e
