@@ -16,7 +16,6 @@ MainWindow::MainWindow() {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
 	this->state = new State();
-	this->max_rows = 1;
 }
 
 void MainWindow::onAttach() {
@@ -61,12 +60,14 @@ void MainWindow::onRender() {
 		}
 		if (BeginMenu("Table")) {
 			if (MenuItem("Add Variable")) {
-			}
-			if (MenuItem("Add Line")) {
+				if (this->state->openProject) {
+					Project* pr = this->state->openProject;
+					BeginPopupModal("#new_symbol");
+					Text("YES"); //doesn't work : the popup close itself after creation :(
+					EndPopup();
+				}
 			}
 			if (MenuItem("Delete Variable")) {
-			}
-			if (MenuItem("Delete Line")) {
 			}
 			EndMenu();
 		}
@@ -120,7 +121,7 @@ void MainWindow::onRender() {
 				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
-			for (int i = 0; i < this->max_rows; i++) {
+			for (int i = 0; i < pr->values_rows; i++) {
 				TableNextRow();
 				for (int j = 0; j < pr->symbols.size(); j++) {
 					TableNextColumn();
@@ -129,6 +130,18 @@ void MainWindow::onRender() {
 				}
 			}
 			EndTable();
+		}
+
+		if (Button("+")) {
+			pr->values_rows += 1;
+			pr->resize_values(pr->values_rows, pr->symbols.size());
+		}
+		SameLine();
+		if (Button("-")) {
+			if (pr->values_rows > 0) {
+				pr->values_rows -= 1;
+				pr->resize_values(pr->values_rows, pr->symbols.size());
+			}
 		}
 	}
 }

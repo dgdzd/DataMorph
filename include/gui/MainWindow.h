@@ -16,6 +16,7 @@ struct Project {
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
 	std::vector<std::vector<double>> values;
+	int values_rows;
 
 	Project(std::string name, std::string path) {
 		this->name = name;
@@ -23,6 +24,7 @@ struct Project {
 		this->units = {};
 		this->symbols = {};
 		this->values = {};
+		this->values_rows = 1;
 	}
 
 	void initValues() {
@@ -30,6 +32,19 @@ struct Project {
 		for (int i = 0; i < this->units.size(); i++) {
 			std::cout << "a\n";
 			this->values.push_back({ 0 });
+		}
+	}
+
+	void resize_values(int rows, int columns) {
+		for (int i; i < values.size(); i++) {
+			for (int j; j < values[i].size(); j++) {
+				this->values[i][j] = *new double(this->values[i][j]);
+			}
+		}
+		this->values.resize(columns);
+		
+		for (int i; i < rows; i++) {
+			this->values.resize(rows);
 		}
 	}
 };
@@ -48,7 +63,6 @@ class MainWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	State* state;
-	int max_rows;
 
 public:
 	MainWindow();
