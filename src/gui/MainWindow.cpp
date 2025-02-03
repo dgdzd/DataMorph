@@ -115,8 +115,9 @@ void MainWindow::onRender() {
 	else {
 		Project* pr = this->state->openProject;
 		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(110.0f*pr->symbols.size(), 0.0f))) {
-			for (std::string symbol : pr->symbols) {
-				TableSetupColumn(symbol.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
+			for (int i = 0; i < pr->symbols.size(); i++) {
+				std::string header = pr->symbols[i] + " ( " + pr->units[i] + " ) ";
+				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
 			for (int i = 0; i < this->max_rows; i++) {
