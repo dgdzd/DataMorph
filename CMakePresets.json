@@ -2,58 +2,14 @@
     "version": 8,
     "configurePresets": [
         {
-            "name": "Custom configure preset",
+            "name": "x64-release",
             "displayName": "Custom configure preset",
             "description": "Sets Ninja generator, build and install directory",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
+            "binaryDir": "${sourceDir}/x64-realease",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
-            }
-        },
-        {
-            "name": "truc",
-            "description": "",
-            "displayName": "",
-            "inherits": [
-                "__addPreset__"
-            ]
-        },
-        {
-            "name": "truc",
-            "displayName": "Configure preset using toolchain file",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_TOOLCHAIN_FILE": "",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
-            }
-        },
-        {
-            "name": "64x-release",
-            "displayName": "Custom configure preset",
-            "description": "Sets Ninja generator, build and install directory",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
-            }
-        },
-        {
-            "name": "GCC 13.2.0 x86_64-w64-mingw32",
-            "displayName": "GCC 13.2.0 x86_64-w64-mingw32",
-            "description": "Using compilers: C = C:\\ProgramData\\mingw64\\mingw64\\bin\\gcc.exe, CXX = C:\\ProgramData\\mingw64\\mingw64\\bin\\g++.exe",
-            "generator": "MinGW Makefiles",
-            "binaryDir": "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
-                "CMAKE_C_COMPILER": "C:/ProgramData/mingw64/mingw64/bin/gcc.exe",
-                "CMAKE_CXX_COMPILER": "C:/ProgramData/mingw64/mingw64/bin/g++.exe",
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/x64-realease"
             }
         }
     ]
