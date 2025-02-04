@@ -56,12 +56,12 @@ int DataMorph::initialize() {
 	this->io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	this->io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	this->baseFont = this->io->Fonts->AddFontFromFileTTF("..\\resources\\fonts\\Segoe UI.ttf", 16.0f);
+	this->baseFont = this->io->Fonts->AddFontFromFileTTF("resources\\fonts\\Segoe UI.ttf", 16.0f);
 
 	FontManager* fm = FontManager::getInstance();
-	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 20, "font20");
-	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 23, "font23");
-	fm->loadFontFromPath("..\\resources\\fonts\\Segoe UI.ttf", 64, "font64");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 20, "font20");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 23, "font23");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 64, "font64");
 
 	this->io->Fonts->Build();
 

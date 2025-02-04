@@ -30,18 +30,24 @@ public:
 	void onRender() override {
 		Project* pr = parent->state->openProject;
 		if (BeginTabBar("NewVar")) {
-			if (BeginTabItem("Name")) {
+			if (BeginTabItem("Dummy")) {
 				Text("Symbol");
 				InputText("##1", newSymbol, 32);
-				Text("Unit");
+				Text("Unit (optional)");
 				InputText("##2", newUnit, 32);
 				EndTabItem();
 			}
-			if (BeginTabItem("Expression")) {
+			if (BeginTabItem("With expression")) {
+				Text("Symbol");
+				InputText("##1", newSymbol, 32);
+				Text("Unit (optional)");
+				InputText("##2", newUnit, 32);
+				Separator();
+
 				Text("Input an Expression : ");
-				Text("symbol [i] : ");
+				Text("%s :", newSymbol[0] == '\0' ? "(Symbol needed)" : (std::string(newSymbol)+"[i]"));
 				SameLine();
-				InputText("no blank", expression, 32);
+				InputText("No blank", expression, 32);
 				EndTabItem();
 			}
 			EndTabBar();
