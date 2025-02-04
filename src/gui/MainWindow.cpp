@@ -58,6 +58,9 @@ public:
 			pr->units.push_back(newUnit);
 			pr->addColumn();
 			parent->state->popups[name] = false;
+			if (expression != new char [32] {""}) {
+				std::cout << "expression detected" << std::endl;
+			}
 			CloseCurrentPopup();
 		}
 		SameLine();
