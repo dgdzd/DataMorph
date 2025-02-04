@@ -13,6 +13,7 @@ class NewVarPopup : public Window {
 	MainWindow* parent;
 	char* newSymbol;
 	char* newUnit;
+	char* expression;
 
 public:
 	NewVarPopup(MainWindow* parent) {
@@ -24,13 +25,28 @@ public:
 		this->wflags = ImGuiWindowFlags_NoCollapse;
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
+		this->expression = new char[32] {""};
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
-		Text("Symbol");
-		InputText("##1", newSymbol, 32);
-		Text("Unit");
-		InputText("##2", newUnit, 32);
+		if (BeginTabBar("NewVar")) {
+			if (BeginTabItem("Name")) {
+				Text("Symbol");
+				InputText("##1", newSymbol, 32);
+				Text("Unit");
+				InputText("##2", newUnit, 32);
+				EndTabItem();
+			}
+			if (BeginTabItem("Expression")) {
+				Text("Input an Expression : ");
+				Text("symbol [i] : ");
+				SameLine();
+				InputText("no blank", expression, 32);
+				EndTabItem();
+			}
+			EndTabBar();
+		}
+		
 		if (Button("Add")) {
 			pr->symbols.push_back(newSymbol);
 			pr->units.push_back(newUnit);
