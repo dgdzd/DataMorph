@@ -4,7 +4,7 @@
 
 using namespace ImGui;
 
-UpdateWindow::UpdateWindow() {
+UpdateWin::UpdateWin() {
 	this->name = "What's new";
 	this->font20 = nullptr;
 	this->font23 = nullptr;
@@ -15,26 +15,26 @@ UpdateWindow::UpdateWindow() {
 	this->wflags = ImGuiWindowFlags_NoDocking;
 }
 
-void UpdateWindow::onAttach() {
+void UpdateWin::onAttach() {
 	FontManager* fm = FontManager::getInstance();
 	this->font20 = fm->getFont("font20");
 	this->font23 = fm->getFont("font23");
 	this->font64 = fm->getFont("font64");
 }
 
-void UpdateWindow::onDetach() {
+void UpdateWin::onDetach() {
 	// TODO
 }
 
-void UpdateWindow::onPreRender() {
+void UpdateWin::onPreRender() {
 	PushFont(this->font23);
 }
 
-void UpdateWindow::onPostRender() {
+void UpdateWin::onPostRender() {
 	PopFont();
 }
 
-void UpdateWindow::onRender() {
+void UpdateWin::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
@@ -65,6 +65,6 @@ void UpdateWindow::onRender() {
 	EndChild();
 }
 
-void UpdateWindow::message(std::string header, ...) {
+void UpdateWin::message(std::string header, ...) {
 	// TODO
 }

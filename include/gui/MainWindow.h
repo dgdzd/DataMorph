@@ -1,6 +1,7 @@
 #ifndef DM_MAINWINDOW_H
 #define DM_MAINWINDOW_H
 
+#include <exprtk.hpp>
 #include <core/gui/Window.h>
 #include <core/imgui_extension.h>
 #include <App.h>
@@ -10,6 +11,10 @@
 #include <iostream>
 
 using namespace ImGui;
+
+typedef exprtk::symbol_table<double> symbol_table_t;
+typedef exprtk::expression<double>   expression_t;
+typedef exprtk::parser<double>       parser_t;
 
 struct Project {
 	std::string name;
@@ -39,9 +44,36 @@ struct Project {
 		this->values.pop_back();
 	}
 
-	void addColumn() {
-		for (int i = 0; i < this->values.size(); i++) {
-			this->values[i].push_back(0.0);
+	void addColumn(const char* expr) {
+		if (expr[0] == '\0') {
+			for (int i = 0; i < this->values.size(); i++) {
+				this->values[i].push_back(0.0);
+			}
+		}
+		else {
+			symbol_table_t symbol_table;
+			expression_t expression;
+			parser_t parser;
+			std::map<std::string, double> symbol_map;
+
+			for (int i = 0; i < this->symbols.size(); i++) {
+				std::string symbol = this->symbols[i];
+				symbol_map[symbol] = this->values[0][i];
+				symbol_table.add_variable(symbol, symbol_map[symbol]);
+			}
+
+			double i = 0;
+			symbol_table.add_variable("i", i);
+			expression.register_symbol_table(symbol_table);
+			parser.compile(expr, expression);
+			
+			for (i = 0; i < this->values.size(); i++) {
+				for (int j = 0; j < this->symbols.size(); j++) {
+					std::string symbol = this->symbols[j];
+					symbol_map[symbol] = this->values[i][j];
+				}
+				this->values[i].push_back(expression.value());
+			}
 		}
 	}
 

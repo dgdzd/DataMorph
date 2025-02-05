@@ -9,13 +9,13 @@
 
 using namespace ImGui;
 
-class UpdateWindow : public Window {
+class UpdateWin : public Window {
 	ImFont* font20;
 	ImFont* font23;
 	ImFont* font64;
 
 public:
-	UpdateWindow();
+	UpdateWin();
 	void onAttach() override;
 	void onDetach() override;
 	void onPreRender() override;

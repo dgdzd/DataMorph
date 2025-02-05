@@ -17,7 +17,7 @@ int main()
 	}
 
 	app->addLayer(new MainWindow());
-	app->addLayer(new UpdateWindow());
+	app->addLayer(new UpdateWin());
 
 	while (!app->shouldClose) {
 		app->update();

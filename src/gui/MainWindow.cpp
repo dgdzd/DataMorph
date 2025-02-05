@@ -6,7 +6,6 @@
 
 using namespace ImGui;
 
-
 // We define this class locally because it is only used in this file
 class NewVarPopup : public Window {
 	static NewVarPopup* inst;
@@ -29,8 +28,10 @@ public:
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
+		int tab = -1;
 		if (BeginTabBar("NewVar")) {
 			if (BeginTabItem("Dummy")) {
+				tab = 0;
 				Text("Symbol");
 				InputText("##1", newSymbol, 32);
 				Text("Unit (optional)");
@@ -38,6 +39,7 @@ public:
 				EndTabItem();
 			}
 			if (BeginTabItem("With expression")) {
+				tab = 1;
 				Text("Symbol");
 				InputText("##1", newSymbol, 32);
 				Text("Unit (optional)");
@@ -52,17 +54,24 @@ public:
 			}
 			EndTabBar();
 		}
-		
-		if (Button("Add")) {
-			pr->symbols.push_back(newSymbol);
-			pr->units.push_back(newUnit);
-			pr->addColumn();
-			parent->state->popups[name] = false;
-			if (expression != new char [32] {""}) {
-				std::cout << "expression detected" << std::endl;
+
+		bool disabled = tab == 1 && expression[0] == '\0';
+		BeginDisabled(disabled); 
+		{
+			if (Button("Add")) {
+				if (std::find(pr->symbols.begin(), pr->symbols.end(), newSymbol) != pr->symbols.end()) {
+					parent->state->popups["alreadyExists"] = true;
+					parent->state->popups[name] = false;
+					return;
+				}
+				parent->state->popups[name] = false;
+				pr->addColumn(tab == 1 ? expression : "");
+				pr->symbols.push_back(newSymbol);
+				pr->units.push_back(newUnit);
+				CloseCurrentPopup();
 			}
-			CloseCurrentPopup();
 		}
+		EndDisabled();
 		SameLine();
 		if (Button("Cancel")) {
 			parent->state->popups[name] = false;
@@ -134,7 +143,7 @@ void MainWindow::onRender() {
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
 				this->p_open = false;
 			}
-			EndMenu();
+			ImGui::EndMenu();
 		}
 		if (BeginMenu("Table")) {
 			if (MenuItem("Add Variable")) {
@@ -144,7 +153,7 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Delete Variable")) {
 			}
-			EndMenu();
+			ImGui::EndMenu();
 		}
 		if (BeginMenu("Edit")) {
 			if (MenuItem("Undo", "Ctrl+Z")) {}
@@ -153,16 +162,16 @@ void MainWindow::onRender() {
 			if (MenuItem("Cut", "Ctrl+X")) {}
 			if (MenuItem("Copy", "Ctrl+C")) {}
 			if (MenuItem("Paste", "Ctrl+V")) {}
-			EndMenu();
+			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {
 			if (MenuItem("Show log")) {}
 			if (MenuItem("Show console")) {}
-			EndMenu();
+			ImGui::EndMenu();
 		}
 		if (BeginMenu("Help")) {
 			if (MenuItem("About")) {}
-			EndMenu();
+			ImGui::EndMenu();
 		}
 		EndMenuBar();
 	}
@@ -191,6 +200,14 @@ void MainWindow::onRender() {
 	NewVarPopup* nvp = NewVarPopup::getInstance(this);
 	if (BeginPopupModal(nvp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		nvp->onRender();
+	}
+	if (BeginPopupModal("alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+		Text("This symbol already exists.");
+		if (Button("Ok")) {
+			state->popups["alreadyExists"] = false;
+			CloseCurrentPopup();
+		}
+		EndPopup();
 	}
 
 	if (!this->state->openProject) {
