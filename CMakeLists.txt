@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project("DataMorph")
 
+add_compile_options("/bigobj")
+
 set(MAIN_FILE "main.cpp")
 set(PROJECT_SOURCES 
 		src/App.cpp
@@ -26,15 +28,6 @@ set(DEPENDENCIES_SOURCES
 		dependencies/src/imgui/imgui_tables.cpp
 		dependencies/src/imgui/imgui_widgets.cpp
 		dependencies/include/imgui/misc/freetype/imgui_freetype.cpp
-		dependencies/src/libmatheval/error.c
-		dependencies/src/libmatheval/g77_interface.c
-		dependencies/src/libmatheval/matheval.c
-		dependencies/src/libmatheval/node.c
-		dependencies/src/libmatheval/parser.c
-		dependencies/src/libmatheval/scanner.c
-		dependencies/src/libmatheval/symbol_table.c
-		dependencies/src/libmatheval/xmalloc.c
-		dependencies/src/libmatheval/xmath.c
 )
 
 file(GLOB LIBS_LIB "dependencies/libs/*.lib")
@@ -47,7 +40,6 @@ add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES}
 
 target_include_directories(DataMorph PUBLIC include/)
 target_include_directories(DataMorph PRIVATE dependencies/include/imgui)
-target_include_directories(DataMorph PRIVATE dependencies/include/libmatheval)
 target_include_directories(DataMorph PRIVATE dependencies/include)
 
 target_link_libraries(DataMorph PRIVATE ${LIBS_LIB})

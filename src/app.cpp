@@ -4,6 +4,7 @@
 #include <stb/stb_image.h>
 #include <iostream>
 #include <string>
+#include <exprtk.hpp>
 
 DataMorph* DataMorph::inst;
 
@@ -14,6 +15,31 @@ DataMorph::DataMorph() {
 	this->shouldClose = false;
 	this->ftlib = nullptr;
 	this->window = nullptr;
+
+	typedef exprtk::symbol_table<double> symbol_table_t;
+	typedef exprtk::expression<double>   expression_t;
+	typedef exprtk::parser<double>       parser_t;
+
+	const std::string expression_string =
+		"clamp(-1.0, sin(2 * pi * x) + cos(x / 2 * pi), +1.0)";
+
+	double x;
+
+	symbol_table_t symbol_table;
+	symbol_table.add_variable("x", x);
+	symbol_table.add_constants();
+
+	expression_t expression;
+	expression.register_symbol_table(symbol_table);
+
+	parser_t parser;
+	parser.compile(expression_string, expression);
+
+	for (x = -5.0; x <= 5.0; x += 0.001)
+	{
+		const double y = expression.value();
+		printf("%19.15f\t%19.15f\n", x, y);
+	}
 }
 
 DataMorph* DataMorph::getInstance() {
