@@ -65,7 +65,8 @@ public:
 					return;
 				}
 				parent->state->popups[name] = false;
-				pr->addColumn(tab == 1 ? expression : "");
+				Header* newHeader = new Header(newSymbol, newUnit, {}, tab == 1 ? expression : "");
+				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);
 				CloseCurrentPopup();
@@ -242,12 +243,18 @@ void MainWindow::onRender() {
 				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
 			}
 			TableHeadersRow();
-			for (int i = 0; i < pr->values.size(); i++) {
+			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
 				TableNextRow();
-				for (int j = 0; j < pr->symbols.size(); j++) {
+				for (std::string symbol : pr->symbols) {
+					Header& header = pr->headers[symbol];
+					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(100);
-					InputDouble(("##val" + std::to_string(i) + ":" + std::to_string(j)).c_str(), &pr->values[i][j], 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
+					ImGuiInputTextFlags flags = ImGuiInputTextFlags_AlwaysOverwrite;
+					if (header.expression[0] != '\0') {
+						flags |= ImGuiInputTextFlags_ReadOnly;
+					}
+					InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", flags);
 				}
 			}
 			EndTable();
@@ -258,7 +265,7 @@ void MainWindow::onRender() {
 		}
 		SameLine();
 		if (Button("-")) {
-			if (pr->values.size() > 0) {
+			if (pr->headers[pr->symbols[0]].values.size() > 0) {
 				pr->removeRow();
 			}
 		}
@@ -274,6 +281,9 @@ void MainWindow::message(std::string header, ...) {
 		Project* project = new Project(name, "");
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
+		for (int i = 0; i < project->symbols.size(); i++) {
+			project->headers[project->symbols[i]] = Header(project->symbols[i], project->units[i], {});
+		}
 		project->initValues();
 		
 		this->state->openProject = project;
