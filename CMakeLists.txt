@@ -17,6 +17,8 @@ set(PROJECT_SOURCES
 		src/gui/NewProjectWindow.cpp
 		src/FontManager.cpp
 		src/Utils.cpp
+		src/core/Project.cpp
+		src/core/Header.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

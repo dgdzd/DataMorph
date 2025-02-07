@@ -65,7 +65,7 @@ public:
 					return;
 				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(newSymbol, newUnit, {}, tab == 1 ? expression : "");
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "");
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);
@@ -152,7 +152,15 @@ void MainWindow::onRender() {
 					state->popups["Add a column"] = true;
 				}
 			}
-			if (MenuItem("Delete Variable")) {
+			if (BeginMenu("Delete Variable")) {
+				if (pr) {
+					for (std::string symbol : pr->symbols) {
+						if (MenuItem(symbol.c_str())) {
+							pr->removeColumn(symbol);
+						}
+					}
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
@@ -234,13 +242,13 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(110.0f*pr->symbols.size(), 0.0f))) {
+		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f*pr->symbols.size(), 0.0f))) {
 			for (int i = 0; i < pr->symbols.size(); i++) {
 				std::string header = pr->symbols[i];
 				if (pr->units[i] != "") {
 					header += " (in " + pr->units[i] + ")";
 				}
-				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 100.0f);
+				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
 			}
 			TableHeadersRow();
 			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
@@ -249,12 +257,18 @@ void MainWindow::onRender() {
 					Header& header = pr->headers[symbol];
 					double& val = header.values[i];
 					TableNextColumn();
-					SetNextItemWidth(100);
-					ImGuiInputTextFlags flags = ImGuiInputTextFlags_AlwaysOverwrite;
-					if (header.expression[0] != '\0') {
-						flags |= ImGuiInputTextFlags_ReadOnly;
+					SetNextItemWidth(150);
+					header.updateValues();
+
+					bool f = header.expression[0] != '\0';
+					if (f) {
+						Text("%s", std::to_string(val).c_str());
 					}
-					InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", flags);
+					else {
+						PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
+						PopStyleColor();
+					}
 				}
 			}
 			EndTable();
@@ -282,7 +296,7 @@ void MainWindow::message(std::string header, ...) {
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
 		for (int i = 0; i < project->symbols.size(); i++) {
-			project->headers[project->symbols[i]] = Header(project->symbols[i], project->units[i], {});
+			project->headers[project->symbols[i]] = Header(project, project->symbols[i], project->units[i], {});
 		}
 		project->initValues();
 		
