@@ -120,19 +120,31 @@ public:
 			for (int i = 1; i < this->tabs; i++) {
 				std::string tab_name = std::to_string(i) + "° line";
 				if (BeginTabItem(tab_name.c_str())) {
-
+					Text("not yet implemented");
 					EndTabItem();
 				}
 			}
 			if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-				this->tabs += 1;
+				this->tabs ++;
 			}
 			EndTabBar();
 		}
+
+		if (Button("Cancel")) {
+			parent->state->popups[name] = false;
+			CloseCurrentPopup();
+		}
+	}
+	static NewGraphicPopup* getInstance(MainWindow* mw) {
+		if (!inst) {
+			inst = new NewGraphicPopup(mw);
+		}
+		return inst;
 	}
 };
 
 NewGraphicPopup* NewGraphicPopup::inst = nullptr;
+
 
 MainWindow::MainWindow() {
 	this->name = "DataMorph";
@@ -260,6 +272,10 @@ void MainWindow::onRender() {
 		}
 		EndPopup();
 	}
+	NewGraphicPopup* ngp = NewGraphicPopup::getInstance(this);
+	if (BeginPopupModal(ngp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ngp->onRender();
+	}
 
 	if (!this->state->openProject) {
 		this->name = "DataMorph - Inactive";
@@ -333,7 +349,7 @@ void MainWindow::onRender() {
 
 			if (BeginTabItem("Graphic")) {
 				if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-
+					state->popups["Add a graphic"] = true;
 				}
 				ImGuiTabBarFlags flags = ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyResizeDown;
 				if (BeginTabBar("Graphics", flags)) {
