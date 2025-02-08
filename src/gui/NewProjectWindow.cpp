@@ -18,6 +18,7 @@ NewProjectWindow::NewProjectWindow() {
 	this->inputs = { new char[100] {""}, new char[100] {""} };
 	this->units = std::vector<std::string>();
 	this->symbols = std::vector<std::string>();
+	this->graphics = 0;
 	this->project_name;
 }
 

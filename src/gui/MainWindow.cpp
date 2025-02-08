@@ -91,6 +91,48 @@ public:
 
 NewVarPopup* NewVarPopup::inst = nullptr;
 
+class NewGraphicPopup : public Window {
+	static NewGraphicPopup* inst;
+	MainWindow* parent;
+	std::vector<char*> symbols;
+	int tabs;
+	char* graph_name;
+
+public:
+	NewGraphicPopup(MainWindow* parent) {
+		this->parent = parent;
+		this->name = "Add a graphic";
+		this->p_open = true;
+		this->showCloseButton = true;
+		this->style = ImGui::GetStyle();
+		this->wflags = ImGuiWindowFlags_NoCollapse;
+		this->symbols = std::vector<char*>();
+		this->tabs = 1;
+		this->graph_name = new char[32] {"Untitled-1"};
+	}
+	void onRender() override {
+		Project* pr = parent->state->openProject;
+
+		Text("Graphic's Name : ");
+		InputText("", this->graph_name, 32);
+
+		if (BeginTabBar("NewGraphic")) {
+			for (int i = 1; i < this->tabs; i++) {
+				std::string tab_name = std::to_string(i) + "° line";
+				if (BeginTabItem(tab_name.c_str())) {
+
+					EndTabItem();
+				}
+			}
+			if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
+				this->tabs += 1;
+			}
+			EndTabBar();
+		}
+	}
+};
+
+NewGraphicPopup* NewGraphicPopup::inst = nullptr;
 
 MainWindow::MainWindow() {
 	this->name = "DataMorph";
@@ -290,20 +332,15 @@ void MainWindow::onRender() {
 			}
 
 			if (BeginTabItem("Graphic")) {
-				if (BeginMenuBar()) {
-					if (BeginMenu("Model")) {
-						if (MenuItem("Create")) {
+				if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
 
-						}
-						if (MenuItem("Delete")) {
-
-						}
-						if (MenuItem("Modify")) {
-
-						}
-						ImGui::EndMenu();
+				}
+				ImGuiTabBarFlags flags = ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyResizeDown;
+				if (BeginTabBar("Graphics", flags)) {
+					if (BeginTabItem("Untitled-1")) {
+						EndTabItem();
 					}
-					EndMenuBar();
+					EndTabBar();
 				}
 				EndTabItem();
 			}

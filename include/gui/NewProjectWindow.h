@@ -18,6 +18,7 @@ class NewProjectWindow : public Window {
 	std::vector<char*> inputs;
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
+	int graphics;
 	char project_name[32] = "Untitled-1";
 
 public:
