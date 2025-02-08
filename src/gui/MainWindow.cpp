@@ -242,46 +242,73 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f*pr->symbols.size(), 0.0f))) {
-			for (int i = 0; i < pr->symbols.size(); i++) {
-				std::string header = pr->symbols[i];
-				if (pr->units[i] != "") {
-					header += " (in " + pr->units[i] + ")";
-				}
-				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
-			}
-			TableHeadersRow();
-			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
-				TableNextRow();
-				for (std::string symbol : pr->symbols) {
-					Header& header = pr->headers[symbol];
-					double& val = header.values[i];
-					TableNextColumn();
-					SetNextItemWidth(150);
-					header.updateValues();
 
-					bool f = header.expression[0] != '\0';
-					if (f) {
-						Text("%s", std::to_string(val).c_str());
+		if (BeginTabBar("Body")) {
+			if (BeginTabItem("Table")) {
+				if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->symbols.size(), 0.0f))) {
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						std::string header = pr->symbols[i];
+						if (pr->units[i] != "") {
+							header += " (in " + pr->units[i] + ")";
+						}
+						TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
 					}
-					else {
-						PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
-						PopStyleColor();
+					TableHeadersRow();
+					for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
+						TableNextRow();
+						for (std::string symbol : pr->symbols) {
+							Header& header = pr->headers[symbol];
+							double& val = header.values[i];
+							TableNextColumn();
+							SetNextItemWidth(150);
+							header.updateValues();
+
+							bool f = header.expression[0] != '\0';
+							if (f) {
+								Text("%s", std::to_string(val).c_str());
+							}
+							else {
+								PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+								InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
+								PopStyleColor();
+							}
+						}
+					}
+					EndTable();
+				}
+
+				if (Button("+")) {
+					pr->addRow();
+				}
+				SameLine();
+				if (Button("-")) {
+					if (pr->headers[pr->symbols[0]].values.size() > 0) {
+						pr->removeRow();
 					}
 				}
+				EndTabItem();
 			}
-			EndTable();
-		}
 
-		if (Button("+")) {
-			pr->addRow();
-		}
-		SameLine();
-		if (Button("-")) {
-			if (pr->headers[pr->symbols[0]].values.size() > 0) {
-				pr->removeRow();
+			if (BeginTabItem("Graphic")) {
+				if (BeginMenuBar()) {
+					if (BeginMenu("Model")) {
+						if (MenuItem("Create")) {
+
+						}
+						if (MenuItem("Delete")) {
+
+						}
+						if (MenuItem("Modify")) {
+
+						}
+						ImGui::EndMenu();
+					}
+					EndMenuBar();
+				}
+				EndTabItem();
 			}
+
+			EndTabBar();
 		}
 	}
 }
