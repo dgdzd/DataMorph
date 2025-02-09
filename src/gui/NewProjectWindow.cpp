@@ -124,15 +124,12 @@ void NewProjectWindow::onRender() {
 		Text("Enter Project Name");
 		InputText("32 characters max", this->project_name, 32, ImGuiInputTextFlags_AlwaysOverwrite);
 
-		if (this->project_name[0] == '\0' || this->symbols.empty()) {
-			BeginDisabled(true);
-		}
-		else {
-			BeginDisabled(false);
-		}
-		if (Button("Create Project")) {
-			this->p_open = false;
-			DataMorph::getInstance()->getLayer(0)->message("new_project_t1", std::string(this->project_name), symbols, units);
+		BeginDisabled(this->project_name[0] == '\0' || this->symbols.empty());
+		{
+			if (Button("Create Project")) {
+				this->p_open = false;
+				DataMorph::getInstance()->getLayer(0)->message("new_project_t1", std::string(this->project_name), symbols, units);
+			}
 		}
 		EndDisabled();
 	}

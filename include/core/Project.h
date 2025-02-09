@@ -2,6 +2,7 @@
 #define DM_PROJECT_H
 
 #include <core/Header.h>
+#include <core/Graph.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -13,6 +14,7 @@ struct Project {
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
 	std::map<std::string, std::vector<double>> values;
+	std::vector<Graph> graphs;
 
 	Project(std::string name, std::string path);
 

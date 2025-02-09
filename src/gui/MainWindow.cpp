@@ -1,5 +1,6 @@
 #include <gui/MainWindow.h>
 #include <gui/NewProjectWindow.h>
+#include <gui/GraphWindow.h>
 #include <FontManager.h>
 #include <iostream>
 #include <vector>
@@ -60,7 +61,7 @@ public:
 		{
 			if (Button("Add")) {
 				if (std::find(pr->symbols.begin(), pr->symbols.end(), newSymbol) != pr->symbols.end()) {
-					parent->state->popups["alreadyExists"] = true;
+					parent->state->popups["Error###alreadyExists"] = true;
 					parent->state->popups[name] = false;
 					return;
 				}
@@ -91,59 +92,81 @@ public:
 
 NewVarPopup* NewVarPopup::inst = nullptr;
 
-class NewGraphicPopup : public Window {
-	static NewGraphicPopup* inst;
+class NewGraphPopup : public Window {
+	static NewGraphPopup* inst;
 	MainWindow* parent;
-	std::vector<char*> symbols;
-	int tabs;
-	char* graph_name;
+	Project* pr;
 
 public:
-	NewGraphicPopup(MainWindow* parent) {
+	NewGraphPopup(MainWindow* parent) {
 		this->parent = parent;
-		this->name = "Add a graphic";
+		this->name = "Manage graphs";
 		this->p_open = true;
 		this->showCloseButton = true;
 		this->style = ImGui::GetStyle();
 		this->wflags = ImGuiWindowFlags_NoCollapse;
-		this->symbols = std::vector<char*>();
-		this->tabs = 1;
-		this->graph_name = new char[32] {"Untitled-1"};
+		this->pr = parent->state->openProject;
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
 
-		Text("Graphic's Name : ");
-		InputText("", this->graph_name, 32);
-
-		if (BeginTabBar("NewGraphic")) {
-			for (int i = 1; i < this->tabs; i++) {
-				std::string tab_name = std::to_string(i) + "° line";
-				if (BeginTabItem(tab_name.c_str())) {
-					Text("not yet implemented");
+		if (pr->graphs.size() == 0) {
+			Dummy(ImVec2(200.0f, 0.0f));
+			TextWrapped("There is currently no graph.");
+			if (Button("Create one")) {
+				Graph g("New graph 1", &pr->headers[pr->symbols[0]], &pr->headers[pr->symbols[0]], 0, 0);
+				pr->graphs.push_back(g);
+			}
+		}
+		else if (BeginTabBar("graphs")) {
+			for (int i = 0; i < pr->graphs.size(); i++) {
+				Graph& graph = pr->graphs[i];
+				if (BeginTabItem(("Graph #" + std::to_string(i+1)).c_str())) {
+					Text("Name");
+					InputText("##graphName", &graph.name[0], graph.name.size());
+					Dummy(ImVec2(0.0f, 10.0f));
+					if (BeginCombo("X axis", graph.xHeader->name.c_str())) {
+						for (std::string symbol : pr->symbols) {
+							if (Selectable(symbol.c_str())) {
+								graph.xHeader = &pr->headers[symbol];
+							}
+						}
+						EndCombo();
+					}
+					if (BeginCombo("Y axis", graph.yHeader->name.c_str())) {
+						for (std::string symbol : pr->symbols) {
+							if (Selectable(symbol.c_str())) {
+								graph.yHeader = &pr->headers[symbol];
+							}
+						}
+						EndCombo();
+					}
 					EndTabItem();
 				}
 			}
 			if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-				this->tabs ++;
+				Graph g(("New graph "+std::to_string(pr->graphs.size()+1)), &pr->headers[pr->symbols[0]], &pr->headers[pr->symbols[0]], 0, 0);
+				pr->graphs.push_back(g);
 			}
 			EndTabBar();
 		}
 
-		if (Button("Cancel")) {
+		if (Button("OK")) {
 			parent->state->popups[name] = false;
 			CloseCurrentPopup();
 		}
+
+		EndPopup();
 	}
-	static NewGraphicPopup* getInstance(MainWindow* mw) {
+	static NewGraphPopup* getInstance(MainWindow* mw) {
 		if (!inst) {
-			inst = new NewGraphicPopup(mw);
+			inst = new NewGraphPopup(mw);
 		}
 		return inst;
 	}
 };
 
-NewGraphicPopup* NewGraphicPopup::inst = nullptr;
+NewGraphPopup* NewGraphPopup::inst = nullptr;
 
 
 MainWindow::MainWindow() {
@@ -188,33 +211,15 @@ void MainWindow::onRender() {
 
 	if (BeginMenuBar()) {
 		if (BeginMenu("File")) {
-			if (MenuItem("New project", "Ctrl+N")) {
+			if (MenuItem("New project...", "Ctrl+N")) {
 				DataMorph::getInstance()->addLayer(new NewProjectWindow());
 			}
-			if (MenuItem("Open project", "Ctrl+O")) {
+			if (MenuItem("Open project...", "Ctrl+O")) {
 			}
 			if (MenuItem("Save project", "Ctrl+S")) {
 			}
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
 				this->p_open = false;
-			}
-			ImGui::EndMenu();
-		}
-		if (BeginMenu("Table")) {
-			if (MenuItem("Add Variable")) {
-				if (pr) {
-					state->popups["Add a column"] = true;
-				}
-			}
-			if (BeginMenu("Delete Variable")) {
-				if (pr) {
-					for (std::string symbol : pr->symbols) {
-						if (MenuItem(symbol.c_str())) {
-							pr->removeColumn(symbol);
-						}
-					}
-				}
-				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
@@ -226,6 +231,33 @@ void MainWindow::onRender() {
 			if (MenuItem("Copy", "Ctrl+C")) {}
 			if (MenuItem("Paste", "Ctrl+V")) {}
 			ImGui::EndMenu();
+		}
+		if (pr) {
+			if (BeginMenu("Table")) {
+				if (MenuItem("Add Variable...")) {
+					state->popups["Add a column"] = true;
+				}
+				if (BeginMenu("Delete Variable")) {
+					for (std::string symbol : pr->symbols) {
+						if (MenuItem(symbol.c_str())) {
+							pr->removeColumn(symbol);
+						}
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+			}
+			if (BeginMenu("Graphs")) {
+				if (MenuItem("Manage graphs...")) {
+					state->popups["Manage graphs"] = true;
+				}
+				if (MenuItem("View graphs")) {
+					if (pr) {
+						DataMorph::getInstance()->addLayer(new GraphWindow(pr));
+					}
+				}
+				ImGui::EndMenu();
+			}
 		}
 		if (BeginMenu("View")) {
 			if (MenuItem("Show log")) {}
@@ -264,17 +296,18 @@ void MainWindow::onRender() {
 	if (BeginPopupModal(nvp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
 		nvp->onRender();
 	}
-	if (BeginPopupModal("alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+	NewGraphPopup* ngp = NewGraphPopup::getInstance(this);
+	if (BeginPopupModal(ngp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+		ngp->onRender();
+	}
+
+	if (BeginPopupModal("Error###alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 		Text("This symbol already exists.");
 		if (Button("Ok")) {
 			state->popups["alreadyExists"] = false;
 			CloseCurrentPopup();
 		}
 		EndPopup();
-	}
-	NewGraphicPopup* ngp = NewGraphicPopup::getInstance(this);
-	if (BeginPopupModal(ngp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-		ngp->onRender();
 	}
 
 	if (!this->state->openProject) {
@@ -300,68 +333,46 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-
-		if (BeginTabBar("Body")) {
-			if (BeginTabItem("Table")) {
-				if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->symbols.size(), 0.0f))) {
-					for (int i = 0; i < pr->symbols.size(); i++) {
-						std::string header = pr->symbols[i];
-						if (pr->units[i] != "") {
-							header += " (in " + pr->units[i] + ")";
-						}
-						TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
-					}
-					TableHeadersRow();
-					for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
-						TableNextRow();
-						for (std::string symbol : pr->symbols) {
-							Header& header = pr->headers[symbol];
-							double& val = header.values[i];
-							TableNextColumn();
-							SetNextItemWidth(150);
-							header.updateValues();
-
-							bool f = header.expression[0] != '\0';
-							if (f) {
-								Text("%s", std::to_string(val).c_str());
-							}
-							else {
-								PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-								InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
-								PopStyleColor();
-							}
-						}
-					}
-					EndTable();
+		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->symbols.size(), 0.0f))) {
+			for (int i = 0; i < pr->symbols.size(); i++) {
+				std::string header = pr->symbols[i];
+				if (pr->units[i] != "") {
+					header += " (in " + pr->units[i] + ")";
 				}
-
-				if (Button("+")) {
-					pr->addRow();
-				}
-				SameLine();
-				if (Button("-")) {
-					if (pr->headers[pr->symbols[0]].values.size() > 0) {
-						pr->removeRow();
-					}
-				}
-				EndTabItem();
+				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
 			}
+			TableHeadersRow();
+			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
+				TableNextRow();
+				for (std::string symbol : pr->symbols) {
+					Header& header = pr->headers[symbol];
+					double& val = header.values[i];
+					TableNextColumn();
+					SetNextItemWidth(150);
+					header.updateValues();
 
-			if (BeginTabItem("Graphic")) {
-				if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-					state->popups["Add a graphic"] = true;
-				}
-				ImGuiTabBarFlags flags = ImGuiTabBarFlags_AutoSelectNewTabs | ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_FittingPolicyResizeDown;
-				if (BeginTabBar("Graphics", flags)) {
-					if (BeginTabItem("Untitled-1")) {
-						EndTabItem();
+					bool f = header.expression[0] != '\0';
+					if (f) {
+						Text("%s", std::to_string(val).c_str());
 					}
-					EndTabBar();
+					else {
+						PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
+						PopStyleColor();
+					}
 				}
-				EndTabItem();
 			}
+			EndTable();
+		}
 
-			EndTabBar();
+		if (Button("+")) {
+			pr->addRow();
+		}
+		SameLine();
+		if (Button("-")) {
+			if (pr->headers[pr->symbols[0]].values.size() > 0) {
+				pr->removeRow();
+			}
 		}
 	}
 }

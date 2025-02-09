@@ -1,4 +1,5 @@
 #include <core/Project.h>
+#include <iostream>
 
 Project::Project(std::string name, std::string path) {
 	 this->name = name;
@@ -47,5 +48,13 @@ void Project::removeColumn(std::string name) {
 	if (it == this->headers.end()) {
 		return;
 	}
+	std::cout << "Removing column " << (*it).first << std::endl;
 	this->headers.erase(it);
+	auto ne = std::remove(this->symbols.begin(), this->symbols.end(), name);
+	auto d = std::distance(this->symbols.begin(), ne);
+	auto ne2 = std::remove(this->units.begin(), this->units.end(), this->units[d]);
+
+	this->symbols.erase(ne, this->symbols.end());
+	this->units.erase(ne2, this->units.end());
+
 }
