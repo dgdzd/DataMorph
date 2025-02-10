@@ -18,6 +18,7 @@ class NewVarPopup : public Window {
 	char* newSymbol;
 	char* newUnit;
 	char* expression;
+	std::vector<std::string> derivate;
 
 public:
 	NewVarPopup(MainWindow* parent) {
@@ -30,6 +31,7 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
+		this->derivate = std::vector<std::string>();
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
@@ -55,6 +57,52 @@ public:
 				Text("%s :", newSymbol[0] == '\0' ? "(Symbol needed)" : (std::string(newSymbol)+"[i]"));
 				SameLine();
 				InputText("No blank", expression, 32);
+				EndTabItem();
+			}
+			if (BeginTabItem("Derivate")) {
+				tab = 2;
+				Text("Symbol");
+				InputText("##1", newSymbol, 32);
+				Text("Unit (optional)");
+				InputText("##2", newUnit, 32);
+				Separator();
+
+				Text("Input a Derivate : ");
+				Text("d ");
+				SameLine();
+				if (BeginCombo("##3", pr->symbols[0].c_str())) {
+					int selected = 0;
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						bool is_selected = selected == i;
+						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+							selected = i;
+							derivate[0] = pr->symbols[i];
+						}
+						if (is_selected) {
+							SetItemDefaultFocus();
+						}
+					}
+					EndCombo();
+				}
+
+				Text("-----------");
+
+				Text("d ");
+				SameLine();
+				if (BeginCombo("##4", pr->symbols[0].c_str())) {
+					int selected = 0;
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						bool is_selected = selected == i;
+						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+							selected = i;
+							derivate[1] = pr->symbols[i];
+						}
+						if (is_selected) {
+							SetItemDefaultFocus();
+						}
+					}
+					EndCombo();
+				}
 				EndTabItem();
 			}
 			EndTabBar();
