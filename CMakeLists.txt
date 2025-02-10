@@ -31,6 +31,10 @@ set(DEPENDENCIES_SOURCES
 		dependencies/src/imgui/imgui_tables.cpp
 		dependencies/src/imgui/imgui_widgets.cpp
 		dependencies/include/imgui/misc/freetype/imgui_freetype.cpp
+		dependencies/src/imgui/implot.cpp
+		dependencies/src/imgui/implot_demo.cpp
+		dependencies/src/imgui/implot_items.cpp
+		"dependencies/src/imgui/imgui_stdlib.cpp"
 )
 
 file(GLOB LIBS_LIB "dependencies/libs/*.lib")

@@ -1,5 +1,6 @@
 #include <App.h>
 #include <FontManager.h>
+#include <implot.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <iostream>
@@ -48,6 +49,11 @@ int DataMorph::initialize() {
 
 	if (!ImGui::CreateContext()) {
 		std::cout << "Failed to initialize ImGui.\n";
+		return -1;
+	}
+
+	if (!ImPlot::CreateContext()) {
+		std::cout << "Failed to initialize ImPlot.\n";
 		return -1;
 	}
 
@@ -156,6 +162,7 @@ void DataMorph::update() {
 void DataMorph::terminate() {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
+	ImPlot::DestroyContext();
 	ImGui::DestroyContext();
 	glfwTerminate();
 }

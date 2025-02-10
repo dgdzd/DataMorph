@@ -1,8 +1,12 @@
 #include <gui/MainWindow.h>
+
+#include <FontManager.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
-#include <FontManager.h>
+#include <core/Graph.h>
+#include <imgui/imgui_stdlib.h>
 #include <iostream>
+#include <Utils.h>
 #include <vector>
 
 using namespace ImGui;
@@ -104,17 +108,17 @@ public:
 		this->p_open = true;
 		this->showCloseButton = true;
 		this->style = ImGui::GetStyle();
-		this->wflags = ImGuiWindowFlags_NoCollapse;
+		this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 		this->pr = parent->state->openProject;
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
+		SetWindowSize(ImVec2(450, 700));
 
 		if (pr->graphs.size() == 0) {
-			Dummy(ImVec2(200.0f, 0.0f));
 			TextWrapped("There is currently no graph.");
 			if (Button("Create one")) {
-				Graph g("New graph 1", &pr->headers[pr->symbols[0]], &pr->headers[pr->symbols[0]], 0, 0);
+				Graph g("New graph 1", &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
 				pr->graphs.push_back(g);
 			}
 		}
@@ -123,7 +127,7 @@ public:
 				Graph& graph = pr->graphs[i];
 				if (BeginTabItem(("Graph #" + std::to_string(i+1)).c_str())) {
 					Text("Name");
-					InputText("##graphName", &graph.name[0], graph.name.size());
+					InputText("##graphName", &graph.name, 32);
 					Dummy(ImVec2(0.0f, 10.0f));
 					if (BeginCombo("X axis", graph.xHeader->name.c_str())) {
 						for (std::string symbol : pr->symbols) {
@@ -133,24 +137,59 @@ public:
 						}
 						EndCombo();
 					}
-					if (BeginCombo("Y axis", graph.yHeader->name.c_str())) {
-						for (std::string symbol : pr->symbols) {
-							if (Selectable(symbol.c_str())) {
-								graph.yHeader = &pr->headers[symbol];
+					Dummy(ImVec2(0.0f, 10.0f));
+					Separator();
+					Dummy(ImVec2(0.0f, 10.0f));
+					Text("Lines");
+					for (int j = 0; j < graph.lines.size(); j++) {
+						if (TreeNodeEx(("Line #" + std::to_string(j+1)).c_str())) {
+							Line& line = graph.lines[j];
+							if (BeginCombo("Data to plot", line.header->name.c_str())) {
+								for (std::string symbol : pr->symbols) {
+									if (Selectable(symbol.c_str())) {
+										line.header = &pr->headers[symbol];
+									}
+								}
+								EndCombo();
 							}
+							ColorEdit4("Line color", &line.color->x);
+							if (BeginCombo("Marker", ImPlotMarkerToString(line.marker))) {
+								for (int i = -1; i < ImPlotMarker_COUNT; i++) {
+									if (Selectable(ImPlotMarkerToString(i))) {
+										line.marker = i;
+									}
+								}
+								EndCombo();
+							}
+							if (graph.lines.size() > 1) {
+								PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+								PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+								PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+								if (Button(("Remove###" + std::to_string(j)).c_str())) {
+									graph.lines.erase(graph.lines.begin() + j);
+								}
+								PopStyleColor();
+								PopStyleColor();
+								PopStyleColor();
+							}
+							TreePop();
 						}
-						EndCombo();
+					}
+					Dummy(ImVec2(0.0f, 10.0f));
+					if (Button("+")) {
+						Line l(&pr->headers[pr->symbols[0]]);
+						graph.lines.push_back(l);
 					}
 					EndTabItem();
 				}
 			}
 			if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-				Graph g(("New graph "+std::to_string(pr->graphs.size()+1)), &pr->headers[pr->symbols[0]], &pr->headers[pr->symbols[0]], 0, 0);
+				Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
 				pr->graphs.push_back(g);
 			}
 			EndTabBar();
 		}
-
+		Dummy(ImVec2(0.0f, 15.0f));
 		if (Button("OK")) {
 			parent->state->popups[name] = false;
 			CloseCurrentPopup();
@@ -252,9 +291,7 @@ void MainWindow::onRender() {
 					state->popups["Manage graphs"] = true;
 				}
 				if (MenuItem("View graphs")) {
-					if (pr) {
-						DataMorph::getInstance()->addLayer(new GraphWindow(pr));
-					}
+					DataMorph::getInstance()->addLayer(new GraphWindow(pr));
 				}
 				ImGui::EndMenu();
 			}
@@ -297,14 +334,14 @@ void MainWindow::onRender() {
 		nvp->onRender();
 	}
 	NewGraphPopup* ngp = NewGraphPopup::getInstance(this);
-	if (BeginPopupModal(ngp->name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+	if (BeginPopupModal(ngp->name.c_str(), NULL, ngp->wflags)) {
 		ngp->onRender();
 	}
 
 	if (BeginPopupModal("Error###alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 		Text("This symbol already exists.");
 		if (Button("Ok")) {
-			state->popups["alreadyExists"] = false;
+			state->popups["Error###alreadyExists"] = false;
 			CloseCurrentPopup();
 		}
 		EndPopup();

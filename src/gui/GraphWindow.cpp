@@ -41,8 +41,19 @@ void GraphWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-
 	SetWindowSize(ImVec2(900.0f, 500.0f));
+
+	if (BeginTabBar("graphs_tabs")) {
+		for (int i = 0; i < project->graphs.size(); i++) {
+			Graph& g = project->graphs[i];
+			if (BeginTabItem(g.name.c_str())) {
+				// TODO : Render graph
+
+				EndTabItem();
+			}
+		}
+		EndTabBar();
+	}
 }
 
 void GraphWindow::message(std::string header, ...) {
