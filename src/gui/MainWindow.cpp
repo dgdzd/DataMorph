@@ -6,6 +6,7 @@
 #include <core/Graph.h>
 #include <imgui/imgui_stdlib.h>
 #include <iostream>
+#include <functional>
 #include <Utils.h>
 #include <vector>
 
@@ -18,7 +19,7 @@ class NewVarPopup : public Window {
 	char* newSymbol;
 	char* newUnit;
 	char* expression;
-	std::vector<std::string> derivate;
+	std::pair<std::string, std::string> derivate;
 
 public:
 	NewVarPopup(MainWindow* parent) {
@@ -31,8 +32,8 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
-		Project* pr = parent->state->openProject;
 		this->derivate = {"", ""};
+		Project* pr = parent->state->openProject;
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
@@ -41,20 +42,20 @@ public:
 			if (BeginTabItem("Dummy")) {
 				tab = 0;
 				Text("Symbol");
-				InputText("##1", newSymbol, 32);
+				InputText("##Symbol", newSymbol, 32);
 				Text("Unit (optional)");
-				InputText("##2", newUnit, 32);
+				InputText("##Unit", newUnit, 32);
 				EndTabItem();
 			}
 			if (BeginTabItem("With expression")) {
 				tab = 1;
 				Text("Symbol");
-				InputText("##1", newSymbol, 32);
+				InputText("##Symbol", newSymbol, 32);
 				Text("Unit (optional)");
-				InputText("##2", newUnit, 32);
+				InputText("##Unit", newUnit, 32);
 				Separator();
 
-				Text("Input an Expression : ");
+				Text("Input an expression : ");
 				Text("%s :", newSymbol[0] == '\0' ? "(Symbol needed)" : (std::string(newSymbol)+"[i]"));
 				SameLine();
 				InputText("No blank", expression, 32);
@@ -63,21 +64,21 @@ public:
 			if (BeginTabItem("Derivate")) {
 				tab = 2;
 				Text("Symbol");
-				InputText("##1", newSymbol, 32);
+				InputText("##Symbol", newSymbol, 32);
 				Text("Unit (optional)");
-				InputText("##2", newUnit, 32);
+				InputText("##Unit", newUnit, 32);
 				Separator();
 
-				Text("Input a Derivate : ");
-				Text("d ");
+				Text("Input a derivative :");
+				Text("d");
 				SameLine();
-				if (BeginCombo("##3", derivate[0].c_str())) {
+				if (BeginCombo("##3", derivate.first.c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
 						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 							selected = i;
-							derivate[0] = pr->symbols[i];
+							derivate.first = pr->symbols[i];
 						}
 						if (is_selected) {
 							SetItemDefaultFocus();
@@ -86,17 +87,17 @@ public:
 					EndCombo();
 				}
 
-				Text("-----------");
+				Separator();
 
-				Text("d ");
+				Text("dx");
 				SameLine();
-				if (BeginCombo("##4", derivate[1].c_str())) {
+				if (BeginCombo("##4", derivate.second.c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
 						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 							selected = i;
-							derivate[1] = pr->symbols[i];
+							derivate.second = pr->symbols[i];
 						}
 						if (is_selected) {
 							SetItemDefaultFocus();
@@ -104,17 +105,17 @@ public:
 					}
 					EndCombo();
 				}
-				std::string new_derivate = derivate[0] + "/" + derivate[1];
-				char* new_derivate2 = new char[new_derivate.length() + 1];
-				std::strcpy(new_derivate2, new_derivate.c_str());
-				this->expression = new_derivate2;
+				std::string str_expr = derivate.first + "/" + derivate.second;
+				char* new_d = new char[str_expr.length() + 1];
+				std::strcpy(new_d, str_expr.c_str());
+				this->expression = new_d;
 
 				EndTabItem();
 			}
 			EndTabBar();
 		}
 
-		bool disabled = (tab == 1 && expression[0] == '\0') || (tab == 2 && (derivate[0] == "" || derivate[1] == ""));
+		bool disabled = (tab == 1 && expression[0] == '\0') || (tab == 2 && (derivate.first.empty() || derivate.second.empty()));
 		BeginDisabled(disabled); 
 		{
 			if (Button("Add")) {
@@ -206,6 +207,7 @@ public:
 								}
 								EndCombo();
 							}
+							Checkbox("Scatter", &line.scatter);
 							ColorEdit4("Line color", &line.color->x);
 							if (BeginCombo("Marker", ImPlotMarkerToString(line.marker))) {
 								for (int i = -1; i < ImPlotMarker_COUNT; i++) {

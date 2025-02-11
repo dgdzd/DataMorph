@@ -1,8 +1,10 @@
 #include <gui/GraphWindow.h>
+
 #include <App.h>
 #include <FontManager.h>
-#include <Utils.h>
+#include <implot.h>
 #include <iostream>
+#include <Utils.h>
 
 using namespace ImGui;
 
@@ -47,7 +49,25 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				// TODO : Render graph
+				if (ImPlot::BeginPlot("Graph")) {
+					for (int j = 0; j < g.lines.size(); j++) {
+						Line& l = g.lines[j];
+
+						if (l.scatter) {
+							int _size = g.xHeader->values.size();
+							ImPlot::SetNextLineStyle(*l.color);
+							ImPlot::SetNextMarkerStyle(l.marker);
+							ImPlot::PlotScatter((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+						}
+						else {
+							int _size = g.xHeader->values.size();
+							ImPlot::SetNextLineStyle(*l.color);
+							ImPlot::SetNextMarkerStyle(l.marker);
+							ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+						}
+					}
+					ImPlot::EndPlot();
+				}
 
 				EndTabItem();
 			}
