@@ -31,7 +31,8 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
-		this->derivate = std::vector<std::string>();
+		Project* pr = parent->state->openProject;
+		this->derivate = {"", ""};
 	}
 	void onRender() override {
 		Project* pr = parent->state->openProject;
@@ -70,7 +71,7 @@ public:
 				Text("Input a Derivate : ");
 				Text("d ");
 				SameLine();
-				if (BeginCombo("##3", pr->symbols[0].c_str())) {
+				if (BeginCombo("##3", derivate[0].c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
@@ -89,7 +90,7 @@ public:
 
 				Text("d ");
 				SameLine();
-				if (BeginCombo("##4", pr->symbols[0].c_str())) {
+				if (BeginCombo("##4", derivate[1].c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
@@ -103,12 +104,17 @@ public:
 					}
 					EndCombo();
 				}
+				std::string new_derivate = derivate[0] + "/" + derivate[1];
+				char* new_derivate2 = new char[new_derivate.length() + 1];
+				std::strcpy(new_derivate2, new_derivate.c_str());
+				this->expression = new_derivate2;
+
 				EndTabItem();
 			}
 			EndTabBar();
 		}
 
-		bool disabled = tab == 1 && expression[0] == '\0';
+		bool disabled = (tab == 1 && expression[0] == '\0') || (tab == 2 && (derivate[0] == "" || derivate[1] == ""));
 		BeginDisabled(disabled); 
 		{
 			if (Button("Add")) {
@@ -118,7 +124,7 @@ public:
 					return;
 				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "");
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, (tab == 1 || tab == 2) ? expression : "");
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);
