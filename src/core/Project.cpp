@@ -28,18 +28,15 @@ void Project::removeRow() {
 }
 
 void Project::addColumn(Header* header) {
-	const char* expr = header->expression;
-	if (expr[0] == '\0') {
-		this->headers[header->name] = *header;
-		this->headers[header->name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
-	}
-	else {
-		std::string name = header->name;
-		this->headers[name] = *header;
-		this->headers[name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
-		this->headers[name].addVars();
-		this->headers[name].compileExpression();
-		this->headers[name].updateValues();
+	Expression* expr = header->expression;
+	std::string name = header->name;
+	this->headers[name] = *header;
+	this->headers[name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
+	if (expr->specs.type != DUMMY) {
+		this->headers[name].expression->parent = &this->headers[name];
+		this->headers[name].expression->addVars();
+		this->headers[name].expression->compileExpression();
+		this->headers[name].expression->updateValues();
 	}
 }
 

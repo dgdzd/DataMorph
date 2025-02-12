@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
 		src/Utils.cpp
 		src/core/Project.cpp
 		src/core/Header.cpp
+		src/core/Expression.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
@@ -34,7 +35,7 @@ set(DEPENDENCIES_SOURCES
 		dependencies/src/imgui/implot.cpp
 		dependencies/src/imgui/implot_demo.cpp
 		dependencies/src/imgui/implot_items.cpp
-		"dependencies/src/imgui/imgui_stdlib.cpp"
+		dependencies/src/imgui/imgui_stdlib.cpp
 )
 
 file(GLOB LIBS_LIB "dependencies/libs/*.lib")

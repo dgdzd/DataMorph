@@ -1,5 +1,6 @@
 #include <gui/MainWindow.h>
 
+#include <core/Expression.h>
 #include <FontManager.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
@@ -19,7 +20,6 @@ class NewVarPopup : public Window {
 	char* newSymbol;
 	char* newUnit;
 	char* expression;
-	std::tuple<std::string, int, int> spec_expression;
 	std::pair<int, int> derivate;
 
 public:
@@ -33,7 +33,6 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
-		this->spec_expression;
 		this->derivate = {0, 0};
 		Project* pr = parent->state->openProject;
 	}
@@ -122,14 +121,15 @@ public:
 					return;
 				}
 
+				ExpressionSpecs* specs = new ExpressionSpecs;
 				if (tab == 2) {
-					this->spec_expression = {"DIFF", derivate.first, derivate.second};
+					specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
 				}
-				else {
-					this->spec_expression = { "", 0, 0 };
+				else if (tab == 1) {
+					specs = new ExpressionSpecs(FORMULA, nullptr, nullptr);
 				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", spec_expression);
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs);
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);
@@ -446,9 +446,11 @@ void MainWindow::onRender() {
 					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(150);
-					header.updateValues();
+					if (header.expression) {
+						header.expression->updateValues();
+					}
 
-					bool f = header.expression[0] != '\0' && std::get<0>(header.spec_expression) == "";
+					bool f = header.expression && header.expression->specs.type != DUMMY;
 					if (f) {
 						Text("%s", std::to_string(val).c_str());
 					}
