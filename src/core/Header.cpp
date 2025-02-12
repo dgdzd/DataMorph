@@ -10,7 +10,7 @@ Header::Header() {
 	this->parent = nullptr;
 }
 
-Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression, std::vector<std::string> spec_expression) {
+Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression, std::tuple<std::string, int, int> spec_expression) {
 	this->parent = parent;
 	this->name = name;
 	this->unit = unit;
@@ -21,7 +21,7 @@ Header::Header(Project* parent, std::string name, std::string unit, std::vector<
 }
 
 void Header::addVars() {
-	if (this->expression[0] == '\0') {
+	if (this->expression[0] == '\0' && std::get<0>(this->spec_expression) == "") {
 		return;
 	}
 	this->symbol_map["i"] = 0;
@@ -34,6 +34,19 @@ void Header::addVars() {
 }
 
 void Header::compileExpression() {
+	if (std::get<0>(this->spec_expression) == "DIFF") {
+		Project* pr = this->parent;
+		int index_dy = std::get<1>(this->spec_expression);
+		int index_dx = std::get<2>(this->spec_expression);
+		Header* header_dy = &pr->headers[pr->symbols[index_dy]];
+		Header* header_dx = &pr->headers[pr->symbols[index_dx]];
+		for (int i = 0; i < this->values.size() - 1; i++) {
+			this->values[i] = (header_dy->values[i + 1] - header_dy->values[i]) / (header_dx->values[i + 1] - header_dx->values[i]);
+		}
+		int i = this->values.size() - 1;
+		this->values[i] = (header_dy->values[i] - header_dy->values[i - 1]) / (header_dx->values[i] - header_dx->values[i - 1]);
+		return;
+	}
 	if (this->expression[0] == '\0') {
 		return;
 	}
@@ -43,6 +56,9 @@ void Header::compileExpression() {
 }
 
 void Header::updateValues() {
+	if (std::get<0>(this->spec_expression) == "DIFF") {
+		return;
+	}
 	if (this->expression[0] == '\0') {
 		return;
 	}
@@ -55,7 +71,3 @@ void Header::updateValues() {
 		this->values[i] = this->expr.value();
 	}
 }
-
-//Noah met ces fonctions autre part ou jsp mais aze fais ce que tu veux
-
-void Header::

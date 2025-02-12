@@ -19,8 +19,8 @@ class NewVarPopup : public Window {
 	char* newSymbol;
 	char* newUnit;
 	char* expression;
-	std::vector<std::string> spec_expression;
-	std::pair<std::string, std::string> derivate;
+	std::tuple<std::string, int, int> spec_expression;
+	std::pair<int, int> derivate;
 
 public:
 	NewVarPopup(MainWindow* parent) {
@@ -33,8 +33,8 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
-		this->spec_expression = {""};
-		this->derivate = {"", ""};
+		this->spec_expression;
+		this->derivate = {0, 0};
 		Project* pr = parent->state->openProject;
 	}
 	void onRender() override {
@@ -74,13 +74,13 @@ public:
 				Text("Input a derivative :");
 				Text("d");
 				SameLine();
-				if (BeginCombo("##3", derivate.first.c_str())) {
+				if (BeginCombo("##3", pr->symbols[derivate.first].c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
 						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 							selected = i;
-							derivate.first = pr->symbols[i];
+							derivate.first = i;
 						}
 						if (is_selected) {
 							SetItemDefaultFocus();
@@ -93,13 +93,13 @@ public:
 
 				Text("dx");
 				SameLine();
-				if (BeginCombo("##4", derivate.second.c_str())) {
+				if (BeginCombo("##4", pr->symbols[derivate.second].c_str())) {
 					int selected = 0;
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						bool is_selected = selected == i;
 						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 							selected = i;
-							derivate.second = pr->symbols[i];
+							derivate.second = i;
 						}
 						if (is_selected) {
 							SetItemDefaultFocus();
@@ -112,7 +112,7 @@ public:
 			EndTabBar();
 		}
 
-		bool disabled = (tab == 1 && expression[0] == '\0') || (tab == 2 && (derivate.first.empty() || derivate.second.empty()));
+		bool disabled = tab == 1 && expression[0] == '\0';
 		BeginDisabled(disabled); 
 		{
 			if (Button("Add")) {
@@ -123,10 +123,13 @@ public:
 				}
 
 				if (tab == 2) {
-					this->spec_expression = {derivate.first, derivate.second};
+					this->spec_expression = {"DIFF", derivate.first, derivate.second};
+				}
+				else {
+					this->spec_expression = { "", 0, 0 };
 				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", tab==2 ? spec_expression : {""});
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", spec_expression);
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);
@@ -445,7 +448,7 @@ void MainWindow::onRender() {
 					SetNextItemWidth(150);
 					header.updateValues();
 
-					bool f = header.expression[0] != '\0';
+					bool f = header.expression[0] != '\0' && std::get<0>(header.spec_expression) == "";
 					if (f) {
 						Text("%s", std::to_string(val).c_str());
 					}
