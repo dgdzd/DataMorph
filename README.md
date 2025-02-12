@@ -4,7 +4,7 @@
 
 A better alternative to Regressi, with more features and with an enjoyable ui.
 
-☑☑☑ Current features ☑☑☑
+✅✅✅ Current features ✅✅✅
 
 → Tables
 
@@ -23,3 +23,16 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 ↳ Option to add multiple lines
 
 ↳ Option to color lines
+
+❌❌❌ Features in developement ❌❌❌
+
+→ Tables
+
+↳ Integrals
+
+→ Graphics
+
+↳ 3D graphics
+
+↳ More options to plot graphics
+↳ Multiples graphics management
