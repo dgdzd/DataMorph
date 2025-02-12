@@ -16,13 +16,14 @@ struct Header {
 	std::string name;
 	std::string unit;
 	const char* expression;
+	std::vector<std::string> spec_expression;
 	std::vector<double> values;
 	std::map<std::string, double> symbol_map;
 	symbol_table_t symbol_table;
 	expression_t expr;
 
 	Header();
-	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "");
+	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "", std::vector<std::string> spec_expression = {""});
 
 	void addVars();
 	void compileExpression();

@@ -19,6 +19,7 @@ class NewVarPopup : public Window {
 	char* newSymbol;
 	char* newUnit;
 	char* expression;
+	std::vector<std::string> spec_expression;
 	std::pair<std::string, std::string> derivate;
 
 public:
@@ -32,6 +33,7 @@ public:
 		this->newSymbol = new char[32] {""};
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
+		this->spec_expression = {""};
 		this->derivate = {"", ""};
 		Project* pr = parent->state->openProject;
 	}
@@ -105,11 +107,6 @@ public:
 					}
 					EndCombo();
 				}
-				std::string str_expr = derivate.first + "/" + derivate.second;
-				char* new_d = new char[str_expr.length() + 1];
-				std::strcpy(new_d, str_expr.c_str());
-				this->expression = new_d;
-
 				EndTabItem();
 			}
 			EndTabBar();
@@ -124,8 +121,12 @@ public:
 					parent->state->popups[name] = false;
 					return;
 				}
+
+				if (tab == 2) {
+					this->spec_expression = {derivate.first, derivate.second};
+				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, (tab == 1 || tab == 2) ? expression : "");
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", tab==2 ? spec_expression : {""});
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);

@@ -10,11 +10,12 @@ Header::Header() {
 	this->parent = nullptr;
 }
 
-Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression) {
+Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression, std::vector<std::string> spec_expression) {
 	this->parent = parent;
 	this->name = name;
 	this->unit = unit;
 	this->expression = expression;
+	this->spec_expression = spec_expression;
 	this->values = values;
 	this->symbol_map = {};
 }
@@ -54,3 +55,7 @@ void Header::updateValues() {
 		this->values[i] = this->expr.value();
 	}
 }
+
+//Noah met ces fonctions autre part ou jsp mais aze fais ce que tu veux
+
+void Header::
