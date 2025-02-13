@@ -14,6 +14,8 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 
 ↳ Derivates
 
+↳ Linespaces
+
 ↳ Option to create and delete symbols
 
 → Graphics
