@@ -17,7 +17,7 @@ GraphWindow::GraphWindow(Project* project) {
 	this->p_open = true;
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
-	this->wflags = ImGuiWindowFlags_None;
+	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 }
 
 void GraphWindow::onAttach() {
@@ -43,12 +43,13 @@ void GraphWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(900.0f, 500.0f));
+	SetWindowSize(ImVec2(1200.0f, 500.0f));
 
 	if (BeginTabBar("graphs_tabs")) {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
+				
 				if (ImPlot::BeginPlot("Graph")) {
 					for (int j = 0; j < g.lines.size(); j++) {
 						Line& l = g.lines[j];
