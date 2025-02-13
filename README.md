@@ -26,6 +26,8 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 
 ↳ Option to color lines
 
+↳ Multiples graphics management
+
 ❌❌❌ Features in developement ❌❌❌
 
 → Tables
@@ -37,4 +39,3 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 ↳ 3D graphics
 
 ↳ More options to plot graphics
-↳ Multiples graphics management
