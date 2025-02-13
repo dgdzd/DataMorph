@@ -21,6 +21,8 @@ class NewVarPopup : public Window {
 	char* newUnit;
 	char* expression;
 	std::pair<int, int> derivate;
+	std::pair<float, float> linespace;
+	std::vector<float> args;
 
 public:
 	NewVarPopup(MainWindow* parent) {
@@ -34,6 +36,8 @@ public:
 		this->newUnit = new char[32] {""};
 		this->expression = new char[32] {""};
 		this->derivate = {0, 0};
+		this->linespace = {0.0f, 0.0f};
+		this->args = {};
 		Project* pr = parent->state->openProject;
 	}
 	void onRender() override {
@@ -108,6 +112,23 @@ public:
 				}
 				EndTabItem();
 			}
+			if (BeginTabItem("Linespace")) {
+				tab = 3;
+				Text("Symbol");
+				InputText("##Symbol", newSymbol, 32);
+				Text("Unit (optional)");
+				InputText("##Unit", newUnit, 32);
+				Separator();
+
+				Text("Input a linespace :");
+				Text("from : ");
+				SameLine();
+				InputFloat("##from", &linespace.first);
+				Text("step : ");
+				SameLine();
+				InputFloat("##to", &linespace.second);
+				EndTabItem();
+			}
 			EndTabBar();
 		}
 
@@ -128,8 +149,12 @@ public:
 				else if (tab == 1) {
 					specs = new ExpressionSpecs(FORMULA, nullptr, nullptr);
 				}
+				else if (tab == 2) {
+					specs = new ExpressionSpecs(LINESPACE, nullptr, nullptr);
+					this->args = {linespace.first, linespace.second};
+				}
 				parent->state->popups[name] = false;
-				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs);
+				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs, this->args);
 				pr->addColumn(newHeader);
 				pr->symbols.push_back(newSymbol);
 				pr->units.push_back(newUnit);

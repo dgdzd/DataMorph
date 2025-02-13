@@ -10,10 +10,15 @@ Header::Header() {
 	this->parent = nullptr;
 }
 
-Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression, ExpressionSpecs* specs) {
+Header::Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression, ExpressionSpecs* specs, std::vector<float> args) {
 	this->parent = parent;
 	this->name = name;
 	this->unit = unit;
 	this->values = values;
-	this->expression = new Expression(this, expression, specs ? *specs : ExpressionSpecs());
+	if (args.size() == 0) {
+		this->expression = new Expression(this, args);
+	}
+	else {
+		this->expression = new Expression(this, expression, specs ? *specs : ExpressionSpecs());
+	}
 }

@@ -16,7 +16,8 @@ enum ExpressionType : expr_type {
 	DUMMY = -1,
 	FORMULA = 0,
 	DERIVATIVE = 1,
-	INTEGRAL = 2
+	INTEGRAL = 2,
+	LINESPACE = 3
 };
 
 struct ExpressionSpecs {
@@ -41,10 +42,12 @@ public:
 	Header* parent;
 	ExpressionSpecs specs;
 	std::string expression;
+	std::vector<float> args;
 
 	Expression(Header* parent, std::string expression);
 	Expression(Header* parent, ExpressionSpecs specs);
 	Expression(Header* parent, std::string expression, ExpressionSpecs specs);
+	Expression(Header* parent, std::vector<float> args);
 
 	void addVars();
 	void compileExpression();

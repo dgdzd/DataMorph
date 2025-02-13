@@ -12,12 +12,13 @@ struct Project;
 struct Header {
 	Project* parent;
 	Expression* expression;
+	std::vector<float> args;
 	std::string name;
 	std::string unit;
 	std::vector<double> values;
 
 	Header();
-	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "", ExpressionSpecs* specs = new ExpressionSpecs());
+	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "", ExpressionSpecs* specs = new ExpressionSpecs(), std::vector<float> args = {});
 };
 
 #endif

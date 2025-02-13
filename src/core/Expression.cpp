@@ -3,21 +3,32 @@
 #include <core/Project.h>
 #include <iostream>
 
+//expression 
 Expression::Expression(Header* parent, std::string expression) {
 	this->parent = parent;
 	this->expression = expression;
 }
 
+//manual data entry
 Expression::Expression(Header* parent, ExpressionSpecs specs) {
 	this->parent = parent;
 	this->expression = "";
 	this->specs = specs;
 }
 
+//derivate
 Expression::Expression(Header* parent, std::string expression, ExpressionSpecs specs) {
 	this->parent = parent;
 	this->expression = expression;
 	this->specs = specs;
+}
+
+//integral & integral
+Expression::Expression(Header* parent, std::vector<float> args) {
+	this->parent = parent;
+	this->expression = expression;
+	this->specs = specs;
+	this->args = args;
 }
 
 void Expression::addVars() {
@@ -35,14 +46,27 @@ void Expression::addVars() {
 }
 
 void Expression::compileExpression() {
+	Header* h = this->parent;
+	Project* pr = h->parent;
 	if (this->specs.type == DERIVATIVE) {
-		Header* h = this->parent;
-		Project* pr = h->parent;
 		h->values[0] = 0.0;
 		for (int i = 1; i < h->values.size(); i++) {
 			h->values[i] = (this->specs.header_dy->values[i] - this->specs.header_dy->values[i - 1]) / (this->specs.header_dx->values[i] - this->specs.header_dx->values[i - 1]);
 		}
 		return;
+	}
+	if (this->specs.type == LINESPACE) {
+		for (int i = 1; i < h->values.size(); i++) {
+			h->values[i] = this->args[0] + i * this->args[1];
+		}
+		return;
+	}
+	if (this->specs.type == INTEGRAL) {
+		float n = this->args[2];
+		float a = this->args[0];
+		float b = this->args[1];
+		float h = (b - a) / n;
+
 	}
 	if (this->specs.type == DUMMY) {
 		return;
@@ -58,10 +82,15 @@ void Expression::updateValues() {
 	if (this->specs.type == DUMMY) {
 		return;
 	}
-	if (this->specs.type == DERIVATIVE) {
+	else if (this->specs.type == DERIVATIVE) {
 		h->values[0] = 0.0;
 		for (int i = 1; i < h->values.size() - 1; i++) {
 			h->values[i] = (this->specs.header_dy->values[i] - this->specs.header_dy->values[i - 1]) / (this->specs.header_dx->values[i] - this->specs.header_dx->values[i - 1]);
+		}
+	}
+	else if (this->specs.type == LINESPACE) {
+		for (int i = 1; i < h->values.size(); i++) {
+			h->values[i] = this->args[0] + i * this->args[1];
 		}
 	}
 	else {
