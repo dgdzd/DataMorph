@@ -14,6 +14,8 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 
 ↳ Derivates
 
+↳ Linespaces
+
 ↳ Option to create and delete symbols
 
 → Graphics
@@ -23,6 +25,8 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 ↳ Option to add multiple lines
 
 ↳ Option to color lines
+
+↳ Multiples graphics management
 
 ❌❌❌ Features in developement ❌❌❌
 
@@ -35,4 +39,3 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 ↳ 3D graphics
 
 ↳ More options to plot graphics
-↳ Multiples graphics management
