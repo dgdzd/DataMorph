@@ -21,6 +21,7 @@ set(PROJECT_SOURCES
 		src/core/Project.cpp
 		src/core/Header.cpp
 		src/core/Expression.cpp
+		src/gui/CommonPopups.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

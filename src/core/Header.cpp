@@ -15,7 +15,7 @@ Header::Header(Project* parent, std::string name, std::string unit, std::vector<
 	this->name = name;
 	this->unit = unit;
 	this->values = values;
-	if (args.size() == 0) {
+	if (args.size() != 0) {
 		this->expression = new Expression(this, ExpressionSpecs(), args);
 	}
 	else {

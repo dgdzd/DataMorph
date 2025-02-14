@@ -31,7 +31,12 @@ void Project::addColumn(Header* header) {
 	Expression* expr = header->expression;
 	std::string name = header->name;
 	this->headers[name] = *header;
-	this->headers[name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
+	if (this->headers.size() != 0) {
+		this->headers[name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
+	}
+	else {
+		this->headers[name].values = { 0.0 };
+	}
 	if (expr->specs.type != DUMMY) {
 		this->headers[name].expression->parent = &this->headers[name];
 		this->headers[name].expression->addVars();
@@ -45,13 +50,12 @@ void Project::removeColumn(std::string name) {
 	if (it == this->headers.end()) {
 		return;
 	}
-	std::cout << "Removing column " << (*it).first << std::endl;
 	this->headers.erase(it);
-	auto ne = std::remove(this->symbols.begin(), this->symbols.end(), name);
+	auto ne = std::find(this->symbols.begin(), this->symbols.end(), name);
 	auto d = std::distance(this->symbols.begin(), ne);
-	auto ne2 = std::remove(this->units.begin(), this->units.end(), this->units[d]);
+	auto ne2 = std::find(this->units.begin(), this->units.end(), this->units[d]);
 
-	this->symbols.erase(ne, this->symbols.end());
-	this->units.erase(ne2, this->units.end());
+	this->symbols.erase(ne, ne+1);
+	this->units.erase(ne2, ne2+1);
 
 }

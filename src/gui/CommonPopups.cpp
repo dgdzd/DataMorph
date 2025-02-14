@@ -1,0 +1,322 @@
+#include <gui/CommonPopups.h>
+
+#include <gui/MainWindow.h>
+
+
+NewVarPopup* NewVarPopup::inst = nullptr;
+NewGraphPopup* NewGraphPopup::inst = nullptr;
+
+NewVarPopup::NewVarPopup(MainWindow* parent) {
+	this->parent = parent;
+	this->name = "Add a column";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings;
+	this->newSymbol = new char[32] {""};
+	this->newUnit = new char[32] {""};
+	this->expression = new char[32] {""};
+	this->derivate = { 0, 0 };
+	this->linespace = { 0.0f, 0.0f };
+	this->integral = { 0, 1, 0, 0 };
+	this->args = {};
+	Project* pr = parent->state->openProject;
+}
+
+void NewVarPopup::onRender() {
+	Project* pr = parent->state->openProject;
+	int tab = -1;
+	SetWindowSize(ImVec2(900, 500));
+
+	if (BeginTabBar("NewVar")) {
+		if (BeginTabItem("Dummy")) {
+			tab = 0;
+			Text("Symbol");
+			InputText("##Symbol", newSymbol, 32);
+			Text("Unit (optional)");
+			InputText("##Unit", newUnit, 32);
+			EndTabItem();
+		}
+		if (BeginTabItem("With expression")) {
+			tab = 1;
+			Text("Symbol");
+			InputText("##Symbol", newSymbol, 32);
+			Text("Unit (optional)");
+			InputText("##Unit", newUnit, 32);
+			Separator();
+
+			Text("Input an expression : ");
+			Text("%s :", newSymbol[0] == '\0' ? "(Symbol needed)" : (std::string(newSymbol) + "[i]"));
+			SameLine();
+			InputText("No blank", expression, 32);
+			EndTabItem();
+		}
+		if (BeginTabItem("Derivate")) {
+			tab = 2;
+			Text("Symbol");
+			InputText("##Symbol", newSymbol, 32);
+			Text("Unit (optional)");
+			InputText("##Unit", newUnit, 32);
+			Separator();
+
+			Text("Input a derivative :");
+			Text("d");
+			SameLine();
+			if (BeginCombo("##3", pr->symbols[derivate.first].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						derivate.first = i;
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+
+			Separator();
+
+			Text("dx");
+			SameLine();
+			if (BeginCombo("##4", pr->symbols[derivate.second].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						derivate.second = i;
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+			EndTabItem();
+		}
+		if (BeginTabItem("Linespace")) {
+			tab = 3;
+			Text("Symbol");
+			InputText("##Symbol", newSymbol, 32);
+			Text("Unit (optional)");
+			InputText("##Unit", newUnit, 32);
+			Separator();
+
+			Text("Input a linespace :");
+			Text("from : ");
+			SameLine();
+			InputFloat("##from", &linespace.first);
+			Text("step : ");
+			SameLine();
+			InputFloat("##to", &linespace.second);
+			EndTabItem();
+		}
+		if (BeginTabItem("Integral")) {
+			tab = 4;
+			Text("Symbol");
+			InputText("##Symbol", newSymbol, 32);
+			Text("Unit (optional)");
+			InputText("##Unit", newUnit, 32);
+			Separator();
+
+			Text("Input an integral :");
+			Text("from : ");
+			SameLine();
+			InputInt("##from2", &integral[0]);
+			Text("to : ");
+			SameLine();
+			InputInt("##to2", &integral[1]);
+			Text("integral of : ");
+			SameLine();
+			if (BeginCombo("##5", pr->symbols[integral[2]].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						integral[2] = i;
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+			SameLine();
+			Text(" d");
+			SameLine();
+			if (BeginCombo("##6", pr->symbols[integral[3]].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						integral[3] = i;
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+
+			EndTabItem();
+		}
+		EndTabBar();
+	}
+
+	bool disabled = tab == 1 && expression[0] == '\0';
+	BeginDisabled(disabled);
+	{
+		if (Button("Add")) {
+			if (std::find(pr->symbols.begin(), pr->symbols.end(), newSymbol) != pr->symbols.end()) {
+				parent->state->popups["Error###alreadyExists"] = true;
+				parent->state->popups[name] = false;
+				return;
+			}
+
+			ExpressionSpecs* specs = new ExpressionSpecs;
+			if (tab == 2) {
+				specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+			}
+			else if (tab == 1) {
+				specs = new ExpressionSpecs(FORMULA, nullptr, nullptr);
+			}
+			else if (tab == 3) {
+				specs = new ExpressionSpecs(LINESPACE, nullptr, nullptr);
+				this->args = { linespace.first, linespace.second };
+			}
+			else if (tab == 4) {
+				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+			}
+			parent->state->popups[name] = false;
+			Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs, this->args);
+			pr->addColumn(newHeader);
+			pr->symbols.push_back(newSymbol);
+			pr->units.push_back(newUnit);
+			CloseCurrentPopup();
+		}
+	}
+	EndDisabled();
+	SameLine();
+	if (Button("Cancel")) {
+		parent->state->popups[name] = false;
+		CloseCurrentPopup();
+	}
+	EndPopup();
+}
+
+NewVarPopup* NewVarPopup::getInstance(MainWindow* mw) {
+	if (!inst) {
+		inst = new NewVarPopup(mw);
+	}
+	return inst;
+}
+
+NewGraphPopup::NewGraphPopup(MainWindow* parent) {
+	this->parent = parent;
+	this->name = "Manage graphs";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	this->pr = parent->state->openProject;
+}
+
+void NewGraphPopup::onRender() {
+	Project* pr = parent->state->openProject;
+	SetWindowSize(ImVec2(450, 700));
+
+	if (pr->graphs.size() == 0) {
+		TextWrapped("There is currently no graph.");
+		if (Button("Create one")) {
+			Graph g("New graph 1", &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			pr->graphs.push_back(g);
+		}
+	}
+	else if (BeginTabBar("graphs")) {
+		for (int i = 0; i < pr->graphs.size(); i++) {
+			Graph& graph = pr->graphs[i];
+			if (BeginTabItem(("Graph #" + std::to_string(i + 1)).c_str())) {
+				Text("Name");
+				InputText("##graphName", &graph.name, 32);
+				Dummy(ImVec2(0.0f, 10.0f));
+				if (BeginCombo("X axis", graph.xHeader->name.c_str())) {
+					for (std::string symbol : pr->symbols) {
+						if (Selectable(symbol.c_str())) {
+							graph.xHeader = &pr->headers[symbol];
+						}
+					}
+					EndCombo();
+				}
+				Dummy(ImVec2(0.0f, 10.0f));
+				Separator();
+				Dummy(ImVec2(0.0f, 10.0f));
+				Text("Lines");
+				for (int j = 0; j < graph.lines.size(); j++) {
+					if (TreeNodeEx(("Line #" + std::to_string(j + 1)).c_str())) {
+						Line& line = graph.lines[j];
+						if (BeginCombo("Data to plot", line.header->name.c_str())) {
+							for (std::string symbol : pr->symbols) {
+								if (Selectable(symbol.c_str())) {
+									line.header = &pr->headers[symbol];
+								}
+							}
+							EndCombo();
+						}
+						Checkbox("Scatter", &line.scatter);
+						ColorEdit4("Line color", &line.color->x);
+						if (BeginCombo("Marker", ImPlotMarkerToString(line.marker))) {
+							for (int i = -1; i < ImPlotMarker_COUNT; i++) {
+								if (Selectable(ImPlotMarkerToString(i))) {
+									line.marker = i;
+								}
+							}
+							EndCombo();
+						}
+						if (graph.lines.size() > 1) {
+							PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+							PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+							PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+							if (Button(("Remove###" + std::to_string(j)).c_str())) {
+								graph.lines.erase(graph.lines.begin() + j);
+							}
+							PopStyleColor();
+							PopStyleColor();
+							PopStyleColor();
+						}
+						TreePop();
+					}
+				}
+				Dummy(ImVec2(0.0f, 10.0f));
+				if (Button("+")) {
+					Line l(&pr->headers[pr->symbols[0]]);
+					graph.lines.push_back(l);
+				}
+				EndTabItem();
+			}
+		}
+		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
+			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			pr->graphs.push_back(g);
+		}
+		EndTabBar();
+	}
+	Dummy(ImVec2(0.0f, 15.0f));
+	if (Button("OK")) {
+		parent->state->popups[name] = false;
+		CloseCurrentPopup();
+	}
+
+	EndPopup();
+}
+
+NewGraphPopup* NewGraphPopup::getInstance(MainWindow* mw) {
+	if (!inst) {
+		inst = new NewGraphPopup(mw);
+	}
+	return inst;
+}

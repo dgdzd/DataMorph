@@ -29,7 +29,7 @@
 	- [ ] Add class and methods which can translate a string of a label ID, such as "welcome.datamorph" into a string corresponding to the chosen language. The class can be something like `Translator(Language* language)` which has a method like `translate(std::string id)`
 	- [ ] Add methods for loading all localizations from files under "resources/localized/...". Example : "en.loc" or "fr.loc"
 	- [ ] English
-	- [ ] French
+	- [ ] Français
 	- [ ] Deutsch
 	- [ ] Español
 	- [ ] Русский
