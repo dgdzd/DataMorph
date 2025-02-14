@@ -3,7 +3,7 @@
 #include <core/Project.h>
 #include <iostream>
 
-//expression 
+//formula 
 Expression::Expression(Header* parent, std::string expression) {
 	this->parent = parent;
 	this->expression = expression;
@@ -23,10 +23,10 @@ Expression::Expression(Header* parent, std::string expression, ExpressionSpecs s
 	this->specs = specs;
 }
 
-//integral & integral
-Expression::Expression(Header* parent, std::vector<float> args) {
+//linespace & integral
+Expression::Expression(Header* parent, ExpressionSpecs specs, std::vector<float> args) {
 	this->parent = parent;
-	this->expression = expression;
+	this->expression = "";
 	this->specs = specs;
 	this->args = args;
 }
@@ -62,10 +62,11 @@ void Expression::compileExpression() {
 		return;
 	}
 	if (this->specs.type == INTEGRAL) {
-		float n = this->args[2];
-		float a = this->args[0];
-		float b = this->args[1];
-		float h = (b - a) / n;
+		double integral = 0.0;
+		double height = 0.0;
+		for (int i = this->args[0]; i < h->values.size(); i++) {
+			h->values[i] = integral;
+		}
 
 	}
 	if (this->specs.type == DUMMY) {

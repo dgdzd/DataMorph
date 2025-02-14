@@ -22,6 +22,7 @@ class NewVarPopup : public Window {
 	char* expression;
 	std::pair<int, int> derivate;
 	std::pair<float, float> linespace;
+	std::vector<int> integral;
 	std::vector<float> args;
 
 public:
@@ -37,6 +38,7 @@ public:
 		this->expression = new char[32] {""};
 		this->derivate = {0, 0};
 		this->linespace = {0.0f, 0.0f};
+		this->integral = {0, 1, 0, 0};
 		this->args = {};
 		Project* pr = parent->state->openProject;
 	}
@@ -129,6 +131,57 @@ public:
 				InputFloat("##to", &linespace.second);
 				EndTabItem();
 			}
+			if (BeginTabItem("Integral")) {
+				tab = 4;
+				Text("Symbol");
+				InputText("##Symbol", newSymbol, 32);
+				Text("Unit (optional)");
+				InputText("##Unit", newUnit, 32);
+				Separator();
+
+				Text("Input an integral :");
+				Text("from : ");
+				SameLine();
+				InputInt("##from2", &integral[0]);
+				Text("to : ");
+				SameLine();
+				InputInt("##to2", &integral[1]);
+				Text("integral of : ");
+				SameLine();
+				if (BeginCombo("##5", pr->symbols[integral[2]].c_str())) {
+					int selected = 0;
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						bool is_selected = selected == i;
+						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+							selected = i;
+							integral[2] = i;
+						}
+						if (is_selected) {
+							SetItemDefaultFocus();
+						}
+					}
+					EndCombo();
+				}
+				SameLine();
+				Text(" d");
+				SameLine();
+				if (BeginCombo("##6", pr->symbols[integral[3]].c_str())) {
+					int selected = 0;
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						bool is_selected = selected == i;
+						if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+							selected = i;
+							integral[3] = i;
+						}
+						if (is_selected) {
+							SetItemDefaultFocus();
+						}
+					}
+					EndCombo();
+				}
+
+				EndTabItem();
+			}
 			EndTabBar();
 		}
 
@@ -149,9 +202,12 @@ public:
 				else if (tab == 1) {
 					specs = new ExpressionSpecs(FORMULA, nullptr, nullptr);
 				}
-				else if (tab == 2) {
+				else if (tab == 3) {
 					specs = new ExpressionSpecs(LINESPACE, nullptr, nullptr);
 					this->args = {linespace.first, linespace.second};
+				}
+				else if (tab == 4) {
+					specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
 				}
 				parent->state->popups[name] = false;
 				Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs, this->args);

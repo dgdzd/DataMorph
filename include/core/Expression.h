@@ -47,7 +47,7 @@ public:
 	Expression(Header* parent, std::string expression);
 	Expression(Header* parent, ExpressionSpecs specs);
 	Expression(Header* parent, std::string expression, ExpressionSpecs specs);
-	Expression(Header* parent, std::vector<float> args);
+	Expression(Header* parent, ExpressionSpecs specs, std::vector<float> args);
 
 	void addVars();
 	void compileExpression();
