@@ -49,7 +49,12 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				
+				{
+					BeginChild("Infos", ImVec2(0, 260), ImGuiChildFlags_Borders);
+					//do the uncertainty and modelization stuff
+					EndChild();
+				}
+
 				if (ImPlot::BeginPlot("Graph")) {
 					for (int j = 0; j < g.lines.size(); j++) {
 						Line& l = g.lines[j];

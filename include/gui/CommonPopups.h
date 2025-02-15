@@ -41,4 +41,16 @@ public:
 	static NewGraphPopup* getInstance(MainWindow* mw);
 };
 
+
+class NewStatsPopup : public Window {
+	static NewStatsPopup* inst;
+	MainWindow* parent;
+	Project* pr;
+
+public:
+	NewStatsPopup(MainWindow* parent);
+	void onRender() override;
+	static NewStatsPopup* getInstance(MainWindow* mw);
+};
+
 #endif

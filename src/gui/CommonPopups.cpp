@@ -79,7 +79,7 @@ void NewVarPopup::onRender() {
 
 			Separator();
 
-			Text("dx");
+			Text("d");
 			SameLine();
 			if (BeginCombo("##4", pr->symbols[derivate.second].c_str())) {
 				int selected = 0;
@@ -138,7 +138,6 @@ void NewVarPopup::onRender() {
 				}
 				EndCombo();
 			}
-			SameLine();
 			Text(" d");
 			SameLine();
 			if (BeginCombo("##6", pr->symbols[integral.first].c_str())) {
@@ -216,6 +215,8 @@ NewVarPopup* NewVarPopup::getInstance(MainWindow* mw) {
 	}
 	return inst;
 }
+
+
 
 NewGraphPopup::NewGraphPopup(MainWindow* parent) {
 	this->parent = parent;
@@ -320,4 +321,20 @@ NewGraphPopup* NewGraphPopup::getInstance(MainWindow* mw) {
 		inst = new NewGraphPopup(mw);
 	}
 	return inst;
+}
+
+
+
+NewStatsPopup::NewStatsPopup(MainWindow* parent) {
+	this->parent = parent;
+	this->name = "Manage graphs";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	this->pr = parent->state->openProject;
+}
+
+void NewStatsPopup::onRender() {
+
 }

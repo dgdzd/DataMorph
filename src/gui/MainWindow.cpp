@@ -102,6 +102,15 @@ void MainWindow::onRender() {
 				}
 				ImGui::EndMenu();
 			}
+			if (BeginMenu("Statistics")) {
+				if (MenuItem("Manage statistics...")) {
+					state->popups["Manage graphs"] = true;
+				}
+				if (MenuItem("View statistics")) {
+					DataMorph::getInstance()->addLayer(new StatsWindow(pr));
+				}
+				ImGui::EndMenu();
+			}
 		}
 		if (BeginMenu("View")) {
 			if (MenuItem("Show log")) {}
@@ -185,7 +194,7 @@ void MainWindow::onRender() {
 
 				if (BeginPopupContextItem()) {
 					if (BeginChild("context", ImVec2(0.0, 0.0), 0, ImGuiWindowFlags_NoMove)) {
-						Text((symbol + " (in " + unit + ")").c_str());
+						Text((symbol + " (in" + unit + ")").c_str());
 						Separator();
 						if (MenuItem("Remove this column")) {
 							pr->removeColumn(symbol);
