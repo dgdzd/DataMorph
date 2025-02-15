@@ -12,8 +12,8 @@
 - [x] Derivatives
 	- [x] Add derivatives
 	
-- [ ] Integrals
-	- [ ] Add integrals
+- [x] Integrals
+	- [x] Add integrals
 
 - [ ] Graphs
 	- [x] 2D graphs
