@@ -62,12 +62,12 @@ void Expression::compileExpression() {
 		return;
 	}
 	if (this->specs.type == INTEGRAL) {
-		double integral = 0.0;
 		double height = 0.0;
-		for (int i = this->args[0]; i < h->values.size(); i++) {
-			h->values[i] = integral;
+		for (int i = 0; i < h->values.size() - 1; i++) {
+			height = this->specs.header_dx->values[i + 1] - this->specs.header_dx->values[i];
+			h->values[i] = (this->specs.header_dy->values[i + 1] + this->specs.header_dy->values[i]) * height / 2;
 		}
-
+		return;
 	}
 	if (this->specs.type == DUMMY) {
 		return;
@@ -92,6 +92,13 @@ void Expression::updateValues() {
 	else if (this->specs.type == LINESPACE) {
 		for (int i = 1; i < h->values.size(); i++) {
 			h->values[i] = this->args[0] + i * this->args[1];
+		}
+	}
+	else if (this->specs.type == INTEGRAL) {
+		double height = 0.0;
+		for (int i = 0; i < h->values.size() - 1; i++) {
+			height = this->specs.header_dx->values[i + 1] - this->specs.header_dx->values[i];
+			h->values[i] = (this->specs.header_dy->values[i + 1] + this->specs.header_dy->values[i]) * height / 2;
 		}
 	}
 	else {

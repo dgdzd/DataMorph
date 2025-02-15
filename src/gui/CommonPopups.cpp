@@ -18,7 +18,7 @@ NewVarPopup::NewVarPopup(MainWindow* parent) {
 	this->expression = new char[32] {""};
 	this->derivate = { 0, 0 };
 	this->linespace = { 0.0f, 0.0f };
-	this->integral = { 0, 1, 0, 0 };
+	this->integral = {0, 0};
 	this->args = {};
 	Project* pr = parent->state->openProject;
 }
@@ -122,22 +122,15 @@ void NewVarPopup::onRender() {
 			InputText("##Unit", newUnit, 32);
 			Separator();
 
-			Text("Input an integral :");
-			Text("from : ");
+			Text("Integral of : ");
 			SameLine();
-			InputInt("##from2", &integral[0]);
-			Text("to : ");
-			SameLine();
-			InputInt("##to2", &integral[1]);
-			Text("integral of : ");
-			SameLine();
-			if (BeginCombo("##5", pr->symbols[integral[2]].c_str())) {
+			if (BeginCombo("##5", pr->symbols[integral.second].c_str())) {
 				int selected = 0;
 				for (int i = 0; i < pr->symbols.size(); i++) {
 					bool is_selected = selected == i;
 					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 						selected = i;
-						integral[2] = i;
+						integral.second = i;
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -148,13 +141,13 @@ void NewVarPopup::onRender() {
 			SameLine();
 			Text(" d");
 			SameLine();
-			if (BeginCombo("##6", pr->symbols[integral[3]].c_str())) {
+			if (BeginCombo("##6", pr->symbols[integral.first].c_str())) {
 				int selected = 0;
 				for (int i = 0; i < pr->symbols.size(); i++) {
 					bool is_selected = selected == i;
 					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 						selected = i;
-						integral[3] = i;
+						integral.first = i;
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -194,7 +187,7 @@ void NewVarPopup::onRender() {
 				break;
 
 			case 4:
-				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[integral.first]], &pr->headers[pr->symbols[integral.second]]);
 				break;
 
 			default:

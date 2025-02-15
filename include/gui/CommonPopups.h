@@ -20,7 +20,7 @@ class NewVarPopup : public Window {
 	char* expression;
 	std::pair<int, int> derivate;
 	std::pair<float, float> linespace;
-	std::vector<int> integral;
+	std::pair<int, int> integral;
 	std::vector<double> args;
 
 public:
