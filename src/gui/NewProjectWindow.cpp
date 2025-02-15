@@ -114,6 +114,11 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 
+		if (BeginTabItel("From sound (.wav)")) {
+			Text("idk");
+			EndTabItem();
+		}
+
 		if (BeginTabItem("Fluid Simulation")) {
 			Text("not yet !");
 			EndTabItem();

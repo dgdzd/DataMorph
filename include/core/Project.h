@@ -3,6 +3,7 @@
 
 #include <core/Header.h>
 #include <core/Graph.h>
+#include <core/Stats.h>
 #include <map>
 #include <string>
 #include <vector>
@@ -15,6 +16,7 @@ struct Project {
 	std::vector<std::string> units;
 	std::map<std::string, std::vector<double>> values;
 	std::vector<Graph> graphs;
+	std::vector<Stats> stats;
 
 	Project(std::string name, std::string path);
 

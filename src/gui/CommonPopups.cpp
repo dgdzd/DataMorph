@@ -1,10 +1,10 @@
 #include <gui/CommonPopups.h>
-
 #include <gui/MainWindow.h>
 
 
 NewVarPopup* NewVarPopup::inst = nullptr;
 NewGraphPopup* NewGraphPopup::inst = nullptr;
+NewStatsPopup* NewStatsPopup::inst = nullptr;
 
 NewVarPopup::NewVarPopup(MainWindow* parent) {
 	this->parent = parent;
@@ -327,7 +327,7 @@ NewGraphPopup* NewGraphPopup::getInstance(MainWindow* mw) {
 
 NewStatsPopup::NewStatsPopup(MainWindow* parent) {
 	this->parent = parent;
-	this->name = "Manage graphs";
+	this->name = "Manage stats";
 	this->p_open = true;
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
@@ -336,5 +336,67 @@ NewStatsPopup::NewStatsPopup(MainWindow* parent) {
 }
 
 void NewStatsPopup::onRender() {
+	Project* pr = parent->state->openProject;
+	SetWindowSize(ImVec2(450, 700));
 
+	if (pr->graphs.size() == 0) {
+		TextWrapped("There is currently no stats.");
+		if (Button("Create one")) {
+			Stats g("New stats 1", &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			pr->stats.push_back(g);
+		}
+	}
+	else if (BeginTabBar("stats")) {
+		for (int i = 0; i < pr->stats.size(); i++) {
+			Stats& stats = pr->stats[i];
+			if (BeginTabItem(("Stat #" + std::to_string(i + 1)).c_str())) {
+				Text("Name");
+				InputText("##statsName", &stats.name, 32);
+				Dummy(ImVec2(0.0f, 10.0f));
+				if (BeginCombo("X axis", stats.xHeader->name.c_str())) {
+					for (std::string symbol : pr->symbols) {
+						if (Selectable(symbol.c_str())) {
+							stats.xHeader = &pr->headers[symbol];
+						}
+					}
+					EndCombo();
+				}
+				Dummy(ImVec2(0.0f, 10.0f));
+				Separator();
+				Dummy(ImVec2(0.0f, 10.0f));
+				Text("Number");
+				Line& line = stats.lines[j];
+				if (BeginCombo("Data to plot", line.header->name.c_str())) {
+					for (std::string symbol : pr->symbols) {
+						if (Selectable(symbol.c_str())) {
+							line.header = &pr->headers[symbol];
+						}
+					}
+					EndCombo();
+				}
+				ColorEdit4("Line color", &line.color->x);
+				Dummy(ImVec2(0.0f, 10.0f));
+				EndTabItem();
+			}
+		}
+		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
+			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			pr->stats.push_back(s);
+		}
+		EndTabBar();
+	}
+	Dummy(ImVec2(0.0f, 15.0f));
+	if (Button("OK")) {
+		parent->state->popups[name] = false;
+		CloseCurrentPopup();
+	}
+
+	EndPopup();
+}
+
+NewStatsPopup* NewStatsPopup::getInstance(MainWindow* mw) {
+	if (!inst) {
+		inst = new NewStatsPopup(mw);
+	}
+	return inst;
 }

@@ -5,7 +5,9 @@
 #include <gui/CommonPopups.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
+#include <gui/StatsWindow.h>
 #include <core/Graph.h>
+#include <core/Stats.h>
 #include <imgui_stdlib.h>
 #include <iostream>
 #include <functional>
