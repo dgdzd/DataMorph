@@ -6,7 +6,7 @@
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
 #include <core/Graph.h>
-#include <imgui/imgui_stdlib.h>
+#include <imgui_stdlib.h>
 #include <iostream>
 #include <functional>
 #include <Utils.h>
@@ -178,15 +178,24 @@ void MainWindow::onRender() {
 				if (!TableSetColumnIndex(i)) {
 					continue;
 				}
-				std::string header = pr->symbols[i];
+				std::string symbol = pr->symbols[i];
 				std::string unit = pr->units[i];
-				TableHeader((header + " (in " + unit + ")").c_str());
+				Header* header = &pr->headers[symbol];
+				TableHeader((symbol + " (in " + unit + ")").c_str());
 
 				if (BeginPopupContextItem()) {
-					Text((header + " (in " + unit + ")").c_str());
-					Separator();
-					if (MenuItem("Remove this column")) {
-						pr->removeColumn(header);
+					if (BeginChild("context", ImVec2(0.0, 0.0), 0, ImGuiWindowFlags_NoMove)) {
+						Text((symbol + " (in " + unit + ")").c_str());
+						Separator();
+						if (MenuItem("Remove this column")) {
+							pr->removeColumn(symbol);
+						}
+						PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
+						if (MenuItem("Locked values", NULL, header->lockedValues)) {
+							header->lockedValues = !header->lockedValues;
+						}
+						PopItemFlag();
+						EndChild();
 					}
 					EndPopup();
 				}
@@ -198,19 +207,19 @@ void MainWindow::onRender() {
 					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(150);
-					if (header.expression) {
+					if (header.expression && header.lockedValues) {
 						header.expression->updateValues();
 					}
 
-					bool f = header.expression && header.expression->specs.type != DUMMY;
+					bool f = header.lockedValues;
+					PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					if (f) {
-						Text("%s", std::to_string(val).c_str());
+						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_ReadOnly);
 					}
 					else {
-						PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
-						PopStyleColor();
 					}
+					PopStyleColor();
 				}
 			}
 			EndTable();

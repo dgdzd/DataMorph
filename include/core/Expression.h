@@ -31,6 +31,11 @@ struct ExpressionSpecs {
 		this->header_dx = header_dx;
 		this->header_dy = header_dy;
 	}
+	ExpressionSpecs(ExpressionType type) {
+		this->type = type;
+		this->header_dx = nullptr;
+		this->header_dy = nullptr;
+	}
 };
 
 class Expression {
@@ -42,12 +47,12 @@ public:
 	Header* parent;
 	ExpressionSpecs specs;
 	std::string expression;
-	std::vector<float> args;
+	std::vector<double> args;
 
 	Expression(Header* parent, std::string expression);
-	Expression(Header* parent, ExpressionSpecs specs);
 	Expression(Header* parent, std::string expression, ExpressionSpecs specs);
-	Expression(Header* parent, ExpressionSpecs specs, std::vector<float> args);
+	Expression(Header* parent, ExpressionSpecs specs);
+	Expression(Header* parent, ExpressionSpecs specs, std::vector<double> args);
 
 	void addVars();
 	void compileExpression();

@@ -9,13 +9,6 @@ Expression::Expression(Header* parent, std::string expression) {
 	this->expression = expression;
 }
 
-//manual data entry
-Expression::Expression(Header* parent, ExpressionSpecs specs) {
-	this->parent = parent;
-	this->expression = "";
-	this->specs = specs;
-}
-
 //derivate
 Expression::Expression(Header* parent, std::string expression, ExpressionSpecs specs) {
 	this->parent = parent;
@@ -23,8 +16,15 @@ Expression::Expression(Header* parent, std::string expression, ExpressionSpecs s
 	this->specs = specs;
 }
 
+//manual data entry
+Expression::Expression(Header* parent, ExpressionSpecs specs) {
+	this->parent = parent;
+	this->expression = "";
+	this->specs = specs;
+}
+
 //linespace & integral
-Expression::Expression(Header* parent, ExpressionSpecs specs, std::vector<float> args) {
+Expression::Expression(Header* parent, ExpressionSpecs specs, std::vector<double> args) {
 	this->parent = parent;
 	this->expression = "";
 	this->specs = specs;

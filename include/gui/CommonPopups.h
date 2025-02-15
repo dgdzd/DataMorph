@@ -21,7 +21,7 @@ class NewVarPopup : public Window {
 	std::pair<int, int> derivate;
 	std::pair<float, float> linespace;
 	std::vector<int> integral;
-	std::vector<float> args;
+	std::vector<double> args;
 
 public:
 	NewVarPopup(MainWindow* parent);

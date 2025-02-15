@@ -179,18 +179,26 @@ void NewVarPopup::onRender() {
 			}
 
 			ExpressionSpecs* specs = new ExpressionSpecs;
-			if (tab == 2) {
-				specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
-			}
-			else if (tab == 1) {
+			switch (tab) {
+			case 1:
 				specs = new ExpressionSpecs(FORMULA, nullptr, nullptr);
-			}
-			else if (tab == 3) {
+				break;
+
+			case 2:
+				specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+				break;
+
+			case 3:
 				specs = new ExpressionSpecs(LINESPACE, nullptr, nullptr);
 				this->args = { linespace.first, linespace.second };
-			}
-			else if (tab == 4) {
+				break;
+
+			case 4:
 				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+				break;
+
+			default:
+				break;
 			}
 			parent->state->popups[name] = false;
 			Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs, this->args);

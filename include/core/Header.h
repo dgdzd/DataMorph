@@ -16,9 +16,10 @@ struct Header {
 	std::string name;
 	std::string unit;
 	std::vector<double> values;
+	bool lockedValues;
 
 	Header();
-	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "", ExpressionSpecs* specs = new ExpressionSpecs(), std::vector<float> args = {});
+	Header(Project* parent, std::string name, std::string unit, std::vector<double> values, const char* expression = "", ExpressionSpecs* specs = new ExpressionSpecs(), std::vector<double> args = {});
 };
 
 #endif
