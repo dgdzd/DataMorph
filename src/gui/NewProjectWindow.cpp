@@ -114,7 +114,7 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 
-		if (BeginTabItel("From sound (.wav)")) {
+		if (BeginTabItem("From sound (.wav)")) {
 			Text("idk");
 			EndTabItem();
 		}

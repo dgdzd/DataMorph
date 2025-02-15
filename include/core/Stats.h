@@ -12,13 +12,11 @@ struct Bar {
 
 	Bar() {
 		this->header = nullptr;
-		this->scatter = false;
 		this->color = new ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
 	Bar(Header* header) {
 		this->header = header;
-		this->scatter = false;
 		this->color = new ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
 	}
 
@@ -36,10 +34,10 @@ struct Stats {
 	int width;
 	int height;
 	Header* xHeader;
-	std::Bar bar;
+	Bar bar;
 	std::string name;
 
-	Stats(std::string name, Header* xHeader, std::Bar bar, int width, int height) {
+	Stats(std::string name, Header* xHeader, Bar bar, int width, int height) {
 		this->name = name;
 		this->xHeader = xHeader;
 		this->bar = bar;

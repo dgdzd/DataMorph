@@ -342,7 +342,7 @@ void NewStatsPopup::onRender() {
 	if (pr->graphs.size() == 0) {
 		TextWrapped("There is currently no stats.");
 		if (Button("Create one")) {
-			Stats g("New stats 1", &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Stats g("New stats 1", &pr->headers[pr->symbols[0]], { Bar(&pr->headers[pr->symbols[0]]) }, 0, 0);
 			pr->stats.push_back(g);
 		}
 	}
@@ -365,22 +365,22 @@ void NewStatsPopup::onRender() {
 				Separator();
 				Dummy(ImVec2(0.0f, 10.0f));
 				Text("Number");
-				Line& line = stats.lines[j];
-				if (BeginCombo("Data to plot", line.header->name.c_str())) {
+				Bar& bar = stats.bar;
+				if (BeginCombo("Data to plot", bar.header->name.c_str())) {
 					for (std::string symbol : pr->symbols) {
 						if (Selectable(symbol.c_str())) {
-							line.header = &pr->headers[symbol];
+							bar.header = &pr->headers[symbol];
 						}
 					}
 					EndCombo();
 				}
-				ColorEdit4("Line color", &line.color->x);
+				ColorEdit4("Bar color", &bar.color->x);
 				Dummy(ImVec2(0.0f, 10.0f));
 				EndTabItem();
 			}
 		}
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->symbols[0]], { Bar(&pr->headers[pr->symbols[0]]) }, 0, 0);
 			pr->stats.push_back(s);
 		}
 		EndTabBar();

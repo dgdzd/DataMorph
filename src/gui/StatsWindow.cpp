@@ -58,9 +58,9 @@ void StatsWindow::onRender() {
 
 				if (ImPlot::BeginPlot("Stats")) {
 					Bar& b = s.bar;
-					int _size = g.xHeader->values.size();
+					int _size = s.xHeader->values.size();
 					ImPlot::SetNextBarsStyle(*l.color);
-					ImPlot::PlotBars((l.header->name + "##Plot" + std::to_string(j)).c_str(), &s.xHeader->values[0], &b.header->values[0], _size);
+					ImPlot::PlotBars((l.header->name + "##Plot" + std::to_string(j)).c_str(), &s.xHeader->values[0], &s.header->values[0], _size);
 					
 					ImPlot::EndPlot();
 				}
