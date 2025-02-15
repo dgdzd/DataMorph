@@ -16,6 +16,8 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 
 ↳ Linespaces
 
+↳ Integrals
+
 ↳ Option to create and delete symbols
 
 → Graphics
@@ -29,10 +31,6 @@ A better alternative to Regressi, with more features and with an enjoyable ui.
 ↳ Multiples graphics management
 
 ❌❌❌ Features in developement ❌❌❌
-
-→ Tables
-
-↳ Integrals
 
 → Graphics
 
