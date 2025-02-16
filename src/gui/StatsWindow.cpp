@@ -48,7 +48,7 @@ void StatsWindow::onRender() {
 	if (BeginTabBar("stats_tabs")) {
 		for (int i = 0; i < project->stats.size(); i++) {
 			Stats& s = project->stats[i];
-			if (BeginTabItem(g.name.c_str())) {
+			if (BeginTabItem(s.name.c_str())) {
 				{
 					BeginChild("Infos", ImVec2(0, 260), ImGuiChildFlags_Borders);
 					//do the uncertainty and modelization stuff
@@ -56,12 +56,14 @@ void StatsWindow::onRender() {
 				}
 				SameLine();
 
+				Bar& b = s.bar;
+				int _size = s.xHeader->values.size();
+				double bar_size = 1200.0/ static_cast<double>(_size);
 				if (ImPlot::BeginPlot("Stats")) {
-					Bar& b = s.bar;
-					int _size = s.xHeader->values.size();
-					ImPlot::SetNextBarsStyle(*l.color);
-					ImPlot::PlotBars((l.header->name + "##Plot" + std::to_string(j)).c_str(), &s.xHeader->values[0], &s.header->values[0], _size);
-					
+					ImPlot::PushStyleColor(ImPlotCol_Line, *b.color);
+					ImPlot::PlotBars((b.header->name + "##Plot").c_str(), &s.xHeader->values[0], &b.header->values[0], _size, bar_size);
+					ImPlot::PopStyleColor();
+
 					ImPlot::EndPlot();
 				}
 

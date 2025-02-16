@@ -106,7 +106,7 @@ void MainWindow::onRender() {
 			}
 			if (BeginMenu("Statistics")) {
 				if (MenuItem("Manage statistics...")) {
-					state->popups["Manage graphs"] = true;
+					state->popups["Manage stats"] = true;
 				}
 				if (MenuItem("View statistics")) {
 					DataMorph::getInstance()->addLayer(new StatsWindow(pr));

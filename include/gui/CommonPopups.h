@@ -3,6 +3,7 @@
 
 #include <core/Expression.h>
 #include <core/Graph.h>
+#include <core/Stats.h>
 #include <core/gui/Window.h>
 #include <imgui/imgui_stdlib.h>
 #include <iostream>

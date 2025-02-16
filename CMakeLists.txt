@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
 		src/gui/UpdateWindow.cpp
 		src/gui/NewProjectWindow.cpp
 		src/gui/GraphWindow.cpp
+		src/gui/StatsWindow.cpp
 		src/FontManager.cpp
 		src/Utils.cpp
 		src/core/Project.cpp
