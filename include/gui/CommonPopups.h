@@ -28,6 +28,25 @@ public:
 	NewVarPopup(MainWindow* parent);
 	void onRender() override;
 	static NewVarPopup* getInstance(MainWindow* mw);
+	static void removeInstance();
+};
+
+
+class EditVarPopup : public Window {
+	static EditVarPopup* inst;
+	MainWindow* parent;
+	Project* pr;
+	std::string symbol;
+	std::string newSymbol;
+	std::string newUnit;
+	Expression expression;
+
+public:
+	EditVarPopup(MainWindow* parent, std::string symbol);
+	void onRender() override;
+	static EditVarPopup* getInstance(MainWindow* mw, std::string symbol);
+	static bool hasInstance();
+	static void removeInstance();
 };
 
 
@@ -40,6 +59,7 @@ public:
 	NewGraphPopup(MainWindow* parent);
 	void onRender() override;
 	static NewGraphPopup* getInstance(MainWindow* mw);
+	static void removeInstance();
 };
 
 
@@ -52,6 +72,7 @@ public:
 	NewStatsPopup(MainWindow* parent);
 	void onRender() override;
 	static NewStatsPopup* getInstance(MainWindow* mw);
+	static void removeInstance();
 };
 
 #endif

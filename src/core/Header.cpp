@@ -1,6 +1,7 @@
 #include <core/Expression.h>
 #include <core/Header.h>
 #include <core/Project.h>
+#include <iostream>
 
 Header::Header() {
 	this->name = "";

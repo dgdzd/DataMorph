@@ -138,6 +138,12 @@ void MainWindow::onRender() {
 	if (BeginPopupModal(nvp->name.c_str(), NULL, nvp->wflags)) {
 		nvp->onRender();
 	}
+	if (EditVarPopup::hasInstance()) {
+		EditVarPopup* evp = EditVarPopup::getInstance(this, "");
+		if (BeginPopupModal(evp->name.c_str(), NULL, evp->wflags)) {
+			evp->onRender();
+		}
+	}
 	NewGraphPopup* ngp = NewGraphPopup::getInstance(this);
 	if (BeginPopupModal(ngp->name.c_str(), NULL, ngp->wflags)) {
 		ngp->onRender();
@@ -192,26 +198,29 @@ void MainWindow::onRender() {
 				std::string symbol = pr->symbols[i];
 				std::string unit = pr->units[i];
 				Header* header = &pr->headers[symbol];
-				TableHeader((symbol + " (in " + unit + ")").c_str());
+				TableHeader((symbol + (unit.empty() ? "" : " (in " + unit + ")")).c_str());
 
 				if (BeginPopupContextItem()) {
-					if (BeginChild("context", ImVec2(0.0, 0.0), 0, ImGuiWindowFlags_NoMove)) {
-						Text((symbol + " (in" + unit + ")").c_str());
-						Separator();
-						if (MenuItem("Remove this column")) {
-							pr->removeColumn(symbol);
-						}
-						PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
-						if (MenuItem("Locked values", NULL, header->lockedValues)) {
-							header->lockedValues = !header->lockedValues;
-						}
-						PopItemFlag();
-						EndChild();
+					Text((symbol + " (in " + unit + ")").c_str());
+					Separator();
+					if (MenuItem("Edit...")) {
+						EditVarPopup::getInstance(this, symbol);
+						this->state->popups["Edit variable"] = true;
 					}
+					if (MenuItem("Remove this column")) {
+						pr->removeColumn(symbol);
+					}
+					PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
+					if (MenuItem("Locked values", NULL, header->lockedValues)) {
+						header->lockedValues = !header->lockedValues;
+					}
+					PopItemFlag();
 					EndPopup();
 				}
 			}
+			std::cout << "size: " << pr->symbols.size() << "\n";
 			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
+				std::cout << i << "\n";
 				TableNextRow();
 				for (std::string symbol : pr->symbols) {
 					Header& header = pr->headers[symbol];

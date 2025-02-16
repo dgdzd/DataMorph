@@ -1,8 +1,11 @@
 #include <gui/CommonPopups.h>
+
 #include <gui/MainWindow.h>
+#include <imgui_stdlib.h>
 
 
 NewVarPopup* NewVarPopup::inst = nullptr;
+EditVarPopup* EditVarPopup::inst = nullptr;
 NewGraphPopup* NewGraphPopup::inst = nullptr;
 NewStatsPopup* NewStatsPopup::inst = nullptr;
 
@@ -216,6 +219,237 @@ NewVarPopup* NewVarPopup::getInstance(MainWindow* mw) {
 	return inst;
 }
 
+void NewVarPopup::removeInstance() {
+	delete inst;
+	inst = nullptr;
+}
+
+
+
+EditVarPopup::EditVarPopup(MainWindow* parent, std::string symbol) : expression(nullptr, "") {
+	this->parent = parent;
+	this->name = "Edit variable";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	this->pr = parent->state->openProject;
+	this->symbol = symbol;
+	this->newSymbol = symbol;
+	Header* h = &pr->headers[symbol];
+	this->newUnit = h->unit;
+	if (h->expression) {
+		this->expression = *h->expression;
+	}
+	if (expression.args.size() < 2) {
+		expression.args = { 0.0, 0.0 };
+	}
+}
+
+void EditVarPopup::onRender() {
+	int tab = -1;
+	SetWindowSize(ImVec2(900, 500));
+
+	if (BeginTabBar("NewVar")) {
+		if (BeginTabItem("Dummy")) {
+			tab = 0;
+			Text("Symbol");
+			InputText("##Symbol", &newSymbol);
+			Text("Unit (optional)");
+			InputText("##Unit", &newUnit);
+			EndTabItem();
+		}
+		if (BeginTabItem("With expression")) {
+			tab = 1;
+			Text("Symbol");
+			InputText("##Symbol", &newSymbol);
+			Text("Unit (optional)");
+			InputText("##Unit", &newUnit);
+			Separator();
+
+			Text("Input an expression : ");
+			Text("%s :", newSymbol[0] == '\0' ? "(Symbol needed)" : (std::string(newSymbol) + "[i]"));
+			SameLine();
+			InputText("No blank", &expression.expression);
+			EndTabItem();
+		}
+		if (BeginTabItem("Derivate")) {
+			tab = 2;
+			Text("Symbol");
+			InputText("##Symbol", &newSymbol);
+			Text("Unit (optional)");
+			InputText("##Unit", &newUnit);
+			Separator();
+
+			Text("Input a derivative :");
+			Text("d");
+			SameLine();
+			if (BeginCombo("##3", pr->symbols[0].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						expression.specs.header_dy = &pr->headers[pr->symbols[i]];
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+
+			Separator();
+
+			Text("dx");
+			SameLine();
+			if (BeginCombo("##4", pr->symbols[0].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						expression.specs.header_dx = &pr->headers[pr->symbols[i]];
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+			EndTabItem();
+		}
+		if (BeginTabItem("Linespace")) {
+			tab = 3;
+			Text("Symbol");
+			InputText("##Symbol", &newSymbol);
+			Text("Unit (optional)");
+			InputText("##Unit", &newUnit);
+			Separator();
+
+			Text("Input a linespace :");
+			Text("from : ");
+			SameLine();
+			InputDouble("##from", &expression.args[0]);
+			Text("step : ");
+			SameLine();
+			InputDouble("##to", &expression.args[1]);
+			EndTabItem();
+		}
+		if (BeginTabItem("Integral")) {
+			tab = 4;
+			Text("Symbol");
+			InputText("##Symbol", &newSymbol);
+			Text("Unit (optional)");
+			InputText("##Unit", &newUnit);
+			Separator();
+
+			Text("Integral of : ");
+			SameLine();
+			if (BeginCombo("##5", pr->symbols[0].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						expression.specs.header_dy = &pr->headers[pr->symbols[i]];
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+			Text(" d");
+			SameLine();
+			if (BeginCombo("##6", pr->symbols[0].c_str())) {
+				int selected = 0;
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					bool is_selected = selected == i;
+					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+						selected = i;
+						expression.specs.header_dx = &pr->headers[pr->symbols[i]];
+					}
+					if (is_selected) {
+						SetItemDefaultFocus();
+					}
+				}
+				EndCombo();
+			}
+
+			EndTabItem();
+		}
+		EndTabBar();
+	}
+
+	bool disabled = tab == 1 && expression.expression[0] == '\0';
+	BeginDisabled(disabled);
+	{
+		if (Button("Add")) {
+			std::vector<double> args;
+			switch (tab) {
+			case 1:
+				expression.specs = ExpressionSpecs(FORMULA, nullptr, nullptr);
+				break;
+
+			case 2:
+				expression.specs = ExpressionSpecs(DERIVATIVE, expression.specs.header_dx, expression.specs.header_dy);
+				break;
+
+			case 3:
+				expression.specs = ExpressionSpecs(LINESPACE, nullptr, nullptr);
+				args = expression.args;
+				break;
+
+			case 4:
+				expression.specs = ExpressionSpecs(INTEGRAL, expression.specs.header_dx, expression.specs.header_dy);
+				break;
+
+			default:
+				break;
+			}
+
+			Header* h = &pr->headers[symbol];
+			auto i = std::find(pr->symbols.begin(), pr->symbols.end(), symbol);
+			int d = std::distance(pr->symbols.begin(), i);
+			pr->symbols[d] = newSymbol;
+			pr->units[d] = newUnit;
+			std::vector<double> values = h->values;
+			pr->headers.erase(symbol);
+			pr->headers[newSymbol] = Header(pr, newSymbol, newUnit, values, tab == 1 ? expression.expression.c_str() : "", &expression.specs, args);
+			pr->headers[newSymbol].expression->parent = &pr->headers[newSymbol];
+			pr->headers[newSymbol].expression->addVars();
+			pr->headers[newSymbol].expression->compileExpression();
+			pr->headers[newSymbol].expression->updateValues();
+			parent->state->popups[name] = false;
+			CloseCurrentPopup();
+		}
+	}
+	EndDisabled();
+	SameLine();
+	if (Button("Cancel")) {
+		parent->state->popups[name] = false;
+		CloseCurrentPopup();
+	}
+	EndPopup();
+}
+
+EditVarPopup* EditVarPopup::getInstance(MainWindow* mw, std::string symbol) {
+	if (!inst) {
+		inst = new EditVarPopup(mw, symbol);
+	}
+	return inst;
+}
+
+bool EditVarPopup::hasInstance() {
+	return inst;
+}
+
+void EditVarPopup::removeInstance() {
+	delete inst;
+	inst = nullptr;
+}
+
 
 
 NewGraphPopup::NewGraphPopup(MainWindow* parent) {
@@ -229,7 +463,6 @@ NewGraphPopup::NewGraphPopup(MainWindow* parent) {
 }
 
 void NewGraphPopup::onRender() {
-	Project* pr = parent->state->openProject;
 	SetWindowSize(ImVec2(450, 700));
 
 	if (pr->graphs.size() == 0) {
@@ -323,6 +556,11 @@ NewGraphPopup* NewGraphPopup::getInstance(MainWindow* mw) {
 	return inst;
 }
 
+void NewGraphPopup::removeInstance() {
+	delete inst;
+	inst = nullptr;
+}
+
 
 
 NewStatsPopup::NewStatsPopup(MainWindow* parent) {
@@ -399,4 +637,9 @@ NewStatsPopup* NewStatsPopup::getInstance(MainWindow* mw) {
 		inst = new NewStatsPopup(mw);
 	}
 	return inst;
+}
+
+void NewStatsPopup::removeInstance() {
+	delete inst;
+	inst = nullptr;
 }
