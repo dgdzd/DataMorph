@@ -49,13 +49,6 @@ void StatsWindow::onRender() {
 		for (int i = 0; i < project->stats.size(); i++) {
 			Stats& s = project->stats[i];
 			if (BeginTabItem(s.name.c_str())) {
-				{
-					BeginChild("Infos", ImVec2(0, 260), ImGuiChildFlags_Borders);
-					//do the uncertainty and modelization stuff
-					EndChild();
-				}
-				SameLine();
-
 				Bar& b = s.bar;
 				int _size = s.xHeader->values.size();
 				double bar_size = 1200.0/ static_cast<double>(_size);

@@ -148,6 +148,10 @@ void MainWindow::onRender() {
 	if (BeginPopupModal(ngp->name.c_str(), NULL, ngp->wflags)) {
 		ngp->onRender();
 	}
+	NewStatsPopup* nsp = NewStatsPopup::getInstance(this);
+	if (BeginPopupModal(nsp->name.c_str(), NULL, nsp->wflags)) {
+		nsp->onRender();
+	}
 
 	if (BeginPopupModal("Error###alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 		Text("This symbol already exists.");
@@ -218,9 +222,7 @@ void MainWindow::onRender() {
 					EndPopup();
 				}
 			}
-			std::cout << "size: " << pr->symbols.size() << "\n";
 			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
-				std::cout << i << "\n";
 				TableNextRow();
 				for (std::string symbol : pr->symbols) {
 					Header& header = pr->headers[symbol];

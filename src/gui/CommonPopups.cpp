@@ -82,7 +82,7 @@ void NewVarPopup::onRender() {
 
 			Separator();
 
-			Text("d");
+			Text("dx");
 			SameLine();
 			if (BeginCombo("##4", pr->symbols[derivate.second].c_str())) {
 				int selected = 0;
@@ -201,6 +201,7 @@ void NewVarPopup::onRender() {
 			pr->symbols.push_back(newSymbol);
 			pr->units.push_back(newUnit);
 			CloseCurrentPopup();
+			removeInstance();
 		}
 	}
 	EndDisabled();
@@ -208,6 +209,7 @@ void NewVarPopup::onRender() {
 	if (Button("Cancel")) {
 		parent->state->popups[name] = false;
 		CloseCurrentPopup();
+		removeInstance();
 	}
 	EndPopup();
 }
@@ -243,6 +245,10 @@ EditVarPopup::EditVarPopup(MainWindow* parent, std::string symbol) : expression(
 	}
 	if (expression.args.size() < 2) {
 		expression.args = { 0.0, 0.0 };
+	}
+	if (!expression.specs.header_dx) {
+		expression.specs.header_dx = &pr->headers[pr->symbols[0]];
+		expression.specs.header_dy = &pr->headers[pr->symbols[0]];
 	}
 }
 
@@ -284,7 +290,7 @@ void EditVarPopup::onRender() {
 			Text("Input a derivative :");
 			Text("d");
 			SameLine();
-			if (BeginCombo("##3", pr->symbols[0].c_str())) {
+			if (BeginCombo("##3", expression.specs.header_dy->name.c_str())) {
 				int selected = 0;
 				for (int i = 0; i < pr->symbols.size(); i++) {
 					bool is_selected = selected == i;
@@ -307,7 +313,7 @@ void EditVarPopup::onRender() {
 				int selected = 0;
 				for (int i = 0; i < pr->symbols.size(); i++) {
 					bool is_selected = selected == i;
-					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
+					if (Selectable(expression.specs.header_dx->name.c_str(), is_selected)) {
 						selected = i;
 						expression.specs.header_dx = &pr->headers[pr->symbols[i]];
 					}
@@ -385,7 +391,7 @@ void EditVarPopup::onRender() {
 	bool disabled = tab == 1 && expression.expression[0] == '\0';
 	BeginDisabled(disabled);
 	{
-		if (Button("Add")) {
+		if (Button("Modify")) {
 			std::vector<double> args;
 			switch (tab) {
 			case 1:
@@ -423,6 +429,7 @@ void EditVarPopup::onRender() {
 			pr->headers[newSymbol].expression->updateValues();
 			parent->state->popups[name] = false;
 			CloseCurrentPopup();
+			removeInstance();
 		}
 	}
 	EndDisabled();
@@ -430,6 +437,7 @@ void EditVarPopup::onRender() {
 	if (Button("Cancel")) {
 		parent->state->popups[name] = false;
 		CloseCurrentPopup();
+		removeInstance();
 	}
 	EndPopup();
 }
@@ -463,6 +471,7 @@ NewGraphPopup::NewGraphPopup(MainWindow* parent) {
 }
 
 void NewGraphPopup::onRender() {
+	Project* pr = parent->state->openProject;
 	SetWindowSize(ImVec2(450, 700));
 
 	if (pr->graphs.size() == 0) {
@@ -492,7 +501,7 @@ void NewGraphPopup::onRender() {
 				Dummy(ImVec2(0.0f, 10.0f));
 				Text("Lines");
 				for (int j = 0; j < graph.lines.size(); j++) {
-					if (TreeNodeEx(("Line #" + std::to_string(j + 1)).c_str())) {
+					if (TreeNode(("Line #" + std::to_string(j + 1)).c_str())) {
 						Line& line = graph.lines[j];
 						if (BeginCombo("Data to plot", line.header->name.c_str())) {
 							for (std::string symbol : pr->symbols) {
@@ -544,6 +553,7 @@ void NewGraphPopup::onRender() {
 	if (Button("OK")) {
 		parent->state->popups[name] = false;
 		CloseCurrentPopup();
+		removeInstance();
 	}
 
 	EndPopup();
@@ -627,6 +637,7 @@ void NewStatsPopup::onRender() {
 	if (Button("OK")) {
 		parent->state->popups[name] = false;
 		CloseCurrentPopup();
+		removeInstance();
 	}
 
 	EndPopup();
