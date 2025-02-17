@@ -2,12 +2,14 @@
 
 #include <gui/MainWindow.h>
 #include <imgui_stdlib.h>
+#include "exprtk.hpp"
 
 
 NewVarPopup* NewVarPopup::inst = nullptr;
 EditVarPopup* EditVarPopup::inst = nullptr;
 NewGraphPopup* NewGraphPopup::inst = nullptr;
 NewStatsPopup* NewStatsPopup::inst = nullptr;
+ResolveEquation* ResolveEquation::inst = nullptr;
 
 NewVarPopup::NewVarPopup(MainWindow* parent) {
 	this->parent = parent;
@@ -655,9 +657,10 @@ void NewStatsPopup::removeInstance() {
 	inst = nullptr;
 }
 
+
 ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->parent = parent;
-	this->name = "Resolve equation";
+	this->name = "Resolve Equation";
 	this->p_open = true;
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
@@ -665,25 +668,63 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->pr = parent->state->openProject;
 	this->left_part = new char[64] {""};
 	this->right_part = new char[64] {""};
-	this->precision = new char[32] {""};
 	this->result = "";
+	this->from = 0.0;
+	this->to = 100.0;
 }
 
 void ResolveEquation::onRender() {
-	Text("precision to 10^");
+	Text("Search from : ");
 	SameLine();
-	InputText("##precision", precision, 32);
+	InputDouble("##from", &from);
+	Text("to : ");
+	SameLine();
+	InputDouble("##to", &to);
 
+	Text("Equation : ");
 	InputText("##left", left_part, 64);
 	SameLine();
 	Text(" = ");
 	SameLine();
 	InputText("##right", right_part, 64);
 	if (Button("Resolve")) {
-		int int_precision = std::stoi(precision);
-		while (int_precision > 0) {
-			int_precision--;
-			 
+		if (from < to) {
+			std::string l(left_part);
+			std::string r(right_part);
+			double x = from;
+			double l_y = 0.0;
+			double l_x = 0.0;
+			double precision_0 = 10 ^ 5;
+			double precision = precision_0;
+
+			typedef exprtk::symbol_table<double> symbol_table_t;
+			typedef exprtk::expression<double>   expression_t;
+			typedef exprtk::parser<double>       parser_t;
+
+			symbol_table_t symbol_table;
+			symbol_table.add_variable("x", x);
+			symbol_table.add_constants();
+
+			expression_t l_e;
+			expression_t r_e;
+			l_e.register_symbol_table(symbol_table);
+			r_e.register_symbol_table(symbol_table);
+
+			parser_t parser;
+			parser.compile(l, l_e);
+			parser.compile(r, r_e);
+
+			while (precision > 0.00001) {
+				precision = precision / 10;
+				while (l_e.value() < r_e.value()) {
+					x = x + (precision/precision_0);
+				}
+				precision = precision / 10;
+				while (l_e.value() > r_e.value()) {
+					x = x - (precision / precision_0);
+				}
+			}
+			std::cout << x << std::endl;
 		}
 
 		Text(("Result : " + this->result).c_str());

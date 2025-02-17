@@ -106,7 +106,7 @@ void MainWindow::onRender() {
 				}
 				ImGui::EndMenu();
 			}
-			if (BeginMenu("Graphs")) {
+			if (BeginMenu("Graphs & Stats")) {
 				if (MenuItem("Manage graphs...")) {
 					state->popups["Manage graphs"] = true;
 				}
@@ -124,6 +124,12 @@ void MainWindow::onRender() {
 				}
 				ImGui::EndMenu();
 			}
+		}
+		if (BeginMenu("Tools")) {
+			if (MenuItem("Resolve an Equation")) {
+				state->popups["Resolve Equation"] = true;
+			}
+			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {
 			if (MenuItem("Show log")) {}

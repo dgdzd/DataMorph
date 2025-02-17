@@ -82,8 +82,9 @@ class ResolveEquation : public Window {
 	Project* pr;
 	char* left_part;
 	char* right_part;
-	char* precision;
 	std::string result;
+	double from;
+	double to;
 
 public:
 	ResolveEquation(MainWindow* parent);
