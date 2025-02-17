@@ -665,14 +665,28 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->pr = parent->state->openProject;
 	this->left_part = new char[64] {""};
 	this->right_part = new char[64] {""};
+	this->precision = new char[32] {""};
+	this->result = "";
 }
 
 void ResolveEquation::onRender() {
+	Text("precision to 10^");
+	SameLine();
+	InputText("##precision", precision, 32);
+
 	InputText("##left", left_part, 64);
+	SameLine();
+	Text(" = ");
 	SameLine();
 	InputText("##right", right_part, 64);
 	if (Button("Resolve")) {
+		int int_precision = std::stoi(precision);
+		while (int_precision > 0) {
+			int_precision--;
+			 
+		}
 
+		Text(("Result : " + this->result).c_str());
 	}
 }
 
