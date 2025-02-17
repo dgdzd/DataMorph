@@ -75,4 +75,20 @@ public:
 	static void removeInstance();
 };
 
+
+class ResolveEquation : public Window {
+	static ResolveEquation* inst;
+	MainWindow* parent;
+	Project* pr;
+	std::string equation;
+	char* left_part;
+	char* right_part;
+
+public:
+	ResolveEquation(MainWindow* parent);
+	void onRender() override;
+	static ResolveEquation* getInstance(MainWindow* mw);
+	static void removeInstance();
+};
+
 #endif

@@ -654,3 +654,36 @@ void NewStatsPopup::removeInstance() {
 	delete inst;
 	inst = nullptr;
 }
+
+ResolveEquation::ResolveEquation(MainWindow* parent) {
+	this->parent = parent;
+	this->name = "Resolve equation";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	this->pr = parent->state->openProject;
+	this->left_part = new char[64] {""};
+	this->right_part = new char[64] {""};
+}
+
+void ResolveEquation::onRender() {
+	InputText("##left", left_part, 64);
+	SameLine();
+	InputText("##right", right_part, 64);
+	if (Button("Resolve")) {
+
+	}
+}
+
+ResolveEquation* ResolveEquation::getInstance(MainWindow* mw) {
+	if (!inst) {
+		inst = new ResolveEquation(mw);
+	}
+	return inst;
+}
+
+void ResolveEquation::removeInstance() {
+	delete inst;
+	inst = nullptr;
+}

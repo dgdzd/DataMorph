@@ -93,6 +93,17 @@ void MainWindow::onRender() {
 					}
 					ImGui::EndMenu();
 				}
+				if (BeginMenu("Add Row")) {
+					if (MenuItem("Add 1 Row")) { 
+						pr->addRow(); 
+					}
+					if (MenuItem("Add 10 Rows")) {
+						for (int i; i < 10; i++) {
+							pr->addRow();
+						}
+					}
+					ImGui::EndMenu();
+				}
 				ImGui::EndMenu();
 			}
 			if (BeginMenu("Graphs")) {

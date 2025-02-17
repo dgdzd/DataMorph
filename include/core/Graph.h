@@ -44,6 +44,7 @@ struct Graph {
 	Header* xHeader;
 	std::vector<Line> lines;
 	std::string name;
+	char* model;
 
 	Graph(std::string name, Header* xHeader, std::vector<Line> lines, int width, int height) {
 		this->name = name;
@@ -51,6 +52,7 @@ struct Graph {
 		this->lines = lines;
 		this->width = width;
 		this->height = height;
+		this->model = new char[64] {};
 	}
 };
 
