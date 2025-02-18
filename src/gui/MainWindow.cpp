@@ -169,6 +169,10 @@ void MainWindow::onRender() {
 	if (BeginPopupModal(nsp->name.c_str(), NULL, nsp->wflags)) {
 		nsp->onRender();
 	}
+	ResolveEquation* re = ResolveEquation::getInstance(this);
+	if (BeginPopupModal(re->name.c_str(), NULL, re->wflags)) {
+		re->onRender();
+	}
 
 	if (BeginPopupModal("Error###alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 		Text("This symbol already exists.");

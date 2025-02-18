@@ -674,6 +674,9 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 }
 
 void ResolveEquation::onRender() {
+	pr = parent->state->openProject;
+	SetWindowSize(ImVec2(900, 500));
+
 	Text("Search from : ");
 	SameLine();
 	InputDouble("##from", &from);
@@ -724,11 +727,22 @@ void ResolveEquation::onRender() {
 					x = x - (precision / precision_0);
 				}
 			}
-			std::cout << x << std::endl;
+			result = std::to_string(x);
 		}
-
-		Text(("Result : " + this->result).c_str());
 	}
+	if (!this->result.empty()) {
+		Text(("x = " + this->result).c_str());
+	}
+	else {
+		Text("x = ?");
+	}
+	Dummy(ImVec2(0.0, 20.0));
+	if (Button("Done")) {
+		CloseCurrentPopup();
+		parent->state->popups[name] = false;
+		removeInstance();
+	}
+	EndPopup();
 }
 
 ResolveEquation* ResolveEquation::getInstance(MainWindow* mw) {
