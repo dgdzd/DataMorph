@@ -80,8 +80,7 @@ class ResolveEquation : public Window {
 	static ResolveEquation* inst;
 	MainWindow* parent;
 	Project* pr;
-	char* left_part;
-	char* right_part;
+	std::string equation;
 	std::string result;
 	double from;
 	double to;

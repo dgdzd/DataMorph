@@ -666,8 +666,7 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 	this->pr = parent->state->openProject;
-	this->left_part = new char[64] {""};
-	this->right_part = new char[64] {""};
+	this->equation = "";
 	this->result = "";
 	this->from = 0.0;
 	this->to = 100.0;
@@ -685,50 +684,57 @@ void ResolveEquation::onRender() {
 	InputDouble("##to", &to);
 
 	Text("Equation : ");
-	InputText("##left", left_part, 64);
-	SameLine();
-	Text(" = ");
-	SameLine();
-	InputText("##right", right_part, 64);
-	if (Button("Resolve")) {
-		if (from < to) {
-			std::string l(left_part);
-			std::string r(right_part);
-			double x = from;
-			double l_y = 0.0;
-			double l_x = 0.0;
-			double precision_0 = 10 ^ 5;
-			double precision = precision_0;
+	InputText("##left", &equation);
+	BeginDisabled(equation.find("=") == std::string::npos);
+	{
+		if (Button("Resolve")) {
+			if (from < to) {
+				int separator_i = equation.find("=");
+				std::string l = equation.substr(0, separator_i);
+				std::string r = equation.substr(separator_i + 1);
+				bool invalid = false;
+				double x = from;
+				double l_y = 0.0;
+				double l_x = 0.0;
+				double precision_0 = 10 ^ 5;
+				double precision = precision_0;
 
-			typedef exprtk::symbol_table<double> symbol_table_t;
-			typedef exprtk::expression<double>   expression_t;
-			typedef exprtk::parser<double>       parser_t;
+				typedef exprtk::symbol_table<double> symbol_table_t;
+				typedef exprtk::expression<double>   expression_t;
+				typedef exprtk::parser<double>       parser_t;
 
-			symbol_table_t symbol_table;
-			symbol_table.add_variable("x", x);
-			symbol_table.add_constants();
+				symbol_table_t symbol_table;
+				symbol_table.add_variable("x", x);
+				symbol_table.add_constants();
 
-			expression_t l_e;
-			expression_t r_e;
-			l_e.register_symbol_table(symbol_table);
-			r_e.register_symbol_table(symbol_table);
+				expression_t l_e;
+				expression_t r_e;
+				l_e.register_symbol_table(symbol_table);
+				r_e.register_symbol_table(symbol_table);
 
-			parser_t parser;
-			parser.compile(l, l_e);
-			parser.compile(r, r_e);
+				parser_t parser;
+				parser.compile(l, l_e);
+				parser.compile(r, r_e);
 
-			while (precision > 0.00001) {
-				precision = precision / 10;
-				while (l_e.value() < r_e.value()) {
-					x = x + (precision/precision_0);
+				while (precision > 0.00001) {
+					precision = precision / 10;
+					while (l_e.value() < r_e.value()) {
+						x += precision / precision_0;
+					}
+					precision = precision / 10;
+					while (l_e.value() > r_e.value()) {
+						x -= precision / precision_0;
+					}
 				}
-				precision = precision / 10;
-				while (l_e.value() > r_e.value()) {
-					x = x - (precision / precision_0);
+				if (!invalid) {
+					result = std::to_string(x);
+				}
+				else {
+					result = "";
 				}
 			}
-			result = std::to_string(x);
 		}
+		EndDisabled();
 	}
 	if (!this->result.empty()) {
 		Text(("x = " + this->result).c_str());
