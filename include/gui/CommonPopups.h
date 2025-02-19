@@ -85,6 +85,8 @@ class ResolveEquation : public Window {
 	double from;
 	double to;
 
+	std::vector<double> resolveEqu(std::string l_expression, std::string r_expression, std::string& error, int max_iter=10e3);
+
 public:
 	ResolveEquation(MainWindow* parent);
 	void onRender() override;
