@@ -694,6 +694,11 @@ void ResolveEquation::onRender() {
 				std::string r = equation.substr(separator_i + 1);
 				bool invalid = false;
 				double x = from;
+				double y0 = 0.0;
+				double y1 = 0.0;
+				double h = 0.000001;
+				double a = 1;
+				std::vector<double> x_s = {};
 				double l_y = 0.0;
 				double l_x = 0.0;
 				double precision_0 = 10 ^ 5;
@@ -716,18 +721,57 @@ void ResolveEquation::onRender() {
 				parser.compile(l, l_e);
 				parser.compile(r, r_e);
 
-				while (precision > 0.00001) {
-					precision = precision / 10;
-					while (l_e.value() < r_e.value()) {
-						x += precision / precision_0;
+				while (x < this->to) {
+					while (precision > 0.00001) {
+						y0 = l_e.value() - r_e.value();
+						x += h;
+						y1 = l_e.value() - r_e.value();
+						x -= h;
+						if (y0 <= y1) {
+							precision = precision / 10;
+							while (l_e.value() < r_e.value()) {
+								x += precision / precision_0;
+							}
+							precision = precision / 10;
+							while (l_e.value() > r_e.value()) {
+								x -= precision / precision_0;
+							}
+						}
+						else {
+							precision = precision / 10;
+							while (l_e.value() > r_e.value()) {
+								x += precision / precision_0;
+							}
+							precision = precision / 10;
+							while (l_e.value() < r_e.value()) {
+								x -= precision / precision_0;
+							}
+						}
+						std::cout << x << std::endl;
 					}
-					precision = precision / 10;
-					while (l_e.value() > r_e.value()) {
-						x -= precision / precision_0;
+					x_s.push_back(x);
+					x += 0.0001;
+					precision = precision_0;
+
+					y0 = l_e.value() - r_e.value();
+					x += h;
+					y1 = l_e.value() - r_e.value();
+					x -= h;
+					a = (y1 - y0) / -(y1 - y0);
+					while ((l_e.value() - r_e.value()) / -(l_e.value() - r_e.value()) == a || x > this->to) {
+						x++;
+					}
+					if (x < this->to) {
+						x--;
 					}
 				}
+
 				if (!invalid) {
-					result = std::to_string(x);
+					result = "";
+					for (int i = 0; i < x_s.size(); i++) {
+						result += "x" + std::to_string(i) + " = " + std::to_string(x_s[i]) + ", ";
+					}
+					
 				}
 				else {
 					result = "";
@@ -736,8 +780,9 @@ void ResolveEquation::onRender() {
 		}
 		EndDisabled();
 	}
-	if (!this->result.empty()) {
-		Text(("x = " + this->result).c_str());
+	if (this->result.size() != 0) {
+		this->result = "S = { " + this->result + " }";
+		Text(this->result.c_str());
 	}
 	else {
 		Text("x = ?");
