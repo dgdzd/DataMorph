@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+
+
 struct Line {
 	Header* header;
 	bool scatter;
@@ -45,6 +47,9 @@ struct Graph {
 	std::vector<Line> lines;
 	std::string name;
 	char* model;
+	double a;
+	double b;
+	double c;
 
 	Graph(std::string name, Header* xHeader, std::vector<Line> lines, int width, int height) {
 		this->name = name;
@@ -53,6 +58,9 @@ struct Graph {
 		this->width = width;
 		this->height = height;
 		this->model = new char[64] {};
+		this->a = 0.0;
+		this->b = 0.0;
+		this->c = 0.0;
 	}
 };
 

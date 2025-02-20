@@ -59,6 +59,39 @@ void GraphWindow::onRender() {
 						ImGui::EndMenuBar();
 					}
 					Text("Modelisation : ");
+					if (BeginCombo("Choose Model", "None")) {
+						std::string x = g.lines[0].header->name;
+						if (Selectable("Linear")) {
+							strcpy(g.model, (g.xHeader->name + "=a*" + x).c_str());
+						}
+						if (Selectable("Affine")) {
+							strcpy(g.model, (g.xHeader->name + "=a*" + x + "+b").c_str());
+						}
+						if (Selectable("Polynomial")) {
+							strcpy(g.model, (g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c").c_str());
+						}
+						if (Selectable("Exponential")) {
+							strcpy(g.model, (g.xHeader->name + "=a*e^" + g.lines[0].header->name + "+b").c_str());
+							//e = 2.71828
+						}
+						if (Selectable("Logarithmic")) {
+							strcpy(g.model, (g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b").c_str());
+						}
+						if (Selectable("Power")) {
+							strcpy(g.model, (g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c").c_str());
+						}
+						if (Selectable("Sigmoid")) {
+							strcpy(g.model, (g.xHeader->name + "=1/(1+e^-" + g.lines[0].header->name + ")").c_str());
+							//e = 2.71828
+						}
+						if (Selectable("Sine")) {
+							strcpy(g.model, (g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")").c_str());
+						}
+						if (Selectable("Cosine")) {
+							strcpy(g.model, (g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")").c_str());
+						}
+						EndCombo();
+					}
 					InputText("model", g.model, 64);
 					if (Button("Update model")) {
 						//to do
