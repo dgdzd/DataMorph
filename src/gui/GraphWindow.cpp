@@ -71,7 +71,7 @@ void GraphWindow::onRender() {
 							strcpy(g.model, (g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c").c_str());
 						}
 						if (Selectable("Exponential")) {
-							strcpy(g.model, (g.xHeader->name + "=a*e^" + g.lines[0].header->name + "+b").c_str());
+							strcpy(g.model, (g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b").c_str());
 							//e = 2.71828
 						}
 						if (Selectable("Logarithmic")) {
@@ -81,7 +81,7 @@ void GraphWindow::onRender() {
 							strcpy(g.model, (g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c").c_str());
 						}
 						if (Selectable("Sigmoid")) {
-							strcpy(g.model, (g.xHeader->name + "=1/(1+e^-" + g.lines[0].header->name + ")").c_str());
+							strcpy(g.model, (g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")").c_str());
 							//e = 2.71828
 						}
 						if (Selectable("Sine")) {
