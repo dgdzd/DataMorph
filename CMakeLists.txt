@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
 		src/core/Header.cpp
 		src/core/Expression.cpp
 		src/gui/CommonPopups.cpp
+		src/core/Graph.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

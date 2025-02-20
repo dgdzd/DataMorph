@@ -668,6 +668,7 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->pr = parent->state->openProject;
 	this->equation = "";
 	this->result = "";
+	this->error = "";
 	this->from = 0.0;
 	this->to = 100.0;
 }
@@ -692,88 +693,9 @@ void ResolveEquation::onRender() {
 				int separator_i = equation.find("=");
 				std::string l = equation.substr(0, separator_i);
 				std::string r = equation.substr(separator_i + 1);
-				std::string error = "";
-				std::vector<double> x_s = resolveEqu(l, r, error);
+				std::vector<double> x_s = resolveEqu(l, r, this->error);
 
-				//bool invalid = false;
-				//bool swap = false;
-				//double x = from;
-				//double y0 = 0.0;
-				//double y1 = 0.0;
-				//double d = 0;
-				//double dd = 0; // Dérivée de la dérivée
-				//double h = 0.000001;
-				//double a = 1;
-				//std::vector<double> x_s = {};
-				//double l_y = 0.0;
-				//double l_x = 0.0;
-				//double precision_0 = 10 ^ 5;
-				//double precision = precision_0;
-
-				//typedef exprtk::symbol_table<double> symbol_table_t;
-				//typedef exprtk::expression<double>   expression_t;
-				//typedef exprtk::parser<double>       parser_t;
-
-				//symbol_table_t symbol_table;
-				//symbol_table.add_variable("x", x);
-				//symbol_table.add_constants();
-
-				//expression_t l_e;
-				//expression_t r_e;
-				//l_e.register_symbol_table(symbol_table);
-				//r_e.register_symbol_table(symbol_table);
-
-				//parser_t parser;
-				//parser.compile(l, l_e);
-				//parser.compile(r, r_e);
-
-				//while (precision > 0.00001) {
-				//	// Si la dérivée en x est négative, on inverse les opérations
-				//	y0 = l_e.value() - r_e.value();
-				//	x += h;
-				//	y1 = l_e.value() - r_e.value();
-				//	x -= h;
-				//	if (y0 <= y1) {
-				//		precision = precision / 10;
-				//		while (l_e.value() < r_e.value()) {
-				//			x += precision / precision_0;
-				//		}
-				//		precision = precision / 10;
-				//		while (l_e.value() > r_e.value()) {
-				//			x -= precision / precision_0;
-				//		}
-				//	}
-				//	else {
-				//		precision = precision / 10;
-				//		while (l_e.value() > r_e.value()) {
-				//			x += precision / precision_0;
-				//		}
-				//		precision = precision / 10;
-				//		while (l_e.value() < r_e.value()) {
-				//			x -= precision / precision_0;
-				//		}
-				//	}
-				//	std::cout << x << std::endl;
-				//	x_s.push_back(x);
-				//	x += 0.0001;
-				//	precision = precision_0;
-
-				//	y0 = l_e.value() - r_e.value();
-				//	x += h;
-				//	y1 = l_e.value() - r_e.value();
-				//	x -= h;
-				//	a = (y1 - y0) / -(y1 - y0);
-				//	while ((l_e.value() - r_e.value()) / -(l_e.value() - r_e.value()) == a || x > this->to) {
-				//		x++;
-				//	}
-				//	if (x < this->to) {
-				//		x--;
-				//	}
-				//}
-				if (!error.empty()) {
-					result = error;
-				}
-				else if (x_s.size() > 0) {
+				if (x_s.size() > 0) {
 					result = "S = {";
 					for (int i = 0; i < x_s.size(); i++) {
 						result += std::to_string(x_s[i]) + (i == x_s.size()-1 ? "" : " ; ");
@@ -787,7 +709,13 @@ void ResolveEquation::onRender() {
 		}
 		EndDisabled();
 	}
-	TextWrapped(this->result.c_str());
+	if (error.empty()) {
+		TextWrapped(this->result.c_str());
+	}
+	else {
+		TextWrapped(this->error.c_str());
+	}
+
 	Dummy(ImVec2(0.0, 20.0));
 	if (Button("Done")) {
 		CloseCurrentPopup();
@@ -801,6 +729,7 @@ std::vector<double> ResolveEquation::resolveEqu(std::string l_expression, std::s
 	bool invalid = false;
 	bool swap = false;
 	bool sign = 0;
+	error = "";
 	double x = from;
 	std::vector<double> x_s = {};
 	double precision_0 = 10e5;
@@ -820,22 +749,33 @@ std::vector<double> ResolveEquation::resolveEqu(std::string l_expression, std::s
 	r_e.register_symbol_table(symbol_table);
 
 	parser_t parser;
-	parser.compile(l_expression, l_e);
-	parser.compile(r_expression, r_e);
+	if (!parser.compile(l_expression, l_e)) {
+		error = "The left member of the equation has an invalid syntax.";
+		return {};
+	}
+	if (!parser.compile(r_expression, r_e)) {
+		error = "The right member of the equation has an invalid syntax.";
+		return {};
+	}
 
 	double ivl = l_e.value();
 	double ivr = r_e.value();
 
-	// Checks if ivl or ivr is not a real number
-	std::cout << ivl << "\n";
-	if (ivl != ivl || ivr != ivr) {
-		error = "The equation is not valid everywhere in the range [from;to]";
-		return {};
-	}
-
 	if (ivl - ivr > 0) {
 		swap = true;
 		sign = 1;
+	}
+	else if (ivl - ivr == 0) {
+		while (l_e.value() - r_e.value() == 0 && x == to) {
+			x += 1 / precision_0;
+		}
+		if (x == to) {
+			return {};
+		}
+		if (l_e.value() - r_e.value() > 0) {
+			swap = true;
+			sign = 1;
+		}
 	}
 
 	bool exit = false;
@@ -843,21 +783,38 @@ std::vector<double> ResolveEquation::resolveEqu(std::string l_expression, std::s
 		while (precision > 0.00001) {
 			precision /= 10;
 			double to_add = precision / precision_0;
+			double lval = l_e.value();
+			double rval = r_e.value();
 			if (!swap) {
-				while (l_e.value() < r_e.value()) {
-					x += to_add;
+				for (lval = l_e.value(), rval = r_e.value(); lval < rval; x += to_add, lval = l_e.value(), rval = r_e.value()) {
 					if (x > to) {
 						exit = true;
 						break;
 					}
 				}
+				if (lval != lval || rval != rval) {
+					while (lval != lval || rval != rval) {
+						x += to_add;
+						lval = l_e.value();
+						rval = r_e.value();
+					}
+					x += to_add;
+				}
 				precision /= 10;
 				to_add /= 10;
-				while (l_e.value() > r_e.value()) {
+				for (lval = l_e.value(), rval = r_e.value(); lval > rval; x -= to_add, lval = l_e.value(), rval = r_e.value()) {
+					// Nothing
+				}
+				if (lval != lval || rval != rval) {
+					while (lval != lval || rval != rval) {
+						x -= to_add;
+						lval = l_e.value();
+						rval = r_e.value();
+					}
 					x -= to_add;
 				}
 				if (exit) {
-					if (x < to) {
+					if (x < to && x > from) {
 						exit = false;
 					}
 					else {
@@ -866,19 +823,34 @@ std::vector<double> ResolveEquation::resolveEqu(std::string l_expression, std::s
 				}
 			}
 			else {
-				while (l_e.value() > r_e.value()) {
-					x += to_add;
+				for (lval = l_e.value(), rval = r_e.value(); lval > rval; x += to_add, lval = l_e.value(), rval = r_e.value()) {
 					if (x > to) {
 						exit = true;
 						break;
 					}
 				}
+				if (lval != lval || rval != rval) {
+					while (lval != lval || rval != rval) {
+						x += to_add;
+						lval = l_e.value();
+						rval = r_e.value();
+					}
+					x += to_add;
+				}
 				precision /= 10;
 				to_add /= 10;
-				while (l_e.value() < r_e.value()) {
+				for (lval = l_e.value(), rval = r_e.value(); lval < rval; x -= to_add, lval = l_e.value(), rval = r_e.value()) {
+					// Nothing
+				}
+				if (lval != lval || rval != rval) {
+					while (lval != lval || rval != rval) {
+						x -= to_add;
+						lval = l_e.value();
+						rval = r_e.value();
+					}
 					x -= to_add;
 				}
-				if (x < to) {
+				if (x < to && x > from) {
 					exit = false;
 				}
 				else {
@@ -886,9 +858,11 @@ std::vector<double> ResolveEquation::resolveEqu(std::string l_expression, std::s
 				}
 			}
 		}
+		if (std::find(x_s.begin(), x_s.end(), x) != x_s.end()) {
+			return x_s;
+		}
 		x_s.push_back(x);
-		double last_x = x_s.size() > 1 ? x_s[x_s.size() - 2] : from;
-		x += precision / precision_0;
+		x += 1 / precision_0;
 		swap = !swap;
 		precision = precision_0;
 	}

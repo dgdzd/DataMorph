@@ -25,7 +25,7 @@ struct Bar {
 		this->color = color;
 	}
 
-	bool operator==(Line& other) {
+	bool operator==(Bar& other) {
 		return this->header == other.header && this->color == other.color;
 	}
 };

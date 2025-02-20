@@ -18,7 +18,7 @@ ImFont* FontManager::loadFontFromPath(const char* path, float size, const char* 
 	if (name == "") {
 		name = path;
 	}
-	ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF(path, size);
+	ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF(path, size, 0, ImGui::GetIO().Fonts->GetGlyphRangesGreek());
 	this->fonts.insert(std::pair<const char*, ImFont*>(name, font));
 	return font;
 }

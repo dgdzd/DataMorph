@@ -82,6 +82,7 @@ class ResolveEquation : public Window {
 	Project* pr;
 	std::string equation;
 	std::string result;
+	std::string error;
 	double from;
 	double to;
 

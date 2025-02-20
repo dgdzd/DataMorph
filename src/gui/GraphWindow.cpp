@@ -1,6 +1,7 @@
-#include <gui/GraphWindow.h>
+﻿#include <gui/GraphWindow.h>
 
 #include <App.h>
+#include <cmath>
 #include <FontManager.h>
 #include <implot.h>
 #include <iostream>
@@ -18,6 +19,7 @@ GraphWindow::GraphWindow(Project* project) {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
+	this->statsVar = "";
 }
 
 void GraphWindow::onAttach() {
@@ -59,7 +61,7 @@ void GraphWindow::onRender() {
 						ImGui::EndMenuBar();
 					}
 					Text("Modelisation : ");
-					if (BeginCombo("Choose Model", "None")) {
+					if (BeginCombo("Choose a model", "None")) {
 						std::string x = g.lines[0].header->name;
 						if (Selectable("Linear")) {
 							strcpy(g.model, (g.xHeader->name + "=a*" + x).c_str());
@@ -92,7 +94,7 @@ void GraphWindow::onRender() {
 						}
 						EndCombo();
 					}
-					InputText("model", g.model, 64);
+					InputText("Model", g.model, 64);
 					if (Button("Update model")) {
 						//to do
 					}	
@@ -120,8 +122,45 @@ void GraphWindow::onRender() {
 					ImPlot::EndPlot();
 				}
 				if (TreeNode("Statistics")) {
-					if (BeginCombo("Var", project->headers[0].name.c_str())) {
-						double moy;
+					if (BeginChild("##StatsChild", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
+						if (BeginCombo("Var", this->statsVar == "" ? "None" : project->headers[this->statsVar].name.c_str())) {
+							if (Selectable("None")) {
+								this->statsVar = "";
+							}
+							for (int i = 0; i < project->headers.size(); i++) {
+								if (Selectable(project->headers[project->symbols[i]].name.c_str())) {
+									this->statsVar = project->symbols[i];
+								}
+							}
+							EndCombo();
+						}
+						if (!this->statsVar.empty()) {
+							Header* h = &project->headers[this->statsVar];
+
+							// Average
+							double average = 0;
+							for (auto v : h->values) {
+								average += v;
+							}
+							average /= h->values.size();
+
+							// Standard deviation
+							double standard_deviation = 0;
+							for (auto v : h->values) {
+								standard_deviation += pow(average - v, 2);
+							}
+							standard_deviation /= h->values.size();
+
+							// Uncertainty
+							double uncertainty = standard_deviation / sqrt(h->values.size());
+
+							PushFont(FontManager::getInstance()->getFont("math23"));
+							Text("average(%s) = %.5f%s", h->name, average, h->unit);
+							Text("σ(%s) = %.5f%s", h->name, standard_deviation, h->unit);
+							Text("u(%s) = %.5f%s", h->name, uncertainty, h->unit);
+							PopFont();
+						}
+						EndChild();
 					}
 
 					TreePop();
