@@ -115,15 +115,6 @@ void MainWindow::onRender() {
 				}
 				ImGui::EndMenu();
 			}
-			if (BeginMenu("Statistics")) {
-				if (MenuItem("Manage statistics...")) {
-					state->popups["Manage stats"] = true;
-				}
-				if (MenuItem("View statistics")) {
-					DataMorph::getInstance()->addLayer(new StatsWindow(pr));
-				}
-				ImGui::EndMenu();
-			}
 		}
 		if (BeginMenu("Tools")) {
 			if (MenuItem("Resolve an Equation")) {
@@ -164,10 +155,6 @@ void MainWindow::onRender() {
 	NewGraphPopup* ngp = NewGraphPopup::getInstance(this);
 	if (BeginPopupModal(ngp->name.c_str(), NULL, ngp->wflags)) {
 		ngp->onRender();
-	}
-	NewStatsPopup* nsp = NewStatsPopup::getInstance(this);
-	if (BeginPopupModal(nsp->name.c_str(), NULL, nsp->wflags)) {
-		nsp->onRender();
 	}
 	ResolveEquation* re = ResolveEquation::getInstance(this);
 	if (BeginPopupModal(re->name.c_str(), NULL, re->wflags)) {
