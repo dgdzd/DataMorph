@@ -113,8 +113,8 @@ void GraphWindow::onRender() {
 
 							symbol_table_t symbol_table;
 							symbol_table.add_variable("a", a);
-							symbol_table.add_variable("a", b);
-							symbol_table.add_variable("a", c);
+							symbol_table.add_variable("b", b);
+							symbol_table.add_variable("c", c);
 							symbol_table.add_constants();
 							for (int j = 0; j < project->values.size(); j++) {
 								symbol_table.add_variable(project->symbols[j], project->values[project->symbols[j]][0]);
@@ -131,14 +131,13 @@ void GraphWindow::onRender() {
 
 							std::vector<double> x_models = {};
 							for (int j = 0; j < g.lines[0].header->values.size(); j++) {
-								;
 								x_models.push_back(g.xHeader->values[j]);
 							}
 
 							double loss0 = 0.0;
 							double loss1 = 0.0;
 							int sign = 1;
-							double precision0 = 10^5;
+							double precision0 = 10e5;
 							double precision = precision0;
 
 							if (yModel.find("a") != std::string::npos) {
@@ -232,15 +231,14 @@ void GraphWindow::onRender() {
 								standard_deviation += pow(average - v, 2);
 							}
 							standard_deviation /= h->values.size();
+							standard_deviation = sqrt(standard_deviation);
 
 							// Uncertainty
 							double uncertainty = standard_deviation / sqrt(h->values.size());
 
-							PushFont(FontManager::getInstance()->getFont("math23"));
-							Text("average(%s) = %.5f%s", h->name, average, h->unit);
-							Text("σ(%s) = %.5f%s", h->name, standard_deviation, h->unit);
-							Text("u(%s) = %.5f%s", h->name, uncertainty, h->unit);
-							PopFont();
+							Text((const char*)u8"%s̅ = %.5f %s", h->name, average, h->unit);
+							Text((const char*)u8"σ(%s) = %.5f %s", h->name, standard_deviation, h->unit);
+							Text("u(%s) = %.5f %s", h->name, uncertainty, h->unit);
 						}
 						EndChild();
 					}

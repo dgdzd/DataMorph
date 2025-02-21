@@ -62,7 +62,7 @@ int DataMorph::initialize() {
 	this->io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	this->io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	this->baseFont = this->io->Fonts->AddFontFromFileTTF("resources\\fonts\\Segoe UI.ttf", 16.0f);
+	this->baseFont = this->io->Fonts->AddFontFromFileTTF("resources\\fonts\\Segoe UI.ttf", 16.0f, 0, this->io->Fonts->GetGlyphRangesGreek());
 
 	FontManager* fm = FontManager::getInstance();
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 20, "font20");

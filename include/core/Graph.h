@@ -27,6 +27,9 @@ struct Graph {
 	std::vector<Line> lines;
 	std::string name;
 	char* model;
+	double a;
+	double b;
+	double c;
 
 	Graph(std::string name, Header* xHeader, std::vector<Line> lines, int width, int height);
 };
