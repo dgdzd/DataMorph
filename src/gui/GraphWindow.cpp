@@ -96,7 +96,30 @@ void GraphWindow::onRender() {
 					}
 					InputText("Model", g.model, 64);
 					if (Button("Update model")) {
-						//to do
+						typedef exprtk::symbol_table<double> symbol_table_t;
+						typedef exprtk::expression<double>   expression_t;
+						typedef exprtk::parser<double>       parser_t;
+
+						symbol_table_t symbol_table;
+						symbol_table.add_variable("a", g.a);
+						symbol_table.add_variable("a", g.b);
+						symbol_table.add_variable("a", g.c);
+						symbol_table.add_constants();
+
+						expression_t m_e;
+						m_e.register_symbol_table(symbol_table);
+
+						parser_t parser;
+						parser.compile(std::string(g.model), m_e);
+
+						std::vector<double> x_models = {};
+						for (int j = 0; j < g.lines[0].header->values.size(); j++) {;
+							x_models.push_back(g.xHeader->values[j]);
+						}
+						int separator_i = std::string(g.model).find("=");
+						std::string yHeader = std::string(g.model).substr(0, separator_i);
+						std::string xModel = std::string(g.model).substr(separator_i + 1);
+
 					}	
 
 					EndChild();
