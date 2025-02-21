@@ -100,25 +100,49 @@ void GraphWindow::onRender() {
 						typedef exprtk::expression<double>   expression_t;
 						typedef exprtk::parser<double>       parser_t;
 
+						double a = 0.0;
+						double b = 0.0;
+						double c = 0.0;
+
 						symbol_table_t symbol_table;
-						symbol_table.add_variable("a", g.a);
-						symbol_table.add_variable("a", g.b);
-						symbol_table.add_variable("a", g.c);
+						symbol_table.add_variable("a", a);
+						symbol_table.add_variable("a", b);
+						symbol_table.add_variable("a", c);
 						symbol_table.add_constants();
+						for (int j = 0; j < project->values.size(); j++) {
+							symbol_table.add_variable(project->symbols[j], project->values[project->symbols[j]][0]);
+						}
 
 						expression_t m_e;
 						m_e.register_symbol_table(symbol_table);
 
 						parser_t parser;
-						parser.compile(std::string(g.model), m_e);
+						int separator_i = std::string(g.model).find("=");
+						std::string xheader = std::string(g.model).substr(0, separator_i);
+						std::string yModel = std::string(g.model).substr(separator_i + 1);
+						parser.compile(yModel, m_e);
 
 						std::vector<double> x_models = {};
 						for (int j = 0; j < g.lines[0].header->values.size(); j++) {;
 							x_models.push_back(g.xHeader->values[j]);
 						}
-						int separator_i = std::string(g.model).find("=");
-						std::string yHeader = std::string(g.model).substr(0, separator_i);
-						std::string xModel = std::string(g.model).substr(separator_i + 1);
+
+						double loss0 = 0.0;
+						double loss1 = 0.0;	
+						if (yModel.find("a") != std::string::npos) {
+							loss0 = 0.0;
+							for (int j = 0; j < x_models.size(); j++) {
+								loss0 += std::abs(m_e.value() - x_models[j]);
+							}
+							a++;
+							loss1 = 0.0;
+							for (int j = 0; j < x_models.size(); j++) {
+								loss1 += std::abs(m_e.value() - x_models[j]);
+							}
+							if (loss1 - loss0 < 0) {
+
+							}
+						}
 
 					}	
 
