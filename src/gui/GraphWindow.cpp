@@ -230,15 +230,72 @@ void GraphWindow::onRender() {
 							for (auto v : h->values) {
 								standard_deviation += pow(average - v, 2);
 							}
-							standard_deviation /= h->values.size() - 1;
+							standard_deviation /= h->values.size();
 							standard_deviation = sqrt(standard_deviation);
 
+							// Sample standard deviation
+							double standard_deviation1 = 0;
+							for (auto v : h->values) {
+								standard_deviation1 += pow(average - v, 2);
+							}
+							standard_deviation1 /= h->values.size()-1;
+							standard_deviation1 = sqrt(standard_deviation1);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The number of values in %s.", h->name);
+							}
+							SameLine();
 							Text("N(%s) = %d", h->name, h->values.size());
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The smallest value of %s.", h->name);
+							}
+							SameLine();
 							Text("min(%s) = %.5f %s", h->name, std::min(h->values), h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The highest value of %s.", h->name);
+							}
+							SameLine();
 							Text("max(%s) = %.5f %s", h->name, std::max(h->values), h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The scope of %s.", h->name);
+							}
+							SameLine();
+							Text("scope(%s) = %.5f %s", h->name, std::max(h->values) - std::min(h->values), h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The average %s.", h->name);
+							}
+							SameLine();
 							Text((const char*)u8"%s\u2098 = %.5f %s", h->name, average, h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The sum of all the values of %s", h->name);
+							}
+							SameLine();
 							Text((const char*)u8"Σ(%s) = %.5f %s", h->name, std::sum(h->values), h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The standard deviation of %s.", h->name);
+							}
+							SameLine();
 							Text((const char*)u8"σ(%s) = %.5f %s", h->name, standard_deviation, h->unit);
+
+							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+							if (IsItemHovered()) {
+								SetTooltip("The sample standard deviation of %s.", h->name);
+							}
+							SameLine();
+							Text((const char*)u8"s(%s) = %.5f %s", h->name, standard_deviation1, h->unit);
 						}
 						EndChild();
 					}

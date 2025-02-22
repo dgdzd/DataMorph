@@ -72,7 +72,7 @@ int DataMorph::initialize() {
 
 	this->io->Fonts->Build();
 
-	ImGui::StyleColorsDark();
+	ImGui::StyleColorsLight();
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
