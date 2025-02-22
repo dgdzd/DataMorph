@@ -86,9 +86,10 @@ void MainWindow::onRender() {
 					state->popups["Add a column"] = true;
 				}
 				if (BeginMenu("Delete Variable")) {
-					for (std::string symbol : pr->symbols) {
+					for (int i = 0; i < pr->symbols.size(); i++) {
+						std::string symbol = pr->symbols[i];
 						if (MenuItem(symbol.c_str())) {
-							pr->removeColumn(symbol);
+							pr->removeColumn(pr->ids[i]);
 						}
 					}
 					ImGui::EndMenu();
@@ -147,7 +148,7 @@ void MainWindow::onRender() {
 		nvp->onRender();
 	}
 	if (EditVarPopup::hasInstance()) {
-		EditVarPopup* evp = EditVarPopup::getInstance(this, "");
+		EditVarPopup* evp = EditVarPopup::getInstance(this, 0);
 		if (BeginPopupModal(evp->name.c_str(), NULL, evp->wflags)) {
 			evp->onRender();
 		}
@@ -209,18 +210,19 @@ void MainWindow::onRender() {
 				}
 				std::string symbol = pr->symbols[i];
 				std::string unit = pr->units[i];
-				Header* header = &pr->headers[symbol];
+				unsigned int id = pr->ids[i];
+				Header* header = &pr->headers[id];
 				TableHeader((symbol + (unit.empty() ? "" : " (in " + unit + ")")).c_str());
 
 				if (BeginPopupContextItem()) {
 					Text((symbol + " (in " + unit + ")").c_str());
 					Separator();
 					if (MenuItem("Edit...")) {
-						EditVarPopup::getInstance(this, symbol);
+						EditVarPopup::getInstance(this, id);
 						this->state->popups["Edit variable"] = true;
 					}
 					if (MenuItem("Remove this column")) {
-						pr->removeColumn(symbol);
+						pr->removeColumn(id);
 					}
 					PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
 					if (MenuItem("Locked values", NULL, header->lockedValues)) {
@@ -230,10 +232,11 @@ void MainWindow::onRender() {
 					EndPopup();
 				}
 			}
-			for (int i = 0; i < pr->headers[pr->symbols[0]].values.size(); i++) {
+			for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
 				TableNextRow();
-				for (std::string symbol : pr->symbols) {
-					Header& header = pr->headers[symbol];
+				for (int i = 0; i < pr->symbols.size(); i++) {
+					std::string symbol = pr->symbols[i];
+					Header& header = pr->headers[pr->ids[i]];
 					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(150);
@@ -260,7 +263,7 @@ void MainWindow::onRender() {
 		}
 		SameLine();
 		if (Button("-")) {
-			if (pr->headers[pr->symbols[0]].values.size() > 0) {
+			if (pr->headers[pr->ids[0]].values.size() > 0) {
 				pr->removeRow();
 			}
 		}
@@ -277,7 +280,7 @@ void MainWindow::message(std::string header, ...) {
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
 		for (int i = 0; i < project->symbols.size(); i++) {
-			project->headers[project->symbols[i]] = Header(project, project->symbols[i], project->units[i], {});
+			project->headers[project->ids[i]] = Header(project, project->symbols[i], project->units[i], {});
 		}
 		project->initValues();
 		

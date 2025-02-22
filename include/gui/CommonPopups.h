@@ -36,15 +36,15 @@ class EditVarPopup : public Window {
 	static EditVarPopup* inst;
 	MainWindow* parent;
 	Project* pr;
-	std::string symbol;
+	unsigned int id;
 	std::string newSymbol;
 	std::string newUnit;
 	Expression expression;
 
 public:
-	EditVarPopup(MainWindow* parent, std::string symbol);
+	EditVarPopup(MainWindow* parent, unsigned int id);
 	void onRender() override;
-	static EditVarPopup* getInstance(MainWindow* mw, std::string symbol);
+	static EditVarPopup* getInstance(MainWindow* mw, unsigned int id);
 	static bool hasInstance();
 	static void removeInstance();
 };

@@ -17,7 +17,7 @@ class GraphWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	Project* project;
-	std::string statsVar;
+	unsigned int statsVar;
 
 public:
 	GraphWindow(Project* project);

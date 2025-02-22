@@ -178,3 +178,7 @@ void DataMorph::setIcon(const char* path) {
 	glfwSetWindowIcon(this->window, 1, &icon);
 	stbi_image_free(icon.pixels);
 }
+
+double DataMorph::getTime() {
+	return glfwGetTime();
+}

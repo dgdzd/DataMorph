@@ -11,7 +11,8 @@
 struct Project {
 	std::string name;
 	std::string path;
-	std::map<std::string, Header> headers;
+	std::map<unsigned int, Header> headers;
+	std::vector<unsigned int> ids;
 	std::vector<std::string> symbols;
 	std::vector<std::string> units;
 	std::map<std::string, std::vector<double>> values;
@@ -24,7 +25,7 @@ struct Project {
 	void addRow();
 	void removeRow();
 	void addColumn(Header* header);
-	void removeColumn(std::string name);
+	void removeColumn(unsigned int id);
 };
 
 #endif

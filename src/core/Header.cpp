@@ -1,7 +1,10 @@
-#include <core/Expression.h>
 #include <core/Header.h>
+
+#include <App.h>
+#include <core/Expression.h>
 #include <core/Project.h>
 #include <iostream>
+#include <random>
 
 Header::Header() {
 	this->name = "";
@@ -31,4 +34,8 @@ Header::Header(Project* parent, std::string name, std::string unit, std::vector<
 		}
 		this->lockedValues = true;
 	}
+
+	// Generate ID
+	srand(DataMorph::getTime());
+	this->id = (int)(100000 + (rand() / RAND_MAX) * 899999); // Génère un ID entre 100000 et 999999
 }

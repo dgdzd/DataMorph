@@ -10,6 +10,7 @@ class Expression;
 struct Project;
 
 struct Header {
+	unsigned int id;
 	Project* parent;
 	Expression* expression;
 	std::vector<float> args;

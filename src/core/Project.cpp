@@ -11,47 +11,48 @@ Project::Project(std::string name, std::string path) {
 
 void Project::initValues() {
 	for (int i = 0; i < this->symbols.size(); i++) {
-		this->headers[this->symbols[i]] = Header(this, this->symbols[i], this->units[i], { 0.0 });
+		Header h = Header(this, this->symbols[i], this->units[i], { 0.0 });
+		this->headers[h.id] = h;
 	}
 }
 
 void Project::addRow() {
-	for (int i = 0; i < this->symbols.size(); i++) {
-		this->headers[this->symbols[i]].values.push_back(0.0);
+	for (int i = 0; i < this->ids.size(); i++) {
+		this->headers[this->ids[i]].values.push_back(0.0);
 	}
 }
 
 void Project::removeRow() {
-	for (int i = 0; i < this->symbols.size(); i++) {
-		this->headers[this->symbols[i]].values.pop_back();
+	for (int i = 0; i < this->ids.size(); i++) {
+		this->headers[this->ids[i]].values.pop_back();
 	}
 }
 
 void Project::addColumn(Header* header) {
 	Expression* expr = header->expression;
-	std::string name = header->name;
-	this->headers[name] = *header;
+	unsigned int id = header->id;
+	this->headers[id] = *header;
 	if (this->headers.size() != 0) {
-		this->headers[name].values = std::vector<double>(this->headers[this->symbols[0]].values.size(), 0.0);
+		this->headers[id].values = std::vector<double>(this->headers[this->ids[0]].values.size(), 0.0);
 	}
 	else {
-		this->headers[name].values = { 0.0 };
+		this->headers[id].values = { 0.0 };
 	}
 	if (expr->specs.type != DUMMY) {
-		this->headers[name].expression->parent = &this->headers[name];
-		this->headers[name].expression->addVars();
-		this->headers[name].expression->compileExpression();
-		this->headers[name].expression->updateValues();
+		this->headers[id].expression->parent = &this->headers[id];
+		this->headers[id].expression->addVars();
+		this->headers[id].expression->compileExpression();
+		this->headers[id].expression->updateValues();
 	}
 }
 
-void Project::removeColumn(std::string name) {
-	auto it = this->headers.find(name);
+void Project::removeColumn(unsigned int id) {
+	auto it = this->headers.find(id);
 	if (it == this->headers.end()) {
 		return;
 	}
 	this->headers.erase(it);
-	auto ne = std::find(this->symbols.begin(), this->symbols.end(), name);
+	auto ne = std::find(this->symbols.begin(), this->symbols.end(), id);
 	auto d = std::distance(this->symbols.begin(), ne);
 	auto ne2 = std::find(this->units.begin(), this->units.end(), this->units[d]);
 

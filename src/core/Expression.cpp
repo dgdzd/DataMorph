@@ -39,8 +39,9 @@ void Expression::addVars() {
 	this->symbol_table.add_variable("i", this->symbol_map["i"]);
 	Project* p = this->parent->parent;
 	for (int i = 0; i < p->symbols.size(); i++) {
+		unsigned int id = p->ids[i];
 		std::string symbol = p->symbols[i];
-		this->symbol_map[symbol] = p->headers[symbol].values[0];
+		this->symbol_map[symbol] = p->headers[id].values[0];
 		this->symbol_table.add_variable(symbol, this->symbol_map[symbol]);
 	}
 }
@@ -106,7 +107,8 @@ void Expression::updateValues() {
 			this->symbol_map["i"] = i;
 			for (int j = 0; j < pr->symbols.size(); j++) {
 				std::string symbol = pr->symbols[j];
-				this->symbol_map[symbol] = pr->headers[symbol].values[i];
+				unsigned int id = pr->ids[j];
+				this->symbol_map[symbol] = pr->headers[id].values[i];
 			}
 			h->values[i] = this->expr.value();
 		}

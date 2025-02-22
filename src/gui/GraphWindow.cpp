@@ -19,7 +19,7 @@ GraphWindow::GraphWindow(Project* project) {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
-	this->statsVar = "";
+	this->statsVar = 0;
 }
 
 void GraphWindow::onAttach() {
@@ -117,7 +117,7 @@ void GraphWindow::onRender() {
 							symbol_table.add_variable("c", c);
 							symbol_table.add_constants();
 							for (int j = 0; j < project->values.size(); j++) {
-								symbol_table.add_variable(project->symbols[j], project->values[project->symbols[j]][0]);
+								symbol_table.add_variable(project->symbols[j], project->headers[project->ids[j]].values[0]);
 							}
 
 							expression_t m_e;
@@ -204,18 +204,18 @@ void GraphWindow::onRender() {
 				}
 				if (TreeNode("Statistics")) {
 					if (BeginChild("##StatsChild", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
-						if (BeginCombo("Var", this->statsVar == "" ? "None" : project->headers[this->statsVar].name.c_str())) {
+						if (BeginCombo("Var", this->statsVar == 0 ? "None" : project->headers[this->statsVar].name.c_str())) {
 							if (Selectable("None")) {
-								this->statsVar = "";
+								this->statsVar = 0;
 							}
 							for (int i = 0; i < project->headers.size(); i++) {
-								if (Selectable(project->headers[project->symbols[i]].name.c_str())) {
-									this->statsVar = project->symbols[i];
+								if (Selectable(project->headers[project->ids[i]].name.c_str())) {
+									this->statsVar = project->ids[i];
 								}
 							}
 							EndCombo();
 						}
-						if (!this->statsVar.empty()) {
+						if (this->statsVar != 0) {
 							Header* h = &project->headers[this->statsVar];
 
 							// Average

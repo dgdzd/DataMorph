@@ -32,6 +32,7 @@ public:
 	GLFWwindow* window;
 
 	static DataMorph* getInstance();
+	static double getTime();
 	int initialize();
 	Window* getLayer(int id);
 	void update();

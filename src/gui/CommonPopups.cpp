@@ -182,7 +182,7 @@ void NewVarPopup::onRender() {
 				break;
 
 			case 2:
-				specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->symbols[derivate.second]], &pr->headers[pr->symbols[derivate.first]]);
+				specs = new ExpressionSpecs(DERIVATIVE, &pr->headers[pr->ids[derivate.second]], &pr->headers[pr->ids[derivate.first]]);
 				break;
 
 			case 3:
@@ -191,7 +191,7 @@ void NewVarPopup::onRender() {
 				break;
 
 			case 4:
-				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->symbols[integral.first]], &pr->headers[pr->symbols[integral.second]]);
+				specs = new ExpressionSpecs(INTEGRAL, &pr->headers[pr->ids[integral.first]], &pr->headers[pr->ids[integral.second]]);
 				break;
 
 			default:
@@ -230,7 +230,7 @@ void NewVarPopup::removeInstance() {
 
 
 
-EditVarPopup::EditVarPopup(MainWindow* parent, std::string symbol) : expression(nullptr, "") {
+EditVarPopup::EditVarPopup(MainWindow* parent, unsigned int id) : expression(nullptr, "") {
 	this->parent = parent;
 	this->name = "Edit variable";
 	this->p_open = true;
@@ -238,9 +238,9 @@ EditVarPopup::EditVarPopup(MainWindow* parent, std::string symbol) : expression(
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 	this->pr = parent->state->openProject;
-	this->symbol = symbol;
-	this->newSymbol = symbol;
-	Header* h = &pr->headers[symbol];
+	Header* h = &pr->headers[id];
+	this->id = id;
+	this->newSymbol = h->name;
 	this->newUnit = h->unit;
 	if (h->expression) {
 		this->expression = *h->expression;
@@ -249,8 +249,8 @@ EditVarPopup::EditVarPopup(MainWindow* parent, std::string symbol) : expression(
 		expression.args = { 0.0, 0.0 };
 	}
 	if (!expression.specs.header_dx) {
-		expression.specs.header_dx = &pr->headers[pr->symbols[0]];
-		expression.specs.header_dy = &pr->headers[pr->symbols[0]];
+		expression.specs.header_dx = &pr->headers[pr->ids[0]];
+		expression.specs.header_dy = &pr->headers[pr->ids[0]];
 	}
 }
 
@@ -294,11 +294,11 @@ void EditVarPopup::onRender() {
 			SameLine();
 			if (BeginCombo("##3", expression.specs.header_dy->name.c_str())) {
 				int selected = 0;
-				for (int i = 0; i < pr->symbols.size(); i++) {
+				for (int i = 0; i < pr->ids.size(); i++) {
 					bool is_selected = selected == i;
 					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 						selected = i;
-						expression.specs.header_dy = &pr->headers[pr->symbols[i]];
+						expression.specs.header_dy = &pr->headers[pr->ids[i]];
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -317,7 +317,7 @@ void EditVarPopup::onRender() {
 					bool is_selected = selected == i;
 					if (Selectable(expression.specs.header_dx->name.c_str(), is_selected)) {
 						selected = i;
-						expression.specs.header_dx = &pr->headers[pr->symbols[i]];
+						expression.specs.header_dx = &pr->headers[pr->ids[i]];
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -360,7 +360,7 @@ void EditVarPopup::onRender() {
 					bool is_selected = selected == i;
 					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 						selected = i;
-						expression.specs.header_dy = &pr->headers[pr->symbols[i]];
+						expression.specs.header_dy = &pr->headers[pr->ids[i]];
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -376,7 +376,7 @@ void EditVarPopup::onRender() {
 					bool is_selected = selected == i;
 					if (Selectable(pr->symbols[i].c_str(), is_selected)) {
 						selected = i;
-						expression.specs.header_dx = &pr->headers[pr->symbols[i]];
+						expression.specs.header_dx = &pr->headers[pr->ids[i]];
 					}
 					if (is_selected) {
 						SetItemDefaultFocus();
@@ -417,18 +417,18 @@ void EditVarPopup::onRender() {
 				break;
 			}
 
-			Header* h = &pr->headers[symbol];
-			auto i = std::find(pr->symbols.begin(), pr->symbols.end(), symbol);
+			Header* h = &pr->headers[id];
+			auto i = std::find(pr->symbols.begin(), pr->symbols.end(), this->id);
 			int d = std::distance(pr->symbols.begin(), i);
 			pr->symbols[d] = newSymbol;
 			pr->units[d] = newUnit;
 			std::vector<double> values = h->values;
-			pr->headers.erase(symbol);
-			pr->headers[newSymbol] = Header(pr, newSymbol, newUnit, values, tab == 1 ? expression.expression.c_str() : "", &expression.specs, args);
-			pr->headers[newSymbol].expression->parent = &pr->headers[newSymbol];
-			pr->headers[newSymbol].expression->addVars();
-			pr->headers[newSymbol].expression->compileExpression();
-			pr->headers[newSymbol].expression->updateValues();
+			pr->headers[this->id] = Header(pr, newSymbol, newUnit, values, tab == 1 ? expression.expression.c_str() : "", &expression.specs, args);
+			pr->headers[this->id].id = this->id;
+			pr->headers[this->id].expression->parent = &pr->headers[this->id];
+			pr->headers[this->id].expression->addVars();
+			pr->headers[this->id].expression->compileExpression();
+			pr->headers[this->id].expression->updateValues();
 			parent->state->popups[name] = false;
 			CloseCurrentPopup();
 			removeInstance();
@@ -444,9 +444,9 @@ void EditVarPopup::onRender() {
 	EndPopup();
 }
 
-EditVarPopup* EditVarPopup::getInstance(MainWindow* mw, std::string symbol) {
+EditVarPopup* EditVarPopup::getInstance(MainWindow* mw, unsigned int id) {
 	if (!inst) {
-		inst = new EditVarPopup(mw, symbol);
+		inst = new EditVarPopup(mw, id);
 	}
 	return inst;
 }
@@ -479,7 +479,7 @@ void NewGraphPopup::onRender() {
 	if (pr->graphs.size() == 0) {
 		TextWrapped("There is currently no graph.");
 		if (Button("Create one")) {
-			Graph g("New graph 1", &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Graph g("New graph 1", &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
 			pr->graphs.push_back(g);
 		}
 	}
@@ -491,9 +491,9 @@ void NewGraphPopup::onRender() {
 				InputText("##graphName", &graph.name, 32);
 				Dummy(ImVec2(0.0f, 10.0f));
 				if (BeginCombo("X axis", graph.xHeader->name.c_str())) {
-					for (std::string symbol : pr->symbols) {
-						if (Selectable(symbol.c_str())) {
-							graph.xHeader = &pr->headers[symbol];
+					for (unsigned int id : pr->ids) {
+						if (Selectable(pr->headers[id].name.c_str())) {
+							graph.xHeader = &pr->headers[id];
 						}
 					}
 					EndCombo();
@@ -506,9 +506,9 @@ void NewGraphPopup::onRender() {
 					if (TreeNode(("Line #" + std::to_string(j + 1)).c_str())) {
 						Line& line = graph.lines[j];
 						if (BeginCombo("Data to plot", line.header->name.c_str())) {
-							for (std::string symbol : pr->symbols) {
-								if (Selectable(symbol.c_str())) {
-									line.header = &pr->headers[symbol];
+							for (unsigned int id : pr->ids) {
+								if (Selectable(pr->headers[id].name.c_str())) {
+									line.header = &pr->headers[id];
 								}
 							}
 							EndCombo();
@@ -539,14 +539,14 @@ void NewGraphPopup::onRender() {
 				}
 				Dummy(ImVec2(0.0f, 10.0f));
 				if (Button("+")) {
-					Line l(&pr->headers[pr->symbols[0]]);
+					Line l(&pr->headers[pr->ids[0]]);
 					graph.lines.push_back(l);
 				}
 				EndTabItem();
 			}
 		}
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->symbols[0]], { Line(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
 			pr->graphs.push_back(g);
 		}
 		EndTabBar();
@@ -592,7 +592,7 @@ void NewStatsPopup::onRender() {
 	if (pr->graphs.size() == 0) {
 		TextWrapped("There is currently no stats.");
 		if (Button("Create one")) {
-			Stats g("New stats 1", &pr->headers[pr->symbols[0]], { Bar(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Stats g("New stats 1", &pr->headers[pr->ids[0]], { Bar(&pr->headers[pr->ids[0]]) }, 0, 0);
 			pr->stats.push_back(g);
 		}
 	}
@@ -604,9 +604,9 @@ void NewStatsPopup::onRender() {
 				InputText("##statsName", &stats.name, 32);
 				Dummy(ImVec2(0.0f, 10.0f));
 				if (BeginCombo("X axis", stats.xHeader->name.c_str())) {
-					for (std::string symbol : pr->symbols) {
-						if (Selectable(symbol.c_str())) {
-							stats.xHeader = &pr->headers[symbol];
+					for (unsigned int id : pr->ids) {
+						if (Selectable(pr->headers[id].name.c_str())) {
+							stats.xHeader = &pr->headers[id];
 						}
 					}
 					EndCombo();
@@ -617,9 +617,9 @@ void NewStatsPopup::onRender() {
 				Text("Number");
 				Bar& bar = stats.bar;
 				if (BeginCombo("Data to plot", bar.header->name.c_str())) {
-					for (std::string symbol : pr->symbols) {
-						if (Selectable(symbol.c_str())) {
-							bar.header = &pr->headers[symbol];
+					for (unsigned int id : pr->ids) {
+						if (Selectable(pr->headers[id].name.c_str())) {
+							bar.header = &pr->headers[id];
 						}
 					}
 					EndCombo();
@@ -630,7 +630,7 @@ void NewStatsPopup::onRender() {
 			}
 		}
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->symbols[0]], { Bar(&pr->headers[pr->symbols[0]]) }, 0, 0);
+			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->ids[0]], { Bar(&pr->headers[pr->ids[0]]) }, 0, 0);
 			pr->stats.push_back(s);
 		}
 		EndTabBar();

@@ -48,7 +48,8 @@ Graph::Graph(std::string name, Header* xHeader, std::vector<Line> lines, int wid
 	 symbol_table.add_variable("c", c);
 	 for (int i = 0; i < xHeader->parent->symbols.size(); i++) {
 		 std::string symbol = xHeader->parent->symbols[i];
-		 symbol_table.add_variable(symbol, xHeader->parent->headers[symbol].values[0]);
+		 unsigned int id = xHeader->parent->ids[i];
+		 symbol_table.add_variable(symbol, xHeader->parent->headers[id].values[0]);
 	 }
 
 	 symbol_table.add_constants();
