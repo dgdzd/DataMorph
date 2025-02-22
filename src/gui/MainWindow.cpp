@@ -228,7 +228,7 @@ void MainWindow::onRender() {
 						}
 					}
 					EndDisabled();
-					PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
+					PushItemFlag(ImGuiItemFlags_AutoClosePopups, false);
 					if (MenuItem("Locked values", NULL, header->lockedValues)) {
 						header->lockedValues = !header->lockedValues;
 					}
