@@ -96,10 +96,10 @@ void GraphWindow::onRender() {
 					}
 					InputText("No blank", g.model, 64);
 					if (Button("Update model")) {
-						if (g.model == "") {
+						if (std::string(g.model) == "") {
 
 						}
-						else if (g.model == g.xHeader->name+"="+g.lines[0].header->name) {
+						else if (std::string(g.model) == std::string(g.xHeader->name+"="+g.lines[0].header->name)) {
 
 						}
 						else {
@@ -158,21 +158,31 @@ void GraphWindow::onRender() {
 								while (precision > 0.00001) {
 									if (sign == 1) {
 										while (loss1 - loss0 > 0) {
-											loss0 = loss1;
-											a += 0.1;
+											loss0 = 0.0;
+											for (int j = 0; j < x_models.size(); j++) {
+												loss0 += std::abs(m_e.value() - x_models[j]);
+											}
+											a += precision/precision0;
+											loss1 = 0.0;
 											for (int j = 0; j < x_models.size(); j++) {
 												loss1 += std::abs(m_e.value() - x_models[j]);
 											}
 										}
+										sign = -1;
 									}
 									else {
-										while (loss1 - loss0 > 0) {
-											loss0 = loss1;
-											a -= 0.1;
+										while (loss1 - loss0 < 0) {
+											loss0 = 0.0;
+											for (int j = 0; j < x_models.size(); j++) {
+												loss0 += std::abs(m_e.value() - x_models[j]);
+											}
+											a -= precision / precision0;
+											loss1 = 0.0;
 											for (int j = 0; j < x_models.size(); j++) {
 												loss1 += std::abs(m_e.value() - x_models[j]);
 											}
 										}
+										sign = 1;
 									}
 
 								}
