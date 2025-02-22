@@ -10,7 +10,7 @@ Project::Project(std::string name, std::string path) {
 }
 
 void Project::initValues() {
-	for (int i = 0; i < this->symbols.size(); i++) {
+	for (int i = 0; i < this->ids.size(); i++) {
 		Header h = Header(this, this->symbols[i], this->units[i], { 0.0 });
 		this->headers[h.id] = h;
 	}
@@ -52,11 +52,13 @@ void Project::removeColumn(unsigned int id) {
 		return;
 	}
 	this->headers.erase(it);
-	auto ne = std::find(this->symbols.begin(), this->symbols.end(), id);
-	auto d = std::distance(this->symbols.begin(), ne);
-	auto ne2 = std::find(this->units.begin(), this->units.end(), this->units[d]);
+	auto ne = std::find(this->ids.begin(), this->ids.end(), id);
+	auto d = std::distance(this->ids.begin(), ne);
+	auto ne2 = std::find(this->symbols.begin(), this->symbols.end(), this->symbols[d]);
+	auto ne3 = std::find(this->units.begin(), this->units.end(), this->units[d]);
 
-	this->symbols.erase(ne, ne+1);
-	this->units.erase(ne2, ne2+1);
+	this->ids.erase(ne, ne + 1);
+	this->symbols.erase(ne2, ne2+1);
+	this->units.erase(ne3, ne3+1);
 
 }

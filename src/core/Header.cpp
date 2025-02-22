@@ -36,6 +36,7 @@ Header::Header(Project* parent, std::string name, std::string unit, std::vector<
 	}
 
 	// Generate ID
-	srand(DataMorph::getTime());
-	this->id = (int)(100000 + (rand() / RAND_MAX) * 899999); // Génère un ID entre 100000 et 999999
+	double time = DataMorph::getTime();
+	this->id = (int)(100000 + rand() * (899999 / RAND_MAX)); // Génère un ID entre 100000 et 999999
+	std::cout << "Header created : " << id << std::endl;
 }

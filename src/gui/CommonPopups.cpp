@@ -199,9 +199,10 @@ void NewVarPopup::onRender() {
 			}
 			parent->state->popups[name] = false;
 			Header* newHeader = new Header(pr, newSymbol, newUnit, {}, tab == 1 ? expression : "", specs, this->args);
-			pr->addColumn(newHeader);
+			pr->ids.push_back(newHeader->id);
 			pr->symbols.push_back(newSymbol);
 			pr->units.push_back(newUnit);
+			pr->addColumn(newHeader);
 			CloseCurrentPopup();
 			removeInstance();
 		}
@@ -418,8 +419,8 @@ void EditVarPopup::onRender() {
 			}
 
 			Header* h = &pr->headers[id];
-			auto i = std::find(pr->symbols.begin(), pr->symbols.end(), this->id);
-			int d = std::distance(pr->symbols.begin(), i);
+			auto i = std::find(pr->ids.begin(), pr->ids.end(), this->id);
+			int d = std::distance(pr->ids.begin(), i);
 			pr->symbols[d] = newSymbol;
 			pr->units[d] = newUnit;
 			std::vector<double> values = h->values;

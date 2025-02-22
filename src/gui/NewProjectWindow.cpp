@@ -1,4 +1,5 @@
 #include <gui/NewProjectWindow.h>
+
 #include <App.h>
 #include <FontManager.h>
 #include <Utils.h>
@@ -16,8 +17,8 @@ NewProjectWindow::NewProjectWindow() {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking;
 	this->inputs = { new char[100] {""}, new char[100] {""} };
-	this->units = std::vector<std::string>();
 	this->symbols = std::vector<std::string>();
+	this->units = std::vector<std::string>();
 	this->graphics = 0;
 	this->project_name;
 }

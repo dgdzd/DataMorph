@@ -5,6 +5,7 @@
 #include <stb/stb_image.h>
 #include <iostream>
 #include <string>
+#include <random>
 
 DataMorph* DataMorph::inst;
 
@@ -15,6 +16,7 @@ DataMorph::DataMorph() {
 	this->shouldClose = false;
 	this->ftlib = nullptr;
 	this->window = nullptr;
+	srand(10e5 * getTime());
 }
 
 DataMorph* DataMorph::getInstance() {

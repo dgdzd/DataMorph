@@ -99,7 +99,7 @@ void MainWindow::onRender() {
 						pr->addRow(); 
 					}
 					if (MenuItem("Add 10 Rows")) {
-						for (int i; i < 10; i++) {
+						for (int i = 0; i < 10; i++) {
 							pr->addRow();
 						}
 					}
@@ -194,8 +194,8 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->symbols.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->symbols.size(), 0.0f))) {
-			for (int i = 0; i < pr->symbols.size(); i++) {
+		if (BeginTable("##table", pr->ids.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->ids.size(), 0.0f))) {
+			for (int i = 0; i < pr->ids.size(); i++) {
 				std::string header = pr->symbols[i];
 				if (pr->units[i] != "") {
 					header += " (in " + pr->units[i] + ")";
@@ -234,9 +234,9 @@ void MainWindow::onRender() {
 			}
 			for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
 				TableNextRow();
-				for (int i = 0; i < pr->symbols.size(); i++) {
-					std::string symbol = pr->symbols[i];
-					Header& header = pr->headers[pr->ids[i]];
+				for (int j = 0; j < pr->ids.size(); j++) {
+					Header& header = pr->headers[pr->ids[j]];
+					std::string symbol = header.name;
 					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(150);
@@ -263,7 +263,7 @@ void MainWindow::onRender() {
 		}
 		SameLine();
 		if (Button("-")) {
-			if (pr->headers[pr->ids[0]].values.size() > 0) {
+			if (pr->headers[pr->ids[0]].values.size() > 1) {
 				pr->removeRow();
 			}
 		}
@@ -280,9 +280,10 @@ void MainWindow::message(std::string header, ...) {
 		project->symbols = va_arg(args, std::vector<std::string>);
 		project->units = va_arg(args, std::vector<std::string>);
 		for (int i = 0; i < project->symbols.size(); i++) {
-			project->headers[project->ids[i]] = Header(project, project->symbols[i], project->units[i], {});
+			Header h = Header(project, project->symbols[i], project->units[i], { 0.0 });
+			project->ids.push_back(h.id);
+			project->headers[h.id] = h;
 		}
-		project->initValues();
 		
 		this->state->openProject = project;
 		std::cout << "Project created : " << name << std::endl;
