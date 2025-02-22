@@ -8,7 +8,9 @@ FontManager::FontManager() {
 	this->fonts = std::map<const char*, ImFont*>();
 	ImFontGlyphRangesBuilder builder;
 	builder.AddRanges(ImGui::GetIO().Fonts->GetGlyphRangesGreek());
+	builder.AddChar(0x0304); // Combining macron char
 	builder.AddChar(0x0305); // Combining overline char
+	builder.AddChar(0x2098); // Subscript m
 	builder.BuildRanges(&ranges);
 }
 

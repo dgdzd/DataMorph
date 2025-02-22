@@ -45,7 +45,7 @@ void GraphWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 500.0f));
+	SetWindowSize(ImVec2(1200.0f, 800.0f));
 
 	if (BeginTabBar("graphs_tabs")) {
 		for (int i = 0; i < project->graphs.size(); i++) {
@@ -230,15 +230,15 @@ void GraphWindow::onRender() {
 							for (auto v : h->values) {
 								standard_deviation += pow(average - v, 2);
 							}
-							standard_deviation /= h->values.size();
+							standard_deviation /= h->values.size() - 1;
 							standard_deviation = sqrt(standard_deviation);
 
-							// Uncertainty
-							double uncertainty = standard_deviation / sqrt(h->values.size());
-
-							Text((const char*)u8"%s̅ = %.5f %s", h->name, average, h->unit);
+							Text("N(%s) = %d", h->name, h->values.size());
+							Text("min(%s) = %.5f %s", h->name, std::min(h->values), h->unit);
+							Text("max(%s) = %.5f %s", h->name, std::max(h->values), h->unit);
+							Text((const char*)u8"%s\u2098 = %.5f %s", h->name, average, h->unit);
+							Text((const char*)u8"Σ(%s) = %.5f %s", h->name, std::sum(h->values), h->unit);
 							Text((const char*)u8"σ(%s) = %.5f %s", h->name, standard_deviation, h->unit);
-							Text("u(%s) = %.5f %s", h->name, uncertainty, h->unit);
 						}
 						EndChild();
 					}
