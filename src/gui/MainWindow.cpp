@@ -221,9 +221,13 @@ void MainWindow::onRender() {
 						EditVarPopup::getInstance(this, id);
 						this->state->popups["Edit variable"] = true;
 					}
-					if (MenuItem("Remove this column")) {
-						pr->removeColumn(id);
+					BeginDisabled(pr->headers.size() < 2);
+					{
+						if (MenuItem("Remove this column")) {
+							pr->removeColumn(id);
+						}
 					}
+					EndDisabled();
 					PushItemFlag(ImGuiItemFlags_AutoClosePopups, true);
 					if (MenuItem("Locked values", NULL, header->lockedValues)) {
 						header->lockedValues = !header->lockedValues;
