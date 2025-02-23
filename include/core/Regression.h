@@ -13,6 +13,7 @@ namespace Regression {
 	extern double polynomial(const std::vector<double>& x, const std::vector<double>& y, int degree);
 	extern double logistic(const std::vector<double>& x, const std::vector<double>& y);
 	extern double sinusoidal(const std::vector<double>& x, const std::vector<double>& y);
+	extern double custom(std::string model);
 }
 
 #endif

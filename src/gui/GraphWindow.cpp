@@ -66,136 +66,53 @@ void GraphWindow::onRender() {
 					std::string x = g.lines[0].header->name;
 					if (BeginCombo("Choose a model", "None")) {
 						if (Selectable("Linear")) {
-							g.model = g.xHeader->name + "=a*" + x;
+							g.model->expr_str = g.xHeader->name + "=a*" + x;
 						}
 						if (Selectable("Affine")) {
-							g.model = g.xHeader->name + "=a*" + x + "+b";
+							g.model->expr_str = g.xHeader->name + "=a*" + x + "+b";
 						}
 						if (Selectable("Polynomial")) {
-							g.model = g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c";
+							g.model->expr_str = g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c";
 						}
 						if (Selectable("Exponential")) {
-							g.model = g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b";
+							g.model->expr_str = g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b";
 							//e = 2.71828
 						}
 						if (Selectable("Logarithmic")) {
-							g.model = g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b";
+							g.model->expr_str = g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b";
 						}
 						if (Selectable("Power")) {
-							g.model = g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c";
+							g.model->expr_str = g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c";
 						}
 						if (Selectable("Sigmoid")) {
-							g.model = g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")";
+							g.model->expr_str = g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")";
 							//e = 2.71828
 						}
 						if (Selectable("Sine")) {
-							g.model = g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")";
+							g.model->expr_str = g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")";
 						}
 						if (Selectable("Cosine")) {
-							g.model = g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")";
+							g.model->expr_str = g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")";
 						}
 						EndCombo();
 					}
-					InputText("No blank", &g.model);
+					InputText("No blank", &g.model->expr_str);
 					if (Button("Update model")) {
-						if (g.model.empty()) {
+						if (g.model->expr_str.size() == 0) {
 						}
-						else if (g.model == g.xHeader->name+"="+x) {
+						else if (g.model->expr_str == g.xHeader->name+"="+x) {
 
 						}
-						else if (g.model == g.xHeader->name + "=a*" + x + "+b") { // Affine
+						else if (g.model->expr_str == g.xHeader->name + "=a*" + x + "+b") { // Affine
 							if (Regression::affine(g.xHeader->values, g.lines[0].header->values, g.b, g.a)) {
 							}
 						}
-						else if (g.model == g.xHeader->name + "=a*" + x) { // Linear
+						else if (g.model->expr_str == g.xHeader->name + "=a*" + x) { // Linear
 							if (Regression::linear(g.xHeader->values, g.lines[0].header->values, g.a)) {
 							}
 						}
 						else {
-							/*typedef exprtk::symbol_table<double> symbol_table_t;
-							typedef exprtk::expression<double>   expression_t;
-							typedef exprtk::parser<double>       parser_t;
-
-							double a = 0.0;
-							double b = 0.0;
-							double c = 0.0;
-
-							symbol_table_t symbol_table;
-							symbol_table.add_variable("a", a);
-							symbol_table.add_variable("b", b);
-							symbol_table.add_variable("c", c);
-							symbol_table.add_constants();
-							for (int j = 0; j < project->values.size(); j++) {
-								symbol_table.add_variable(project->symbols[j], project->headers[project->ids[j]].values[0]);
-							}
-
-							expression_t m_e;
-							m_e.register_symbol_table(symbol_table);
-
-							parser_t parser;
-							int separator_i = std::string(g.model).find("=");
-							std::string xheader = std::string(g.model).substr(0, separator_i);
-							std::string yModel = std::string(g.model).substr(separator_i + 1);
-							parser.compile(yModel, m_e);
-
-							std::vector<double> x_models = {};
-							for (int j = 0; j < g.lines[0].header->values.size(); j++) {
-								x_models.push_back(g.xHeader->values[j]);
-							}
-
-							double loss0 = 0.0;
-							double loss1 = 0.0;
-							int sign = 1;
-							double precision0 = 10e5;
-							double precision = precision0;
-
-							if (yModel.find("a") != std::string::npos) {
-								for (int j = 0; j < x_models.size(); j++) {
-									loss0 += std::abs(m_e.value() - x_models[j]);
-								}
-								a++;
-								for (int j = 0; j < x_models.size(); j++) {
-									loss1 += std::abs(m_e.value() - x_models[j]);
-								}
-								a--;
-								if (loss1 - loss0 < 0) {
-									sign = -1;
-								}
-								else {
-									sign = 1;
-								}
-								while (precision > 0.00001) {
-									if (sign == 1) {
-										while (loss1 - loss0 > 0) {
-											loss0 = 0.0;
-											for (int j = 0; j < x_models.size(); j++) {
-												loss0 += std::abs(m_e.value() - x_models[j]);
-											}
-											a += precision/precision0;
-											loss1 = 0.0;
-											for (int j = 0; j < x_models.size(); j++) {
-												loss1 += std::abs(m_e.value() - x_models[j]);
-											}
-										}
-										sign = -1;
-									}
-									else {
-										while (loss1 - loss0 < 0) {
-											loss0 = 0.0;
-											for (int j = 0; j < x_models.size(); j++) {
-												loss0 += std::abs(m_e.value() - x_models[j]);
-											}
-											a -= precision / precision0;
-											loss1 = 0.0;
-											for (int j = 0; j < x_models.size(); j++) {
-												loss1 += std::abs(m_e.value() - x_models[j]);
-											}
-										}
-										sign = 1;
-									}
-
-								}
-							}*/
+							std::cout << std::to_string(Regression::custom(g.model->expr_str)) << std::endl;
 						}
 					}
 
