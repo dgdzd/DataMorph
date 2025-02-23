@@ -18,6 +18,7 @@ class GraphWindow : public Window {
 	ImFont* font64;
 	Project* project;
 	unsigned int statsVar;
+	ImPlotRect limits;
 
 public:
 	GraphWindow(Project* project);

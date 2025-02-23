@@ -3,6 +3,7 @@
 
 #include <core/Header.h>
 #include <implot.h>
+#include <core/Model.h>
 #include <vector>
 #include <string>
 
@@ -24,9 +25,9 @@ struct Graph {
 	int width;
 	int height;
 	Header* xHeader;
+	Model* model;
 	std::vector<Line> lines;
 	std::string name;
-	char* model;
 	double a;
 	double b;
 	double c;

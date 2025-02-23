@@ -1,8 +1,9 @@
 #ifndef DM_UTILS_H
 #define DM_UTILS_H
 
-#include <string>
+#include <functional>
 #include <implot.h>
+#include <string>
 #include <vector>
 
 namespace std {
@@ -33,12 +34,17 @@ namespace std {
 	}
 
 	template <typename T>
-	extern T sum(const std::vector<T>& v) {
+	extern T sum(const std::vector<T>& v, std::function<T(T val, int i)> func = [](T val, int i) { return val }) {
 		T s = 0;
 		for (int i = 0; i < v.size(); i++) {
-			s += v[i];
+			s += func(v[i]);
 		}
 		return s;
+	}
+
+	template <typename T>
+	extern T mean(const std::vector<T>& v) {
+		return sum(v) / v.size();
 	}
 }
 

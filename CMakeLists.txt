@@ -24,6 +24,8 @@ set(PROJECT_SOURCES
 		src/core/Expression.cpp
 		src/gui/CommonPopups.cpp
 		src/core/Graph.cpp
+		src/core/Regression.cpp
+		src/core/Model.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

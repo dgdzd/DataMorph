@@ -4,7 +4,9 @@
 #include <cmath>
 #include <FontManager.h>
 #include <implot.h>
+#include <imgui_stdlib.h>
 #include <iostream>
+#include <core/Regression.h>
 #include <Utils.h>
 
 using namespace ImGui;
@@ -60,50 +62,57 @@ void GraphWindow::onRender() {
 						}
 						ImGui::EndMenuBar();
 					}
-					Text("Modelisation : ");
+					Text("Modeling : ");
+					std::string x = g.lines[0].header->name;
 					if (BeginCombo("Choose a model", "None")) {
-						std::string x = g.lines[0].header->name;
 						if (Selectable("Linear")) {
-							strcpy(g.model, (g.xHeader->name + "=a*" + x).c_str());
+							g.model = g.xHeader->name + "=a*" + x;
 						}
 						if (Selectable("Affine")) {
-							strcpy(g.model, (g.xHeader->name + "=a*" + x + "+b").c_str());
+							g.model = g.xHeader->name + "=a*" + x + "+b";
 						}
 						if (Selectable("Polynomial")) {
-							strcpy(g.model, (g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c").c_str());
+							g.model = g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c";
 						}
 						if (Selectable("Exponential")) {
-							strcpy(g.model, (g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b").c_str());
+							g.model = g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b";
 							//e = 2.71828
 						}
 						if (Selectable("Logarithmic")) {
-							strcpy(g.model, (g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b").c_str());
+							g.model = g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b";
 						}
 						if (Selectable("Power")) {
-							strcpy(g.model, (g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c").c_str());
+							g.model = g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c";
 						}
 						if (Selectable("Sigmoid")) {
-							strcpy(g.model, (g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")").c_str());
+							g.model = g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")";
 							//e = 2.71828
 						}
 						if (Selectable("Sine")) {
-							strcpy(g.model, (g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")").c_str());
+							g.model = g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")";
 						}
 						if (Selectable("Cosine")) {
-							strcpy(g.model, (g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")").c_str());
+							g.model = g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")";
 						}
 						EndCombo();
 					}
-					InputText("No blank", g.model, 64);
+					InputText("No blank", &g.model);
 					if (Button("Update model")) {
-						if (std::string(g.model) == "") {
+						if (g.model.empty()) {
+						}
+						else if (g.model == g.xHeader->name+"="+x) {
 
 						}
-						else if (std::string(g.model) == std::string(g.xHeader->name+"="+g.lines[0].header->name)) {
-
+						else if (g.model == g.xHeader->name + "=a*" + x + "+b") { // Affine
+							if (Regression::affine(g.xHeader->values, g.lines[0].header->values, g.b, g.a)) {
+							}
+						}
+						else if (g.model == g.xHeader->name + "=a*" + x) { // Linear
+							if (Regression::linear(g.xHeader->values, g.lines[0].header->values, g.a)) {
+							}
 						}
 						else {
-							typedef exprtk::symbol_table<double> symbol_table_t;
+							/*typedef exprtk::symbol_table<double> symbol_table_t;
 							typedef exprtk::expression<double>   expression_t;
 							typedef exprtk::parser<double>       parser_t;
 
@@ -186,7 +195,7 @@ void GraphWindow::onRender() {
 									}
 
 								}
-							}
+							}*/
 						}
 					}
 
@@ -209,6 +218,16 @@ void GraphWindow::onRender() {
 							ImPlot::SetNextMarkerStyle(l.marker);
 							ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
 						}
+
+						if (g.model) {
+							ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+							ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
+							this->limits = ImPlot::GetPlotLimits();
+							ImPlot::PlotLineG("Model", [](int idx, void* user_data) {
+								Graph& g = *(Graph*)user_data;
+								// On va imprimer tous les points affichable du modèle dans la fenêtre du graphique 
+								// avec `return ImPlotPoint(x, y)`
+							}, this, 2);
 					}
 					ImPlot::EndPlot();
 				}

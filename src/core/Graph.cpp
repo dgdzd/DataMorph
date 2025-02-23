@@ -33,30 +33,5 @@ Graph::Graph(std::string name, Header* xHeader, std::vector<Line> lines, int wid
 	 this->lines = lines;
 	 this->width = width;
 	 this->height = height;
-	 this->model = new char[64] {};
-	 this->a = 0.0;
-	 this->b = 0.0;
-	 this->c = 0.0;
-
-	 typedef exprtk::symbol_table<double> symbol_table_t;
-	 typedef exprtk::expression<double>   expression_t;
-	 typedef exprtk::parser<double>       parser_t;
-
-	 symbol_table_t symbol_table;
-	 symbol_table.add_variable("a", a);
-	 symbol_table.add_variable("b", b);
-	 symbol_table.add_variable("c", c);
-	 for (int i = 0; i < xHeader->parent->symbols.size(); i++) {
-		 std::string symbol = xHeader->parent->symbols[i];
-		 unsigned int id = xHeader->parent->ids[i];
-		 symbol_table.add_variable(symbol, xHeader->parent->headers[id].values[0]);
-	 }
-
-	 symbol_table.add_constants();
-
-	 expression_t m_e;
-	 m_e.register_symbol_table(symbol_table);
-
-	 parser_t parser;
-	 parser.compile(std::string(this->model), m_e);
+	 this->model = nullptr;
 	}
