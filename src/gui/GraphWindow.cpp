@@ -56,8 +56,7 @@ void GraphWindow::onRender() {
 				{
 					BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
 					if (BeginMenuBar()) {
-						if (BeginMenu("Infos"))
-						{
+						if (BeginMenu("Infos")) {
 							ImGui::EndMenu();
 						}
 						ImGui::EndMenuBar();
@@ -104,15 +103,23 @@ void GraphWindow::onRender() {
 
 						}
 						else if (g.model->expr_str == g.xHeader->name + "=a*" + x + "+b") { // Affine
-							if (Regression::affine(g.xHeader->values, g.lines[0].header->values, g.b, g.a)) {
+							if (Regression::affine(g.xHeader->values, g.lines[0].header->values, g.model->b, g.model->a)) {
+								Model* m = g.model;
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
 							}
 						}
 						else if (g.model->expr_str == g.xHeader->name + "=a*" + x) { // Linear
-							if (Regression::linear(g.xHeader->values, g.lines[0].header->values, g.a)) {
+							if (Regression::linear(g.xHeader->values, g.lines[0].header->values, g.model->a)) {
+								Model* m = g.model;
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
 							}
 						}
 						else {
-							std::cout << std::to_string(Regression::custom(g.model->expr_str)) << std::endl;
+							/*std::cout << std::to_string(Regression::custom(g.model->expr_str)) << std::endl;*/
 						}
 					}
 
@@ -135,22 +142,18 @@ void GraphWindow::onRender() {
 							ImPlot::SetNextMarkerStyle(l.marker);
 							ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
 						}
-
-						if (g.model) {
-							ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
-							ImPlot::SetNextMarkerStyle(ImPlotMarker_Circle);
-							this->limits = ImPlot::GetPlotLimits();
-							ImPlot::PlotLineG("Model", [](int idx, void* user_data) {
-								Graph& g = *(Graph*)user_data;
-								// On va imprimer tous les points affichable du modèle dans la fenêtre du graphique 
-								// avec `return ImPlotPoint(x, y)`
-							}, this, 2);
+						std::cout << "c\n";
+					}
+					if (g.model && g.model->values.size() != 0) {
+						ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
+						ImPlot::PlotLine("Model##Plot", &g.xHeader->values[0], &g.model->values[0], g.model->values.size());
 					}
 					ImPlot::EndPlot();
 				}
 				if (TreeNode("Statistics")) {
 					if (BeginChild("##StatsChild", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
-						if (BeginCombo("Var", this->statsVar == 0 ? "None" : project->headers[this->statsVar].name.c_str())) {
+						if (BeginCombo("Data", this->statsVar == 0 ? "None" : project->headers[this->statsVar].name.c_str())) {
 							if (Selectable("None")) {
 								this->statsVar = 0;
 							}

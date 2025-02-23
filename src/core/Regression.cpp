@@ -31,7 +31,7 @@ namespace Regression {
 		return true;
 	}
 
-	double exponential(const std::vector<double>& x, const std::vector<double>& y) {
+	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
 		if (x.size() != y.size()) {
 			return 0.0;
 		}
@@ -42,9 +42,9 @@ namespace Regression {
 		double sum_xy = std::sum(x, [&y](double val, int i) { return val * y[i]; });
 		double w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
 		double w0 = (sum_y - w1 * sum_x) / n;
-	}
+	}*/
 
-	double custom(std::string model, Project* project) {
+	/*double custom(std::string model, Project* project) {
 		if (x.size() != y.size()) {
 			return 0.0;
 		}
@@ -132,5 +132,5 @@ namespace Regression {
 
 			}
 		}
-	}
+	}*/
 }

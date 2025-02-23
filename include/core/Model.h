@@ -6,17 +6,16 @@
 #include <vector>
 
 struct Model {
-	std::string name;
 	std::string expr_str;
-	double a, b, c;
-	std::pair<double, double> values;
+	double a, b, c, x;
+	std::vector<double> values;
 	exprtk::symbol_table<double> symbol_table;
 	exprtk::expression<double> expression_t;
 
-	Model(std::string name, std::string expression, std::vector<std::string> symbols, std::vector<double> values);
+	Model(std::string expression, std::vector<std::string> symbols, std::vector<double> values);
 	void addVars();
 	bool compile();
-	double value();
+	double value(double x);
 
 };
 

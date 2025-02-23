@@ -34,10 +34,10 @@ namespace std {
 	}
 
 	template <typename T>
-	extern T sum(const std::vector<T>& v, std::function<T(T val, int i)> func = [](T val, int i) { return val }) {
+	extern T sum(const std::vector<T>& v, std::function<T(T val, int i)> func = [](T val, int i) { return val; }) {
 		T s = 0;
 		for (int i = 0; i < v.size(); i++) {
-			s += func(v[i]);
+			s += func(v[i], i);
 		}
 		return s;
 	}

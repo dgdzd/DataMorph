@@ -33,5 +33,5 @@ Graph::Graph(std::string name, Header* xHeader, std::vector<Line> lines, int wid
 	 this->lines = lines;
 	 this->width = width;
 	 this->height = height;
-	 this->model = nullptr;
+	 this->model = new Model("", {}, {});
 	}
