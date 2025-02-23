@@ -1,6 +1,7 @@
 #ifndef DM_EXPRESSION_H
 #define DM_EXPRESSION_H
 
+#define exprtk_disable_caseinsensitivity
 #include <exprtk.hpp>
 #include <map>
 #include <string>

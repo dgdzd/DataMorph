@@ -1,5 +1,6 @@
 #include <core/Graph.h>
 
+#include <core/Model.h>
 #include <core/Project.h>
 
 Line::Line() {
@@ -28,10 +29,10 @@ bool Line::operator==(Line& other) {
 }
 
 Graph::Graph(std::string name, Header* xHeader, std::vector<Line> lines, int width, int height) {
-	 this->name = name;
-	 this->xHeader = xHeader;
-	 this->lines = lines;
-	 this->width = width;
-	 this->height = height;
-	 this->model = new Model("", {}, {});
-	}
+	this->name = name;
+	this->xHeader = xHeader;
+	this->lines = lines;
+	this->width = width;
+	this->height = height;
+	this->model = new Model("", {}, {}, xHeader->name);
+}

@@ -52,3 +52,26 @@ const char* ImPlotMarkerToString(ImPlotMarker marker) {
 		return "None";
 	}
 }
+
+std::string ModelTypeToString(ModelType type) {
+	switch (type) {
+	case ModelType::LINEAR:
+		return "Linear";
+	case ModelType::AFFINE:
+		return "Affine";
+	case ModelType::QUADRATIC:
+		return "Quadratic";
+	case ModelType::CUBIC:
+		return "Cubic";
+	case ModelType::EXPONENTIAL:
+		return "Exponential";
+	case ModelType::LOGARITHMIC:
+		return "Logarithmic";
+	case ModelType::POWER:
+		return "Power";
+	case ModelType::OTHER:
+		return "Other";
+	default:
+		return "None";
+	}
+}

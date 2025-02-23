@@ -1,6 +1,7 @@
 #ifndef DM_UTILS_H
 #define DM_UTILS_H
 
+#include <core/Model.h>
 #include <functional>
 #include <implot.h>
 #include <string>
@@ -49,5 +50,6 @@ namespace std {
 }
 
 extern const char* ImPlotMarkerToString(ImPlotMarker marker);
+extern std::string ModelTypeToString(ModelType type);
 
 #endif

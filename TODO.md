@@ -2,9 +2,10 @@
 
  - [ ] Tables
 	- [x] Manual data entry
-	- [ ] Fix bug where symbols and units are desynchronized after removing a column
+	- [x] Fix bug where symbols and units are desynchronized after removing a column
 	- [ ] Possibility to add expressions directly in the new project window
-	- [ ] Right-click context popup to remove or modify a column
+	- [x] Right-click context popup to remove or modify a column
+	- [ ] Fix a bug where dependant variables don't all update after adding a new row
 
 - [ ] Expressions
 	- [ ] Add possibility to retrieve a value from another line (like "x[i-1]")
@@ -22,8 +23,12 @@
 	- [x] Multiple data plots per graph
 	- [x] Customisable lines
 	- [ ] Resize graph to fit window's size.
-	- [ ] Compute statistics (average, uncertainty, error percentage, etc...)
-	- [ ] Modeling that can automatically fit the data as much as possible
+	- [x] Compute statistics (average, uncertainty, error percentage, etc...)
+
+- [ ] Modeling
+	- [ ] Customize the modeling plot
+	- [x] Modeling for linear and affine functions
+	- [ ] Modeling for more complex functions
 
 - [ ] Translation
 	- [ ] Add class and methods which can translate a string of a label ID, such as "welcome.datamorph" into a string corresponding to the chosen language. The class can be something like `Translator(Language* language)` which has a method like `translate(std::string id)`
@@ -36,3 +41,6 @@
 	- [ ] українська
 	- [ ] 廣州話 (Cantonese)
 	- [ ] 简体中文 (Simplified chinese)
+
+- [ ] Resources
+	- [	] Embed resources in the executable

@@ -2,11 +2,12 @@
 
 #include <App.h>
 #include <cmath>
-#include <FontManager.h>
-#include <implot.h>
-#include <imgui_stdlib.h>
-#include <iostream>
+#include <core/Model.h>
 #include <core/Regression.h>
+#include <FontManager.h>
+#include <imgui_stdlib.h>
+#include <implot.h>
+#include <iostream>
 #include <Utils.h>
 
 using namespace ImGui;
@@ -53,8 +54,7 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				{
-					BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar);
+				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
 					if (BeginMenuBar()) {
 						if (BeginMenu("Infos")) {
 							ImGui::EndMenu();
@@ -62,36 +62,63 @@ void GraphWindow::onRender() {
 						ImGui::EndMenuBar();
 					}
 					Text("Modeling : ");
-					std::string x = g.lines[0].header->name;
-					if (BeginCombo("Choose a model", "None")) {
+					if (!g.model->dataset) {
+						g.model->dataset = &g.lines[0];
+					}
+					std::string x = g.xHeader->name;
+					std::string y = g.model->dataset->header->name;
+					if (BeginCombo("Choose a model", ModelTypeToString(g.model->type).c_str())) {
 						if (Selectable("Linear")) {
-							g.model->expr_str = g.xHeader->name + "=a*" + x;
+							g.model->type = ModelType::LINEAR;
+							g.model->expr_str = y + "=a*" + x;
+							g.model->refresh();
 						}
 						if (Selectable("Affine")) {
-							g.model->expr_str = g.xHeader->name + "=a*" + x + "+b";
+							g.model->type = ModelType::AFFINE;
+							g.model->expr_str = y + "=a*" + x + "+b";
+							g.model->refresh();
 						}
-						if (Selectable("Polynomial")) {
-							g.model->expr_str = g.xHeader->name + "=a*" + x + "^2+b*" + x + "+c";
+						BeginDisabled();
+						{
+							if (Selectable("Polynomial")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
+							}
+							if (Selectable("Exponential")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*2.71828^" + x + "+b";
+								//e = 2.71828
+							}
+							if (Selectable("Logarithmic")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*log(" + x + ")+b";
+							}
+							if (Selectable("Power")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*" + x + "^b+c";
+							}
+							if (Selectable("Sigmoid")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=1/(1+2.71828^-" + x + ")";
+								//e = 2.71828
+							}
+							if (Selectable("Sine")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*sin(b+" + x + ")";
+							}
+							if (Selectable("Cosine")) {
+								g.model->type = ModelType::LINEAR;
+								g.model->expr_str = y + "=a*cos(b+" + x + ")";
+							}
+							EndDisabled();
 						}
-						if (Selectable("Exponential")) {
-							g.model->expr_str = g.xHeader->name + "=a*2.71828^" + g.lines[0].header->name + "+b";
-							//e = 2.71828
-						}
-						if (Selectable("Logarithmic")) {
-							g.model->expr_str = g.xHeader->name + "=a*log(" + g.lines[0].header->name + ")+b";
-						}
-						if (Selectable("Power")) {
-							g.model->expr_str = g.xHeader->name + "=a*" + g.lines[0].header->name + "^b+c";
-						}
-						if (Selectable("Sigmoid")) {
-							g.model->expr_str = g.xHeader->name + "=1/(1+2.71828^-" + g.lines[0].header->name + ")";
-							//e = 2.71828
-						}
-						if (Selectable("Sine")) {
-							g.model->expr_str = g.xHeader->name + "=a*sin(b+" + g.lines[0].header->name + ")";
-						}
-						if (Selectable("Cosine")) {
-							g.model->expr_str = g.xHeader->name + "=a*cos(b+" + g.lines[0].header->name + ")";
+						EndCombo();
+					}
+					if (BeginCombo("Choose dataset", g.lines[0].header->name.c_str())) {
+						for (int i = 0; i < g.lines.size(); i++) {
+							if (Selectable(g.lines[i].header->name.c_str())) {
+								g.model->dataset = &g.lines[i];
+							}
 						}
 						EndCombo();
 					}
@@ -102,16 +129,19 @@ void GraphWindow::onRender() {
 						else if (g.model->expr_str == g.xHeader->name+"="+x) {
 
 						}
-						else if (g.model->expr_str == g.xHeader->name + "=a*" + x + "+b") { // Affine
-							if (Regression::affine(g.xHeader->values, g.lines[0].header->values, g.model->b, g.model->a)) {
+						else if (g.model->type == AFFINE) { // Affine
+							if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
+								printf("a = %f\n", g.model->a);
+								printf("b = %f\n", g.model->b);
 								Model* m = g.model;
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
 							}
 						}
-						else if (g.model->expr_str == g.xHeader->name + "=a*" + x) { // Linear
-							if (Regression::linear(g.xHeader->values, g.lines[0].header->values, g.model->a)) {
+						else if (g.model->type == LINEAR) { // Linear
+							if (Regression::linear(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
+								printf("a = %f\n", g.model->a);
 								Model* m = g.model;
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
@@ -142,7 +172,6 @@ void GraphWindow::onRender() {
 							ImPlot::SetNextMarkerStyle(l.marker);
 							ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
 						}
-						std::cout << "c\n";
 					}
 					if (g.model && g.model->values.size() != 0) {
 						ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));

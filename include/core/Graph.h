@@ -3,10 +3,10 @@
 
 #include <core/Header.h>
 #include <implot.h>
-#include <core/Model.h>
 #include <vector>
 #include <string>
 
+struct Model;
 
 struct Line {
 	Header* header;
