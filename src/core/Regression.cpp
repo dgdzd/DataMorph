@@ -77,9 +77,9 @@ namespace Regression {
 		double loss0 = 0.0;
 		double loss1 = 0.0;
 		int sign = 1;
-		double precision0 = 10e5;
-		double precision = precision0;
+		double precision = 1.0;
 		bool same = false;
+		double delta_loss = 0.0;
 
 		if (yModel.find(x_str) != std::string::npos) {
 			if (yModel.find("a") != std::string::npos) {
@@ -93,23 +93,28 @@ namespace Regression {
 					loss1 += std::abs(m_e.value() - ys[j]);
 				}
 				a--;
-				if (loss1 - loss0 < 0) {
+				if (loss1 - loss0 > 0) {
 					sign = -1;
 				}
-
-				while (precision > 0.00001 || same) {
+				while (precision > 0.00001 && not same) {
+					std::cout << sign << std::endl;
 					if (sign == 1) {
-						while (loss1 - loss0 > 0) {
+						delta_loss = -1;
+						while (delta_loss < 0) {
 							loss0 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a += precision / precision0;
+							a += precision;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss1 += std::abs(m_e.value() - ys[j]);
+							}
+							delta_loss = loss1 - loss0;
+							if (delta_loss == 0) {
+								same = true;
 							}
 							std::cout << a << std::endl;
 							std::cout << loss0 << std::endl;
@@ -118,29 +123,27 @@ namespace Regression {
 						sign = -1;
 					}
 					else {
-						while (loss1 - loss0 < 0) {
+						delta_loss = 1;
+						while (delta_loss > 0) {
 							loss0 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a -= precision / precision0;
+							a -= precision;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss1 += std::abs(m_e.value() - ys[j]);
 							}
+							delta_loss = loss1 - loss0;
+							if (delta_loss == 0) {
+								same = true;
+							}
 						}
 						sign = 1;
 					}
 					precision /= 10;
-
-					bool alt = true;
-					for (int j = 0; j < ys.size(); j++) {
-						x = xs[j];
-						alt = alt && (m_e.value() == ys[j]);
-					}
-					same = alt;
 				}
 			}
 		}
