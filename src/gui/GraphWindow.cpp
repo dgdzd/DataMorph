@@ -23,6 +23,8 @@ GraphWindow::GraphWindow(Project* project) {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 	this->statsVar = 0;
+	this->model_text = "";
+	this->numbersVar = 0;
 }
 
 void GraphWindow::onAttach() {
@@ -54,7 +56,7 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
+				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f + 100, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
 					if (BeginMenuBar()) {
 						if (BeginMenu("Infos")) {
 							ImGui::EndMenu();
@@ -68,6 +70,11 @@ void GraphWindow::onRender() {
 					std::string x = g.xHeader->name;
 					std::string y = g.model->dataset->header->name;
 					if (BeginCombo("Choose a model", ModelTypeToString(g.model->type).c_str())) {
+						if (Selectable("Custom")) {
+							g.model->type = ModelType::CUSTOM;
+							g.model->expr_str = y + "=" + x;
+							g.model->refresh();
+						}
 						if (Selectable("Linear")) {
 							g.model->type = ModelType::LINEAR;
 							g.model->expr_str = y + "=a*" + x;
@@ -122,36 +129,54 @@ void GraphWindow::onRender() {
 						}
 						EndCombo();
 					}
-					InputText("No blank", &g.model->expr_str);
+
+					if (g.model->type == CUSTOM) {
+						InputText("No blank", &g.model->expr_str);
+					}
+					else {
+						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
+					}
+
 					if (Button("Update model")) {
 						if (g.model->expr_str.size() == 0) {
+							model_text = "model empty";
 						}
 						else if (g.model->expr_str == g.xHeader->name+"="+x) {
+							model_text = "model invalid";
 
 						}
 						else if (g.model->type == AFFINE) { // Affine
 							if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
-								printf("a = %f\n", g.model->a);
-								printf("b = %f\n", g.model->b);
 								Model* m = g.model;
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b);
 							}
 						}
 						else if (g.model->type == LINEAR) { // Linear
 							if (Regression::linear(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
-								printf("a = %f\n", g.model->a);
 								Model* m = g.model;
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
+								model_text = "a = " + std::to_string(g.model->a);
+							}
+						}
+						else if (g.model->type == CUSTOM) {
+							if (Regression::custom(g.xHeader->values, g.model->dataset->header->values, g.model->expr_str, g.model->a, g.model->b, g.model->c, g.model->xlabel)) {
+								Model* m = g.model;
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
 							}
 						}
 						else {
-							/*std::cout << std::to_string(Regression::custom(g.model->expr_str)) << std::endl;*/
+							
 						}
 					}
+					Text(model_text.c_str());
 
 					EndChild();
 				}
@@ -193,28 +218,57 @@ void GraphWindow::onRender() {
 							}
 							EndCombo();
 						}
+						if (BeginCombo("Numbers", this->numbersVar == 0 ? "None" : project->headers[this->numbersVar].name.c_str())) {
+							if (Selectable("None")) {
+								this->numbersVar = 0;
+							}
+							for (int i = 0; i < project->headers.size(); i++) {
+								if (Selectable(project->headers[project->ids[i]].name.c_str())) {
+									this->numbersVar = project->ids[i];
+								}
+							}
+							EndCombo();
+						}
 						if (this->statsVar != 0) {
 							Header* h = &project->headers[this->statsVar];
+							Header* h2 = &project->headers[this->numbersVar];
+
+							std::vector<double> numbers = {};
+							if (this->numbersVar == 0) {
+								for (int i = 0; i < h->values.size(); i++) {
+									numbers.push_back(1.0);
+								}
+							}
+							else {
+								for (int i = 0; i < h2->values.size(); i++) {
+									numbers.push_back(h2->values[i]);
+								}
+							}
 
 							// Average
 							double average = 0;
-							for (auto v : h->values) {
-								average += v;
+							double coeff = 0;
+							for (int v = 0; v < h->values.size(); v++) {
+								average += h->values[v]*numbers[v];
 							}
-							average /= h->values.size();
+
+							for (int i = 0; i < numbers.size(); i++) {
+								coeff += numbers[i];
+							}
+							average /= coeff;
 
 							// Standard deviation
 							double standard_deviation = 0;
-							for (auto v : h->values) {
-								standard_deviation += pow(average - v, 2);
+							for (int v = 0; v < h->values.size(); v++) {
+								standard_deviation += pow(average - h->values[v]*numbers[v], 2);
 							}
 							standard_deviation /= h->values.size();
 							standard_deviation = sqrt(standard_deviation);
 
 							// Sample standard deviation
 							double standard_deviation1 = 0;
-							for (auto v : h->values) {
-								standard_deviation1 += pow(average - v, 2);
+							for (int v = 0; v < h->values.size(); v++) {
+								standard_deviation1 += pow(average - h->values[v]*numbers[v], 2);
 							}
 							standard_deviation1 /= h->values.size()-1;
 							standard_deviation1 = sqrt(standard_deviation1);

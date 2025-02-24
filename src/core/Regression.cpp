@@ -4,6 +4,7 @@
 #include <iostream>
 #include <Utils.h>
 #include <vector>
+#include <exprtk.hpp>
 
 namespace Regression {
 	bool linear(const std::vector<double>& x, const std::vector<double>& y, double& w1) {
@@ -44,93 +45,105 @@ namespace Regression {
 		double w0 = (sum_y - w1 * sum_x) / n;
 	}*/
 
-	/*double custom(std::string model, Project* project) {
-		if (x.size() != y.size()) {
-			return 0.0;
+	bool custom(const std::vector<double>& xs, const std::vector<double>& ys, std::string model, double& a, double& b, double& c, std::string x_str) {
+		if (xs.size() != ys.size()) {
+			return false;
 		}
 		typedef exprtk::symbol_table<double> symbol_table_t;
 		typedef exprtk::expression<double>   expression_t;
 		typedef exprtk::parser<double>       parser_t;
 
-		double a = 0.0;
-		double b = 0.0;
-		double c = 0.0;
+		a = 1.0;
+		b = 1.0;
+		c = 1.0;
+		double x = xs[0];
 
 		symbol_table_t symbol_table;
 		symbol_table.add_variable("a", a);
 		symbol_table.add_variable("b", b);
 		symbol_table.add_variable("c", c);
+		symbol_table.add_variable(x_str, x);
 		symbol_table.add_constants();
-		for (int j = 0; j < project->symbol.size(); j++) {
-			symbol_table.add_variable(project->symbols[j], project->headers[project->ids[j]].values[0]);
-		}
 
 		expression_t m_e;
 		m_e.register_symbol_table(symbol_table);
 
 		parser_t parser;
-		int separator_i = std::string(g.model).find("=");
-		std::string xheader = std::string(g.model).substr(0, separator_i);
-		std::string yModel = std::string(g.model).substr(separator_i + 1);
+		int separator_i = std::string(model).find("=");
+		std::string xheader = std::string(model).substr(0, separator_i);
+		std::string yModel = std::string(model).substr(separator_i + 1);
 		parser.compile(yModel, m_e);
-
-		std::vector<double> x_models = {};
-		for (int j = 0; j < g.lines[0].header->values.size(); j++) {
-			x_models.push_back(g.xHeader->values[j]);
-		}
 
 		double loss0 = 0.0;
 		double loss1 = 0.0;
 		int sign = 1;
 		double precision0 = 10e5;
 		double precision = precision0;
+		bool same = false;
 
-		if (yModel.find("a") != std::string::npos) {
-			for (int j = 0; j < x_models.size(); j++) {
-				loss0 += std::abs(m_e.value() - x_models[j]);
-			}
-			a++;
-			for (int j = 0; j < x_models.size(); j++) {
-				loss1 += std::abs(m_e.value() - x_models[j]);
-			}
-			a--;
-			if (loss1 - loss0 < 0) {
-				sign = -1;
-			}
-			else {
-				sign = 1;
-			}
-			while (precision > 0.00001) {
-				if (sign == 1) {
-					while (loss1 - loss0 > 0) {
-						loss0 = 0.0;
-						for (int j = 0; j < x_models.size(); j++) {
-							loss0 += std::abs(m_e.value() - x_models[j]);
-						}
-						a += precision/precision0;
-						loss1 = 0.0;
-						for (int j = 0; j < x_models.size(); j++) {
-							loss1 += std::abs(m_e.value() - x_models[j]);
-						}
-					}
+		if (yModel.find(x_str) != std::string::npos) {
+			if (yModel.find("a") != std::string::npos) {
+				for (int j = 0; j < ys.size(); j++) {
+					x = xs[j];
+					loss0 += std::abs(m_e.value() - ys[j]);
+				}
+				a++;
+				for (int j = 0; j < ys.size(); j++) {
+					x = xs[j];
+					loss1 += std::abs(m_e.value() - ys[j]);
+				}
+				a--;
+				if (loss1 - loss0 < 0) {
 					sign = -1;
 				}
-				else {
-					while (loss1 - loss0 < 0) {
-						loss0 = 0.0;
-						for (int j = 0; j < x_models.size(); j++) {
-							loss0 += std::abs(m_e.value() - x_models[j]);
-						}
-						a -= precision / precision0;
-						loss1 = 0.0;
-						for (int j = 0; j < x_models.size(); j++) {
-							loss1 += std::abs(m_e.value() - x_models[j]);
-						}
-					}
-					sign = 1;
-				}
 
+				while (precision > 0.00001 || same) {
+					if (sign == 1) {
+						while (loss1 - loss0 > 0) {
+							loss0 = 0.0;
+							for (int j = 0; j < ys.size(); j++) {
+								x = xs[j];
+								loss0 += std::abs(m_e.value() - ys[j]);
+							}
+							a += precision / precision0;
+							loss1 = 0.0;
+							for (int j = 0; j < ys.size(); j++) {
+								x = xs[j];
+								loss1 += std::abs(m_e.value() - ys[j]);
+							}
+							std::cout << a << std::endl;
+							std::cout << loss0 << std::endl;
+							std::cout << loss1 << std::endl;
+						}
+						sign = -1;
+					}
+					else {
+						while (loss1 - loss0 < 0) {
+							loss0 = 0.0;
+							for (int j = 0; j < ys.size(); j++) {
+								x = xs[j];
+								loss0 += std::abs(m_e.value() - ys[j]);
+							}
+							a -= precision / precision0;
+							loss1 = 0.0;
+							for (int j = 0; j < ys.size(); j++) {
+								x = xs[j];
+								loss1 += std::abs(m_e.value() - ys[j]);
+							}
+						}
+						sign = 1;
+					}
+					precision /= 10;
+
+					bool alt = true;
+					for (int j = 0; j < ys.size(); j++) {
+						x = xs[j];
+						alt = alt && (m_e.value() == ys[j]);
+					}
+					same = alt;
+				}
 			}
 		}
-	}*/
+		return true;
+	}
 }

@@ -9,6 +9,7 @@
 
 enum ModelType : int {
 	NONE = -1,
+	CUSTOM,
 	LINEAR,
 	AFFINE,
 	QUADRATIC,

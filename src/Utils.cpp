@@ -59,6 +59,8 @@ std::string ModelTypeToString(ModelType type) {
 		return "Linear";
 	case ModelType::AFFINE:
 		return "Affine";
+	case ModelType::CUSTOM:
+		return "Custom";
 	case ModelType::QUADRATIC:
 		return "Quadratic";
 	case ModelType::CUBIC:

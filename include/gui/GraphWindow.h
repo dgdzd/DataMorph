@@ -18,7 +18,10 @@ class GraphWindow : public Window {
 	ImFont* font64;
 	Project* project;
 	unsigned int statsVar;
+	std::string model_message;
 	ImPlotRect limits;
+	std::string model_text;
+	unsigned int numbersVar;
 
 public:
 	GraphWindow(Project* project);
