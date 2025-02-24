@@ -9,7 +9,7 @@ add_compile_options("/bigobj")
 
 ###################### Main DataMorph Project ######################
 
-set(MAIN_FILE src/embedder/main.cpp)
+set(MAIN_FILE main.cpp)
 set(PROJECT_SOURCES 
 		src/App.cpp
 		src/core/imgui_extension.cpp
@@ -28,7 +28,7 @@ set(PROJECT_SOURCES
 		src/core/Graph.cpp
 		src/core/Regression.cpp
 		src/core/Model.cpp
-		
+		src/core/FileHandler.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
@@ -52,7 +52,10 @@ file(GLOB LIBS_LIB "dependencies/libs/*.lib")
 file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
 
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES})
+add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES} resources/resources.rc)
+
+add_subdirectory(nativefiledialog-extended)
+target_link_libraries(DataMorph PRIVATE nfd)
 
 target_include_directories(DataMorph PUBLIC include/)
 target_include_directories(DataMorph PRIVATE dependencies/include/imgui)

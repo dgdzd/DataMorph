@@ -2,12 +2,8 @@
 #define DM_NEWPROJECTWINDOW_H
 
 #include <core/gui/Window.h>
-#include <core/imgui_extension.h>
-#include <App.h>
-#include <imgui_internal.h>
 #include <string>
 #include <vector>
-#include <utility>
 
 using namespace ImGui;
 
@@ -16,10 +12,14 @@ class NewProjectWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	std::vector<char*> inputs;
-	std::vector<std::string> symbols;
-	std::vector<std::string> units;
+	std::vector<std::vector<std::string>> symbols;
+	std::vector<std::vector<std::string>> units;
+	std::vector<std::vector<double>> values;
+	std::string path;
+	std::string filename;
+	int filesize;
 	int graphics;
-	char project_name[32] = "Untitled-1";
+	char project_name[32] = "New project";
 
 public:
 	NewProjectWindow();

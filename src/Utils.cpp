@@ -24,6 +24,44 @@ std::string std::trim(const std::string& str, const char c) {
 	return trim_leading(trim_trailing(str, c), c);
 }
 
+std::vector<std::string> std::split(const std::string& str, const char c) {
+	std::vector<std::string> parts;
+	std::string part = "";
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == c) {
+			parts.push_back(part);
+			part = "";
+		}
+		else {
+			part += str[i];
+		}
+	}
+	parts.push_back(part);
+	return parts;
+}
+
+std::string std::format_num(double val, std::string prefix) {
+	if (val > 10e2) {
+		std::string strval = std::to_string(val / 10e2);
+		return strval.substr(0, strval.find(".") + 3) + " k" + prefix;
+	}
+	else if (val > 10e5) {
+		std::string strval = std::to_string(val / 10e5);
+		return strval.substr(0, strval.find(".") + 3) + " M" + prefix;
+	}
+	else if (val > 10e8) {
+		std::string strval = std::to_string(val / 10e8);
+		return strval.substr(0, strval.find(".") + 3) + " G" + prefix;
+	}
+	else if (val > 10e11) {
+		std::string strval = std::to_string(val / 10e11);
+		return strval.substr(0, strval.find(".") + 3) + " T" + prefix;
+	}
+	else {
+		return std::to_string((int)val) + " " +prefix;
+	}
+}
+
 // Enum-to-string conversion
 
 const char* ImPlotMarkerToString(ImPlotMarker marker) {

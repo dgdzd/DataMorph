@@ -1,9 +1,15 @@
 #include <gui/NewProjectWindow.h>
 
 #include <App.h>
+#include <core/FileHandler.h>
+#include <core/imgui_extension.h>
 #include <FontManager.h>
-#include <Utils.h>
+#include <imgui_internal.h>
+#include <imgui_stdlib.h>
 #include <iostream>
+#include <nfd.hpp>
+#include <utility>
+#include <Utils.h>
 
 using namespace ImGui;
 
@@ -17,10 +23,9 @@ NewProjectWindow::NewProjectWindow() {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking;
 	this->inputs = { new char[100] {""}, new char[100] {""} };
-	this->symbols = std::vector<std::string>();
-	this->units = std::vector<std::string>();
+	this->symbols = { {}, {} };
+	this->units = { {}, {} };
 	this->graphics = 0;
-	this->project_name;
 }
 
 void NewProjectWindow::onAttach() {
@@ -50,8 +55,11 @@ void NewProjectWindow::onRender() {
 	SetWindowSize(ImVec2(900.0f, 500.0f));
 	SetWindowFocus();
 
+	int tab = -1;
 	if (BeginTabBar("##tabs", ImGuiTabBarFlags_None)) {
 		if (BeginTabItem("Manual data entry")) {
+			tab = 0;
+
 			SetCurrentFont(this->font64);
 			SetWindowFontScale(0.4f);
 			Text("Enter name and unit :");
@@ -64,18 +72,18 @@ void NewProjectWindow::onRender() {
 			BeginDisabled(this->inputs[0][0] == '\0');
 			{
 				if (Button("Add/Modify")) {
-					auto found_it = std::find(symbols.begin(), symbols.end(), std::string(this->inputs[0]));
-					if (found_it == symbols.end()) {
+					auto found_it = std::find(symbols[tab].begin(), symbols[tab].end(), std::string(this->inputs[0]));
+					if (found_it == symbols[tab].end()) {
 						std::string magnitude = std::string(this->inputs[0]);
 						std::string unit = std::string(this->inputs[1]);
 						magnitude = std::trim(magnitude);
 						unit = std::trim(unit);
-						this->symbols.push_back(magnitude);
-						this->units.push_back(unit);
+						this->symbols[tab].push_back(magnitude);
+						this->units[tab].push_back(unit);
 					}
 					else {
-						int i = std::distance(symbols.begin(), found_it);
-						units[i] = std::string(this->inputs[1]);
+						int i = std::distance(symbols[tab].begin(), found_it);
+						units[tab][i] = std::string(this->inputs[1]);
 					}
 				}
 			}
@@ -83,9 +91,9 @@ void NewProjectWindow::onRender() {
 			
 
 			if (BeginChild("##units", ImVec2(0, 100), ImGuiChildFlags_Borders)) {
-				for (int i = 0; i < symbols.size(); i++) {
-					std::string magnitude = symbols[i];
-					std::string unit = units[i];
+				for (int i = 0; i < symbols[tab].size(); i++) {
+					std::string magnitude = symbols[tab][i];
+					std::string unit = units[tab][i];
 					Text("%s : %s", magnitude, unit == "" ? "(No unit)" : unit);
 					SameLine();
 
@@ -93,8 +101,8 @@ void NewProjectWindow::onRender() {
 					PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
 					PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
 					if (Button(("Remove##" + std::to_string(i)).c_str())) {
-						this->symbols.erase(this->symbols.begin() + i);
-						this->units.erase(this->units.begin() + i);
+						this->symbols[tab].erase(this->symbols[tab].begin() + i);
+						this->units[tab].erase(this->units[tab].begin() + i);
 					}
 					PopStyleColor();
 					PopStyleColor();
@@ -110,17 +118,75 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 
+		if (BeginTabItem("Import")) {
+			tab = 1;
+			Text("Import a data file (.csv, .txt, .dat)");
+			if (Button("Browse")) {
+				NFD::UniquePath outPath;
+				outPath;
+
+				nfdfilteritem_t filterItem[1] = { {"Data files", "csv,dat,txt"} };
+
+				nfdresult_t result = NFD::OpenDialog(outPath, filterItem, 1, "C:\\Users");
+				if (result == NFD_OKAY) {
+					this->path = outPath.get();
+					FileHandler::read_csv_headers(this->path, this->symbols[tab], this->filesize, this->filename);
+					FileHandler::read_csv_values(this->path, this->values, this->filesize, this->filename);
+					this->units[tab] = std::vector<std::string>(this->symbols[tab].size(), "");
+				}
+				else if (result == NFD_CANCEL) {
+					std::cout << "User pressed cancel." << std::endl;
+				}
+				else {
+					std::cout << "Error: " << NFD::GetError() << std::endl;
+				}
+			}
+
+			if (this->symbols[tab].empty()) {
+				TextWrapped("Note : The first line of the file must contain the headers of the columns. "
+					"Each column will be assigned a variable in the project. "
+					"Each row will be assigned a line in the table.");
+			}
+			else {
+				Text("Selected data file : %s", this->filename.c_str());
+				Text("File size : %s", std::format_num(this->filesize, "b"));
+
+				if (BeginChild("##imported_columns", ImVec2(0, 0), ImGuiChildFlags_Border)) {
+					for (int i = 0; i < symbols[tab].size(); i++) {
+						std::string& symbol = symbols[tab][i];
+						InputText(("##input_" + symbol).c_str(), &symbol);
+						SameLine();
+						PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+						PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+						PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+						if (Button(("Remove##" + std::to_string(i)).c_str())) {
+							this->symbols[tab].erase(this->symbols[tab].begin() + i);
+							this->units[tab].erase(this->units[tab].begin() + i);
+						}
+						PopStyleColor();
+						PopStyleColor();
+						PopStyleColor();
+					}
+					EndChild();
+				}
+			}
+			EndTabItem();
+		}
+
 		if (BeginTabItem("From video (.avi)")) {
+			tab = 2;
 			Text("idk");
 			EndTabItem();
 		}
 
 		if (BeginTabItem("From sound (.wav)")) {
+			tab = 3;
 			Text("idk");
 			EndTabItem();
 		}
 
 		if (BeginTabItem("Fluid Simulation")) {
+			tab = 4;
 			Text("not yet !");
 			EndTabItem();
 		}
@@ -134,7 +200,25 @@ void NewProjectWindow::onRender() {
 		{
 			if (Button("Create Project")) {
 				this->p_open = false;
-				DataMorph::getInstance()->getLayer(0)->message("new_project_t1", std::string(this->project_name), symbols, units);
+				std::string m_header = "";
+				switch (tab) {
+				case 0:
+					m_header = "new_project_t1";
+					DataMorph::getInstance()->getLayer(0)->message(m_header, std::string(this->project_name), symbols[tab], units[tab]);
+					break;
+				case 1:
+					m_header = "new_project_t2";
+					DataMorph::getInstance()->getLayer(0)->message(m_header, std::string(this->project_name), symbols[tab], units[tab], values);
+					break;
+				case 2:
+					m_header = "new_project_t3";
+					break;
+				case 3:
+					m_header = "new_project_t4";
+					break;
+				default:
+					break;
+				}
 			}
 		}
 		EndDisabled();

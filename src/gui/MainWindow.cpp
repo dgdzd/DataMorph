@@ -1,16 +1,17 @@
 #include <gui/MainWindow.h>
 
 #include <core/Expression.h>
+#include <core/Graph.h>
+#include <core/Stats.h>
 #include <FontManager.h>
+#include <functional>
 #include <gui/CommonPopups.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
 #include <gui/StatsWindow.h>
-#include <core/Graph.h>
-#include <core/Stats.h>
 #include <imgui_stdlib.h>
 #include <iostream>
-#include <functional>
+#include <nfd.hpp>
 #include <Utils.h>
 #include <vector>
 
@@ -68,6 +69,38 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Close project", "Ctrl+Maj+X")) {
 				this->p_open = false;
+			}
+			if (BeginMenu("Export to...")) {
+				if (MenuItem("CSV")) {
+					NFD::UniquePath outPath;
+					outPath;
+
+					nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, "C:\\Users", (this->state->openProject->name+".csv").c_str());
+					if (result == NFD_OKAY) {
+						std::string path = outPath.get();
+						std::string filename = path.substr(path.find_last_of("\\") + 1);
+						std::string file_extension = filename.substr(filename.find_last_of(".") + 1);
+						if (file_extension != "csv") {
+							path += ".csv";
+						}
+						std::ofstream file(path);
+						if (file.is_open()) {
+							for (int i = 0; i < pr->symbols.size(); i++) {
+								file << pr->symbols[i] << (i == pr->ids.size() - 1 ? "" : ";");
+							}
+							file << "\n";
+							for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
+								for (int j = 0; j < pr->ids.size(); j++) {
+									unsigned int id = pr->ids[j];
+									file << pr->headers[id].values[i] << (j == pr->ids.size()-1 ? "" : ";");
+								}
+								file << "\n";
+							}
+							file.close();
+						}
+					}
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
@@ -289,6 +322,20 @@ void MainWindow::message(std::string header, ...) {
 			project->headers[h.id] = h;
 		}
 		
+		this->state->openProject = project;
+		std::cout << "Project created : " << name << std::endl;
+	}
+	else if (header == "new_project_t2") {
+		std::string name = va_arg(args, std::string);
+		Project* project = new Project(name, "");
+		project->symbols = va_arg(args, std::vector<std::string>);
+		project->units = va_arg(args, std::vector<std::string>);
+		std::vector<std::vector<double>> values = va_arg(args, std::vector<std::vector<double>>);
+		for (int i = 0; i < project->symbols.size(); i++) {
+			Header h = Header(project, project->symbols[i], project->units[i], values[i]);
+			project->ids.push_back(h.id);
+			project->headers[h.id] = h;
+		}
 		this->state->openProject = project;
 		std::cout << "Project created : " << name << std::endl;
 	}

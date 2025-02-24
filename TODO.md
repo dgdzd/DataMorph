@@ -1,6 +1,7 @@
 # TODO
 
  - [ ] Tables
+	- [ ] Load data from a file (.csv, .xml, .json, .dat, .txt, etc...))
 	- [x] Manual data entry
 	- [x] Fix bug where symbols and units are desynchronized after removing a column
 	- [ ] Possibility to add expressions directly in the new project window

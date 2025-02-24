@@ -11,6 +11,8 @@ namespace std {
 	extern string trim_trailing(const string& str, const char c = ' ');
 	extern string trim_leading(const string& str, const char c = ' ');
 	extern string trim(const string& str, const char c = ' ');
+	extern std::vector<std::string> split(const std::string& str, const char c = ' ');
+	extern std::string format_num(double val, std::string prefix);
 
 	template <typename T>
 	extern T min(const std::vector<T>& v) {

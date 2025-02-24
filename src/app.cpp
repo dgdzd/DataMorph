@@ -4,6 +4,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #include <iostream>
+#include <nfd.hpp>
 #include <string>
 #include <random>
 
@@ -106,6 +107,8 @@ int DataMorph::init_libs() {
 		std::cout << "Failed to initialize Freetype.\n";
 		return -1;
 	}
+
+	NFD::Guard guard;
 
 	return 0;
 }
