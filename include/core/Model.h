@@ -12,6 +12,7 @@ enum ModelType : int {
 	CUSTOM,
 	LINEAR,
 	AFFINE,
+	PONYNOMIAL,
 	QUADRATIC,
 	CUBIC,
 	EXPONENTIAL,

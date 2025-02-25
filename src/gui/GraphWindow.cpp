@@ -94,7 +94,7 @@ void GraphWindow::onRender() {
 							}
 							if (Selectable("Exponential")) {
 								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*2.71828^" + x + "+b";
+								g.model->expr_str = y + "=2.71828^(a*" + x + "+b)";
 								//e = 2.71828
 							}
 							if (Selectable("Logarithmic")) {
