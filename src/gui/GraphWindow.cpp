@@ -123,7 +123,7 @@ void GraphWindow::onRender() {
 						}
 						EndCombo();
 					}
-					if (BeginCombo("Choose dataset", g.lines[0].header->name.c_str())) {
+					if (BeginCombo("Choose dataset", g.model->dataset->header->name.c_str())) {
 						for (int i = 0; i < g.lines.size(); i++) {
 							if (Selectable(g.lines[i].header->name.c_str())) {
 								g.model->dataset = &g.lines[i];
@@ -214,7 +214,7 @@ void GraphWindow::onRender() {
 						}
 					}
 					if (g.model && g.model->values.size() != 0) {
-						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size(), std::stoi(this->settings->options_data["Graphs colormap"])));
+						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size()+1, std::stoi(this->settings->options_data["Graphs colormap"])));
 						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
 						g.limits = ImPlot::GetPlotLimits();
 

@@ -549,6 +549,18 @@ void NewGraphPopup::onRender() {
 					l.color = new ImVec4(ImPlot::GetColormapColor(graph.lines.size()+1, std::stoi(this->settings->options_data["Graphs colormap"])));
 					graph.lines.push_back(l);
 				}
+				if (pr->graphs.size() > 0) {
+					Dummy(ImVec2(0.0f, 15.0f));
+					PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+					PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+					PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+					if (Button("Remove this graph")) {
+						pr->graphs.erase(pr->graphs.begin() + i);
+					}
+					PopStyleColor();
+					PopStyleColor();
+					PopStyleColor();
+				}
 				EndTabItem();
 			}
 		}
