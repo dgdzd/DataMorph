@@ -77,15 +77,20 @@ int DataMorph::initialize() {
 
 	this->io->Fonts->Build();
 
-	ImGui::StyleColorsDark();
+	this->settings = new Settings("options.opt");
+	Settings::instance = this->settings;
+
+	if (this->settings->get_option("Theme") == "Dark") {
+		ImGui::StyleColorsDark();
+	}
+	else {
+		ImGui::StyleColorsLight();
+	}
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	/* Initializes the viewport */
 	glViewport(0, 0, 800, 500);
-
-	this->settings = new Settings("options.opt");
-	Settings::instance = this->settings;
 
 	return 0;
 }
