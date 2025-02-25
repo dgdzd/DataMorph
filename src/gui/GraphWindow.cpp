@@ -56,7 +56,7 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f + 100, 200), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
+				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f + 100, 300), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
 					if (BeginMenuBar()) {
 						if (BeginMenu("Infos")) {
 							ImGui::EndMenu();
@@ -202,7 +202,15 @@ void GraphWindow::onRender() {
 					if (g.model && g.model->values.size() != 0) {
 						ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
 						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
-						ImPlot::PlotLine("Model##Plot", &g.xHeader->values[0], &g.model->values[0], g.model->values.size());
+						g.limits = ImPlot::GetPlotLimits();
+
+						if (g.model->type == AFFINE || g.model->type == LINEAR) {
+							ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
+								Graph& g = *(Graph*)data;
+								double x = g.limits.Min().x + idx * abs(g.limits.Max().x - g.limits.Min().x);
+								return ImPlotPoint(x, g.model->value(x));
+							}, (void*)&g, 2);
+						}
 					}
 					ImPlot::EndPlot();
 				}
@@ -311,7 +319,7 @@ void GraphWindow::onRender() {
 
 							TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 							if (IsItemHovered()) {
-								SetTooltip("The sum of all the values of %s", h->name);
+								SetTooltip("The sum of all the values of %s.", h->name);
 							}
 							SameLine();
 							Text((const char*)u8"Σ(%s) = %.5f %s", h->name, std::sum(h->values), h->unit);

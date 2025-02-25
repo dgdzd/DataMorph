@@ -151,21 +151,10 @@ void NewProjectWindow::onRender() {
 				Text("Selected data file : %s", this->filename.c_str());
 				Text("File size : %s", std::format_num(this->filesize, "b"));
 
-				if (BeginChild("##imported_columns", ImVec2(0, 0), ImGuiChildFlags_Border)) {
+				if (BeginChild("Imported headers", ImVec2(0, 130), ImGuiChildFlags_Border)) {
 					for (int i = 0; i < symbols[tab].size(); i++) {
 						std::string& symbol = symbols[tab][i];
-						InputText(("##input_" + symbol).c_str(), &symbol);
-						SameLine();
-						PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-						PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-						PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
-						if (Button(("Remove##" + std::to_string(i)).c_str())) {
-							this->symbols[tab].erase(this->symbols[tab].begin() + i);
-							this->units[tab].erase(this->units[tab].begin() + i);
-						}
-						PopStyleColor();
-						PopStyleColor();
-						PopStyleColor();
+						InputText(("##input_" + std::to_string(i)).c_str(), &symbol);
 					}
 					EndChild();
 				}

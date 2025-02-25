@@ -2,7 +2,8 @@
 
 #include <gui/MainWindow.h>
 #include <imgui_stdlib.h>
-#include "exprtk.hpp"
+#include <implot.h>
+#include <exprtk.hpp>
 
 
 NewVarPopup* NewVarPopup::inst = nullptr;
@@ -481,6 +482,7 @@ void NewGraphPopup::onRender() {
 		TextWrapped("There is currently no graph.");
 		if (Button("Create one")) {
 			Graph g("New graph 1", &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
+			g.lines[0].color = new ImVec4(ImPlot::GetColormapColor(0, ImPlotColormap_Dark));
 			pr->graphs.push_back(g);
 		}
 	}
@@ -541,6 +543,7 @@ void NewGraphPopup::onRender() {
 				Dummy(ImVec2(0.0f, 10.0f));
 				if (Button("+")) {
 					Line l(&pr->headers[pr->ids[0]]);
+					l.color = new ImVec4(ImPlot::GetColormapColor(graph.lines.size()+1, ImPlotColormap_Dark));
 					graph.lines.push_back(l);
 				}
 				EndTabItem();

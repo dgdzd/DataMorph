@@ -54,6 +54,11 @@ file(COPY resources DESTINATION ${CMAKE_BINARY_DIR})
 # Ajoutez une source à l'exécutable de ce projet.
 add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES} resources/resources.rc)
 
+
+# To hide the console on Windows
+target_link_options(DataMorph PRIVATE "/SUBSYSTEM:WINDOWS")
+target_link_options(DataMorph PRIVATE "/ENTRY:mainCRTStartup")
+
 add_subdirectory(nativefiledialog-extended)
 target_link_libraries(DataMorph PRIVATE nfd)
 

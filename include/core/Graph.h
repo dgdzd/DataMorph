@@ -28,6 +28,7 @@ struct Graph {
 	Model* model;
 	std::vector<Line> lines;
 	std::string name;
+	ImPlotRect limits;
 	double a;
 	double b;
 	double c;
