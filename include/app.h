@@ -1,6 +1,8 @@
 #ifndef DM_APP_H
 #define DM_APP_H
 
+#include <core/gui/Window.h>
+#include <core/Settings.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -11,10 +13,10 @@
 #include FT_FREETYPE_H
 #include <string>
 #include <vector>
-#include <core/gui/Window.h>
 
 class DataMorph {
 	static DataMorph* inst;
+	Settings* settings;
 	FT_Library ftlib;
 	ImGuiIO* io;
 	ImFont* baseFont;

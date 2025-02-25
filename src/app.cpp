@@ -1,4 +1,5 @@
 #include <App.h>
+
 #include <FontManager.h>
 #include <implot.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -17,6 +18,7 @@ DataMorph::DataMorph() {
 	this->shouldClose = false;
 	this->ftlib = nullptr;
 	this->window = nullptr;
+	this->settings = nullptr;
 	srand(10e5 * getTime());
 }
 
@@ -81,6 +83,9 @@ int DataMorph::initialize() {
 
 	/* Initializes the viewport */
 	glViewport(0, 0, 800, 500);
+
+	this->settings = new Settings("options.opt");
+	Settings::instance = this->settings;
 
 	return 0;
 }
@@ -166,6 +171,7 @@ void DataMorph::update() {
 }
 
 void DataMorph::terminate() {
+	Settings::instance->write_options();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImPlot::DestroyContext();

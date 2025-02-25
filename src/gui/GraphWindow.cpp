@@ -25,6 +25,7 @@ GraphWindow::GraphWindow(Project* project) {
 	this->statsVar = 0;
 	this->model_text = "";
 	this->numbersVar = 0;
+	this->settings = Settings::instance;
 }
 
 void GraphWindow::onAttach() {
@@ -200,7 +201,7 @@ void GraphWindow::onRender() {
 						}
 					}
 					if (g.model && g.model->values.size() != 0) {
-						ImPlot::SetNextLineStyle(ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size(), std::stoi(this->settings->options_data["Graphs colormap"])));
 						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
 						g.limits = ImPlot::GetPlotLimits();
 

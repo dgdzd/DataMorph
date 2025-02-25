@@ -3,8 +3,9 @@
 
 #include <core/Expression.h>
 #include <core/Graph.h>
-#include <core/Stats.h>
 #include <core/gui/Window.h>
+#include <core/Settings.h>
+#include <core/Stats.h>
 #include <imgui/imgui_stdlib.h>
 #include <iostream>
 #include <functional>
@@ -54,6 +55,7 @@ class NewGraphPopup : public Window {
 	static NewGraphPopup* inst;
 	MainWindow* parent;
 	Project* pr;
+	Settings* settings;
 
 public:
 	NewGraphPopup(MainWindow* parent);

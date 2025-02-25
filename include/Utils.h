@@ -11,7 +11,7 @@ namespace std {
 	extern string trim_trailing(const string& str, const char c = ' ');
 	extern string trim_leading(const string& str, const char c = ' ');
 	extern string trim(const string& str, const char c = ' ');
-	extern std::vector<std::string> split(const std::string& str, const char c = ' ');
+	extern std::vector<std::string> split(const std::string& str, const char c = ' ', int limit = 0);
 	extern std::string format_num(double val, std::string prefix);
 
 	template <typename T>
@@ -52,6 +52,8 @@ namespace std {
 }
 
 extern const char* ImPlotMarkerToString(ImPlotMarker marker);
+extern const char* ImPlotColormapToString(ImPlotColormap colormap);
+extern ImPlotColormap StringToImPlotColormap(const std::string& str);
 extern std::string ModelTypeToString(ModelType type);
 
 #endif

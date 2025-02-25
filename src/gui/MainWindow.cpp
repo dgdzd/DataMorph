@@ -8,6 +8,7 @@
 #include <gui/CommonPopups.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
+#include <gui/SettingsWindow.h>
 #include <gui/StatsWindow.h>
 #include <imgui_stdlib.h>
 #include <iostream>
@@ -27,6 +28,7 @@ MainWindow::MainWindow() {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
+	this->settings = Settings::instance;
 	this->state = new State();
 }
 
@@ -101,6 +103,10 @@ void MainWindow::onRender() {
 					}
 				}
 				ImGui::EndMenu();
+			}
+			Separator();
+			if (MenuItem("Settings")) {
+				DataMorph::getInstance()->addLayer(new SettingsWindow());
 			}
 			ImGui::EndMenu();
 		}

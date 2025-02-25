@@ -24,13 +24,15 @@ std::string std::trim(const std::string& str, const char c) {
 	return trim_leading(trim_trailing(str, c), c);
 }
 
-std::vector<std::string> std::split(const std::string& str, const char c) {
+std::vector<std::string> std::split(const std::string& str, const char c, int limit) {
 	std::vector<std::string> parts;
 	std::string part = "";
+	int count = 0;
 	for (int i = 0; i < str.size(); i++) {
-		if (str[i] == c) {
+		if (str[i] == c && (limit == 0 || count < limit)) {
 			parts.push_back(part);
 			part = "";
+			count++;
 		}
 		else {
 			part += str[i];
@@ -88,6 +90,99 @@ const char* ImPlotMarkerToString(ImPlotMarker marker) {
 		return "Asterisk";
 	default:
 		return "None";
+	}
+}
+
+const char* ImPlotColormapToString(ImPlotColormap colormap) {
+	switch (colormap) {
+	case ImPlotColormap_Deep:
+		return "Seaborn Deep";
+	case ImPlotColormap_Dark:
+		return "Dark";
+	case ImPlotColormap_Pastel:
+		return "Pastel";
+	case ImPlotColormap_Paired:
+		return "Paired";
+	case ImPlotColormap_Viridis:
+		return "Viridis";
+	case ImPlotColormap_Plasma:
+		return "Plasma";
+	case ImPlotColormap_Hot:
+		return "Hot";
+	case ImPlotColormap_Cool:
+		return "Cool";
+	case ImPlotColormap_Pink:
+		return "Pink";
+	case ImPlotColormap_Jet:
+		return "Jet";
+	case ImPlotColormap_Twilight:
+		return "Twilight";
+	case ImPlotColormap_RdBu:
+		return "Red/Blue";
+	case ImPlotColormap_BrBG:
+		return "Brown/Blue-green";
+	case ImPlotColormap_PiYG:
+		return "Pink/Yellow-green";
+	case ImPlotColormap_Spectral:
+		return "Spectral";
+	case ImPlotColormap_Greys:
+		return "Greys";
+	default:
+		return "Dark";
+	}
+}
+
+ImPlotColormap StringToImPlotColormap(const std::string& str) {
+	if (str == "Seaborn Deep") {
+		return ImPlotColormap_Deep;
+	}
+	else if (str == "Dark") {
+		return ImPlotColormap_Dark;
+	}
+	else if (str == "Pastel") {
+		return ImPlotColormap_Pastel;
+	}
+	else if (str == "Paired") {
+		return ImPlotColormap_Paired;
+	}
+	else if (str == "Viridis") {
+		return ImPlotColormap_Viridis;
+	}
+	else if (str == "Plasma") {
+		return ImPlotColormap_Plasma;
+	}
+	else if (str == "Hot") {
+		return ImPlotColormap_Hot;
+	}
+	else if (str == "Cool") {
+		return ImPlotColormap_Cool;
+	}
+	else if (str == "Pink") {
+		return ImPlotColormap_Pink;
+	}
+	else if (str == "Jet") {
+		return ImPlotColormap_Jet;
+	}
+	else if (str == "Twilight") {
+		return ImPlotColormap_Twilight;
+	}
+	else if (str == "Red/Blue") {
+		return ImPlotColormap_RdBu;
+	}
+	else if (str == "Brown/Blue-green") {
+		return ImPlotColormap_BrBG;
+	}
+	else if (str == "Pink/Yellow-green") {
+		return ImPlotColormap_PiYG;
+	}
+	else if (str == "Spectral") {
+		return ImPlotColormap_Spectral;
+	}
+	else if (str == "Greys") {
+		return ImPlotColormap_Greys;
+	}
+	else {
+		return -1;
 	}
 }
 

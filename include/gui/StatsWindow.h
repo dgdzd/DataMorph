@@ -1,14 +1,14 @@
 #ifndef DM_STATSWINDOW_H
 #define DM_STATSWINDOW_H
 
+#include <App.h>
 #include <core/gui/Window.h>
 #include <core/imgui_extension.h>
-#include <App.h>
 #include <core/Project.h>
 #include <imgui_internal.h>
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 using namespace ImGui;
 

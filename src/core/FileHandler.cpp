@@ -58,4 +58,22 @@ namespace FileHandler {
 		}
 		return false;
 	}
+
+	std::string get_option(const std::string& option) {
+		if (options_data.empty()) {
+			std::ifstream file(options_file);
+			if (file.is_open()) {
+				options_data = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+				file.close();
+			}
+		}
+		std::vector<std::string> lines = std::split(options_data, '\n');
+		for (std::string line : lines) {
+			std::vector<std::string> parts = std::split(line, '=');
+			if (parts[0] == option) {
+				return parts[1];
+			}
+		}
+		return "";
+	}
 }

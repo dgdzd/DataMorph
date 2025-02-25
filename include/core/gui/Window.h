@@ -1,6 +1,7 @@
 #ifndef DM_WINDOW_H
 #define DM_WINDOW_H
 
+#include <core/Settings.h>
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -13,6 +14,7 @@ public:
 	bool p_open;
 	ImGuiStyle style;
 	ImGuiWindowFlags wflags;
+	Settings* settings;
 
 	virtual void onAttach() {};
 	virtual void onDetach() {};
