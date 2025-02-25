@@ -154,6 +154,10 @@ void MainWindow::onRender() {
 			if (MenuItem("Resolve an Equation")) {
 				state->popups["Resolve Equation"] = true;
 			}
+			if (MenuItem("Create a Lua Script")) {
+				state->popups["Lua Script"] = true;
+			}
+
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {
@@ -193,6 +197,10 @@ void MainWindow::onRender() {
 	ResolveEquation* re = ResolveEquation::getInstance(this);
 	if (BeginPopupModal(re->name.c_str(), NULL, re->wflags)) {
 		re->onRender();
+	}
+	LuaScript* ls = LuaScript::getInstance(this);
+	if (BeginPopupModal(ls->name.c_str(), NULL, ls->wflags)) {
+		ls->onRender();
 	}
 
 	if (BeginPopupModal("Error###alreadyExists", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {

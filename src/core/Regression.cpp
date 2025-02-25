@@ -89,19 +89,19 @@ namespace Regression {
 
 		if (yModel.find(x_str) != std::string::npos) {
 			if (yModel.find("a") != std::string::npos) {
+				x = xs[0];
 				double y_0 = m_e.value();
 				for (int j = 0; j < ys.size(); j++) {
 					x = xs[j];
 					loss0 += std::abs(m_e.value() - ys[j]);
 				}
-				loss0 /= ys.size();
 				a++;
+				x = xs[0];
 				double y_1 = m_e.value();
 				for (int j = 0; j < ys.size(); j++) {
 					x = xs[j];
 					loss1 += std::abs(m_e.value() - ys[j]);
 				}
-				loss0 /= ys.size();
 				a--;
 				if (loss1 - loss0 > 0) {
 					sign *= -1;
@@ -118,7 +118,7 @@ namespace Regression {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a += precision*order;
+							a += precision;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
@@ -143,7 +143,7 @@ namespace Regression {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a -= precision*order;
+							a -= precision;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
@@ -158,7 +158,7 @@ namespace Regression {
 							std::cout << loss0 << std::endl;
 							std::cout << loss1 << "\n" << std::endl;
 						}
-						sign *= 1;
+						sign *= -1;
 					}
 					precision /= 10;
 				}
