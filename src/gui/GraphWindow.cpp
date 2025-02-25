@@ -86,12 +86,13 @@ void GraphWindow::onRender() {
 							g.model->expr_str = y + "=a*" + x + "+b";
 							g.model->refresh();
 						}
+						if (Selectable("Polynomial")) {
+							g.model->type = ModelType::POLYNOMIAL;
+							g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
+						}
+
 						BeginDisabled();
 						{
-							if (Selectable("Polynomial")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
-							}
 							if (Selectable("Exponential")) {
 								g.model->type = ModelType::LINEAR;
 								g.model->expr_str = y + "=2.71828^(a*" + x + "+b)";
@@ -149,6 +150,7 @@ void GraphWindow::onRender() {
 						else if (g.model->type == AFFINE) { // Affine
 							if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
 								Model* m = g.model;
+								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
@@ -158,6 +160,7 @@ void GraphWindow::onRender() {
 						else if (g.model->type == LINEAR) { // Linear
 							if (Regression::linear(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 								Model* m = g.model;
+								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
@@ -166,6 +169,16 @@ void GraphWindow::onRender() {
 						}
 						else if (g.model->type == CUSTOM) {
 							if (Regression::custom(g.xHeader->values, g.model->dataset->header->values, g.model->expr_str, g.model->a, g.model->b, g.model->c, g.model->xlabel)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
+							}
+						}
+						else if (g.model->type == POLYNOMIAL) {
+							if (Regression::polynomial(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
 								Model* m = g.model;
 								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {

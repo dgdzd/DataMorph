@@ -1,4 +1,4 @@
-#include <core/Regression.h>
+﻿#include <core/Regression.h>
 
 #include <cmath>
 #include <iostream>
@@ -31,19 +31,6 @@ namespace Regression {
 		w0 = ym - w1 * xm;
 		return true;
 	}
-
-	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
-		if (x.size() != y.size()) {
-			return 0.0;
-		}
-		double n = x.size();
-		double sum_x = std::sum(x);
-		double sum_y = std::sum(y);
-		double sum_x2 = std::sum(x, [](double val) { return val * val; });
-		double sum_xy = std::sum(x, [&y](double val, int i) { return val * y[i]; });
-		double w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
-		double w0 = (sum_y - w1 * sum_x) / n;
-	}*/
 
 	bool custom(const std::vector<double>& xs, const std::vector<double>& ys, std::string model, double& a, double& b, double& c, std::string x_str) {
 		if (xs.size() != ys.size()) {
@@ -82,7 +69,6 @@ namespace Regression {
 		double loss0 = 0.0;
 		double loss1 = 0.0;
 		int sign = 1;
-		int order = 1;
 		double precision = 1.0;
 		bool same = false;
 		double delta_loss = 0.0;
@@ -106,9 +92,6 @@ namespace Regression {
 				if (loss1 - loss0 > 0) {
 					sign *= -1;
 				}
-				if (y_1 < y_0) {
-					order *= -1;
-				}
 				while (precision > 0.00001 && not same) {
 					if (sign == 1) {
 						delta_loss = -1;
@@ -128,10 +111,6 @@ namespace Regression {
 							if (loss1 == 0) {
 								same = true;
 							}
-							std::cout << 1 << std::endl;
-							std::cout << a << std::endl;
-							std::cout << loss0 << std::endl;
-							std::cout << loss1 << "\n" << std::endl;
 						}
 						sign *= -1;
 					}
@@ -153,10 +132,6 @@ namespace Regression {
 							if (loss1 == 0) {
 								same = true;
 							}
-							std::cout << -1 << std::endl;
-							std::cout << a << std::endl;
-							std::cout << loss0 << std::endl;
-							std::cout << loss1 << "\n" << std::endl;
 						}
 						sign *= -1;
 					}
@@ -166,4 +141,90 @@ namespace Regression {
 		}
 		return true;
 	}
+
+	bool polynomial(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& c) {
+		if (x.size() != y.size()) {
+			return false;
+		}
+		if (x.size() < 3) {
+			return false;
+		}
+
+		//sachant : y​=ax^2+bx​+c
+		//on doit minimiser : sigma(n, i=1) = ( y - (a*x+b))^2
+		//puis on résoud la matrice
+
+		int n = x.size();
+
+		// sommes de con de ta mère
+		double Sx = 0, Sxx = 0, Sxxx = 0, Sxxxx = 0;
+		double Sy = 0, Sxy = 0, Sxxy = 0;
+		for (int i = 0; i < n; i++) {
+			Sx += x[i];
+			Sxx += x[i] * x[i];
+			Sxxx += x[i] * x[i] * x[i];
+			Sxxxx += x[i] * x[i] * x[i] * x[i];
+			Sy += y[i];
+			Sxy += x[i] * y[i];
+			Sxxy += x[i] * x[i] * y[i];
+		}
+		//système A
+		double A[3][3] = {
+			{Sxxxx, Sxxx, Sxx},
+			{Sxxx, Sxx, Sx},
+			{Sxx, Sx, (double)n}
+		};
+		//système B
+		double B[3] = { Sxxy, Sxy, Sy };
+		double solution[3];
+
+		// j'ai juré Gauss je vais t'enculer
+		for (int i = 0; i < 3; i++) {
+			for (int k = i + 1; k < 3; k++) {
+				if (abs(A[k][i]) > abs(A[i][i])) {
+					for (int j = 0; j < 3; j++) {
+						std::swap(A[i][j], A[k][j]);
+					}
+					std::swap(B[i], B[k]);
+				}
+			}
+
+			// normalize
+			double diag = A[i][i];
+			for (int j = 0; j < 3; j++) {
+				A[i][j] /= diag;
+			}
+			B[i] /= diag;
+
+			// on fait du tri
+			for (int k = 0; k < 3; k++) {
+				if (k != i) {
+					double factor = A[k][i];
+					for (int j = 0; j < 3; j++) {
+						A[k][j] -= factor * A[i][j];
+					}
+					B[k] -= factor * B[i];
+				}
+			}
+			//voici les solution :/
+			a = solution[0];
+			b = solution[1];
+			c = solution[2];
+		}
+
+		return true;
+	}
+
+	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
+		if (x.size() != y.size()) {
+			return 0.0;
+		}
+		double n = x.size();
+		double sum_x = std::sum(x);
+		double sum_y = std::sum(y);
+		double sum_x2 = std::sum(x, [](double val) { return val * val; });
+		double sum_xy = std::sum(x, [&y](double val, int i) { return val * y[i]; });
+		double w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
+		double w0 = (sum_y - w1 * sum_x) / n;
+	}*/
 }
