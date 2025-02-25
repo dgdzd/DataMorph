@@ -11,6 +11,7 @@ EditVarPopup* EditVarPopup::inst = nullptr;
 NewGraphPopup* NewGraphPopup::inst = nullptr;
 NewStatsPopup* NewStatsPopup::inst = nullptr;
 ResolveEquation* ResolveEquation::inst = nullptr;
+LuaScript* LuaScript::inst = nullptr;
 
 NewVarPopup::NewVarPopup(MainWindow* parent) {
 	this->parent = parent;
@@ -883,6 +884,58 @@ ResolveEquation* ResolveEquation::getInstance(MainWindow* mw) {
 }
 
 void ResolveEquation::removeInstance() {
+	delete inst;
+	inst = nullptr;
+}
+
+
+
+LuaScript::LuaScript(MainWindow* parent) {
+	this->parent = parent;
+	this->name = "Lua Script";
+	this->p_open = true;
+	this->showCloseButton = true;
+	this->style = ImGui::GetStyle();
+	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
+	this->pr = parent->state->openProject;
+	this->text = "";
+}
+
+void LuaScript::onRender() {
+	if (BeginMenuBar()) {
+		if (BeginMenu("File")) {
+			if (MenuItem("Save")) {
+
+			}
+			if (MenuItem("Load")) {
+
+			}
+			if (MenuItem("Close")) {
+				CloseCurrentPopup();
+				parent->state->popups[name] = false;
+				removeInstance();
+			}
+		}
+		if (BeginMenu("Lua")) {
+			if (MenuItem("Execute")) {
+				//do stuff
+			}
+		}
+	}
+	InputTextMultiline("##inputscript", &text, ImVec2(1200, GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput);
+
+
+	EndPopup();
+}
+
+LuaScript* LuaScript::getInstance(MainWindow* mw) {
+	if (!inst) {
+		inst = new LuaScript(mw);
+	}
+	return inst;
+}
+
+void LuaScript::removeInstance() {
 	delete inst;
 	inst = nullptr;
 }
