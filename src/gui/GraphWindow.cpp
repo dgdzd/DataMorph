@@ -166,6 +166,7 @@ void GraphWindow::onRender() {
 						else if (g.model->type == CUSTOM) {
 							if (Regression::custom(g.xHeader->values, g.model->dataset->header->values, g.model->expr_str, g.model->a, g.model->b, g.model->c, g.model->xlabel)) {
 								Model* m = g.model;
+								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}

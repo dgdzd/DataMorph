@@ -69,79 +69,96 @@ namespace Regression {
 		m_e.register_symbol_table(symbol_table);
 
 		parser_t parser;
-		int separator_i = std::string(model).find("=");
-		std::string xheader = std::string(model).substr(0, separator_i);
-		std::string yModel = std::string(model).substr(separator_i + 1);
+		std::string yModel = "";
+		if (model.find("=") != std::string::npos) {
+			int separator_i = model.find("=");
+			yModel = model.substr(separator_i + 1);
+		}
+		else {
+			yModel = model;
+		}
 		parser.compile(yModel, m_e);
 
 		double loss0 = 0.0;
 		double loss1 = 0.0;
 		int sign = 1;
+		int order = 1;
 		double precision = 1.0;
 		bool same = false;
 		double delta_loss = 0.0;
 
 		if (yModel.find(x_str) != std::string::npos) {
 			if (yModel.find("a") != std::string::npos) {
+				double y_0 = m_e.value();
 				for (int j = 0; j < ys.size(); j++) {
 					x = xs[j];
 					loss0 += std::abs(m_e.value() - ys[j]);
 				}
+				loss0 /= ys.size();
 				a++;
+				double y_1 = m_e.value();
 				for (int j = 0; j < ys.size(); j++) {
 					x = xs[j];
 					loss1 += std::abs(m_e.value() - ys[j]);
 				}
+				loss0 /= ys.size();
 				a--;
 				if (loss1 - loss0 > 0) {
-					sign = -1;
+					sign *= -1;
+				}
+				if (y_1 < y_0) {
+					order *= -1;
 				}
 				while (precision > 0.00001 && not same) {
-					std::cout << sign << std::endl;
 					if (sign == 1) {
 						delta_loss = -1;
-						while (delta_loss < 0) {
+						while (delta_loss < 0 && !same) {
 							loss0 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a += precision;
+							a += precision*order;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss1 += std::abs(m_e.value() - ys[j]);
 							}
 							delta_loss = loss1 - loss0;
-							if (delta_loss == 0) {
+							if (loss1 == 0) {
 								same = true;
 							}
+							std::cout << 1 << std::endl;
 							std::cout << a << std::endl;
 							std::cout << loss0 << std::endl;
-							std::cout << loss1 << std::endl;
+							std::cout << loss1 << "\n" << std::endl;
 						}
-						sign = -1;
+						sign *= -1;
 					}
 					else {
 						delta_loss = 1;
-						while (delta_loss > 0) {
+						while (delta_loss > 0 && !same) {
 							loss0 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss0 += std::abs(m_e.value() - ys[j]);
 							}
-							a -= precision;
+							a -= precision*order;
 							loss1 = 0.0;
 							for (int j = 0; j < ys.size(); j++) {
 								x = xs[j];
 								loss1 += std::abs(m_e.value() - ys[j]);
 							}
 							delta_loss = loss1 - loss0;
-							if (delta_loss == 0) {
+							if (loss1 == 0) {
 								same = true;
 							}
+							std::cout << -1 << std::endl;
+							std::cout << a << std::endl;
+							std::cout << loss0 << std::endl;
+							std::cout << loss1 << "\n" << std::endl;
 						}
-						sign = 1;
+						sign *= 1;
 					}
 					precision /= 10;
 				}
