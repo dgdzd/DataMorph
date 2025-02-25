@@ -3,6 +3,7 @@
 #include <App.h>
 #include <core/Settings.h>
 #include <FontManager.h>
+#include <imgui_stdlib.h>
 #include <implot.h>
 #include <iostream>
 #include <Utils.h>
@@ -54,6 +55,17 @@ void SettingsWindow::onRender() {
 			EndTabItem();
 		}
 		if (BeginTabItem("Styles")) {
+			if (BeginCombo("Main theme", this->local_settings.get_option("Theme").c_str())) {
+				if (Selectable("Dark")) {
+					local_settings.set_option("Theme", "Dark");
+					this->applied = false;
+				}
+				if (Selectable("Light")) {
+					local_settings.set_option("Theme", "Light");
+					this->applied = false;
+				}
+				EndCombo();
+			}
 			if (BeginCombo("Lines color map", ImPlotColormapToString(std::stoi(local_settings.options_data["Graphs colormap"])))) {
 				for (int i = 0; i < 16; i++) {
 					if (Selectable(ImPlotColormapToString(i))) {
@@ -62,6 +74,12 @@ void SettingsWindow::onRender() {
 					}
 				}
 				EndCombo();
+			}
+			EndTabItem();
+		}
+		if (BeginTabItem("Python")) {
+			if (InputText("Python executable path", &local_settings.options_data["Python executable path"])) {
+				this->applied = false;
 			}
 			EndTabItem();
 		}
@@ -77,6 +95,13 @@ void SettingsWindow::onRender() {
 				Settings::instance->options_data = local_settings.options_data;
 				Settings::instance->write_options();
 				this->applied = true;
+
+				if (this->settings->get_option("Theme") == "Dark") {
+					ImGui::StyleColorsDark();
+				}
+				else {
+					ImGui::StyleColorsLight();
+				}
 			}
 		}
 		EndDisabled();

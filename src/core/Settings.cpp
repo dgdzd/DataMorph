@@ -23,6 +23,7 @@ void Settings::set_option(const std::string& option, const std::string& value) {
 
 void Settings::load_options() {
 	std::ifstream file(options_file);
+	options_data["Theme"] = "Dark";
 	options_data["Graphs colormap"] = "1";
 	options_data["Python executable path"] = "resources\\Python\\python3.exe";
 	if (file.is_open()) {
@@ -42,7 +43,6 @@ void Settings::write_options() {
 	std::ofstream file(options_file);
 	if (file.is_open()) {
 		for (auto& [key, value] : options_data) {
-			printf("%s=%s\n", key.c_str(), value.c_str());
 			file << key << "=" << value << "\n";
 		}
 		file.close();

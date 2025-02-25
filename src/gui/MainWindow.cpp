@@ -69,44 +69,49 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Save project", "Ctrl+S")) {
 			}
-			if (MenuItem("Close project", "Ctrl+Maj+X")) {
-				this->p_open = false;
-			}
-			if (BeginMenu("Export to...")) {
-				if (MenuItem("CSV")) {
-					NFD::UniquePath outPath;
-					outPath;
+			BeginDisabled(!pr);
+			{
+				if (BeginMenu("Export to...")) {
+					if (MenuItem("CSV")) {
+						NFD::UniquePath outPath;
+						outPath;
 
-					nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, "C:\\Users", (this->state->openProject->name+".csv").c_str());
-					if (result == NFD_OKAY) {
-						std::string path = outPath.get();
-						std::string filename = path.substr(path.find_last_of("\\") + 1);
-						std::string file_extension = filename.substr(filename.find_last_of(".") + 1);
-						if (file_extension != "csv") {
-							path += ".csv";
-						}
-						std::ofstream file(path);
-						if (file.is_open()) {
-							for (int i = 0; i < pr->symbols.size(); i++) {
-								file << pr->symbols[i] << (i == pr->ids.size() - 1 ? "" : ";");
+						nfdresult_t result = NFD::SaveDialog(outPath, nullptr, 0, "C:\\Users", (this->state->openProject->name + ".csv").c_str());
+						if (result == NFD_OKAY) {
+							std::string path = outPath.get();
+							std::string filename = path.substr(path.find_last_of("\\") + 1);
+							std::string file_extension = filename.substr(filename.find_last_of(".") + 1);
+							if (file_extension != "csv") {
+								path += ".csv";
 							}
-							file << "\n";
-							for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
-								for (int j = 0; j < pr->ids.size(); j++) {
-									unsigned int id = pr->ids[j];
-									file << pr->headers[id].values[i] << (j == pr->ids.size()-1 ? "" : ";");
+							std::ofstream file(path);
+							if (file.is_open()) {
+								for (int i = 0; i < pr->symbols.size(); i++) {
+									file << pr->symbols[i] << (i == pr->ids.size() - 1 ? "" : ";");
 								}
 								file << "\n";
+								for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
+									for (int j = 0; j < pr->ids.size(); j++) {
+										unsigned int id = pr->ids[j];
+										file << pr->headers[id].values[i] << (j == pr->ids.size() - 1 ? "" : ";");
+									}
+									file << "\n";
+								}
+								file.close();
 							}
-							file.close();
 						}
 					}
+					ImGui::EndMenu();
 				}
-				ImGui::EndMenu();
 			}
+			EndDisabled();
 			Separator();
 			if (MenuItem("Settings")) {
 				DataMorph::getInstance()->addLayer(new SettingsWindow());
+			}
+			Separator();
+			if (MenuItem("Exit")) {
+				this->p_open = false;
 			}
 			ImGui::EndMenu();
 		}
@@ -163,7 +168,9 @@ void MainWindow::onRender() {
 			if (MenuItem("Create a Lua Script")) {
 				state->popups["Lua Script"] = true;
 			}
+			if (MenuItem("Create a Python Script")) {
 
+			}
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {

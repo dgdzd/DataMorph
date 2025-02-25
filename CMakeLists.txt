@@ -31,6 +31,7 @@ set(PROJECT_SOURCES
 		src/core/FileHandler.cpp
 		src/core/Settings.cpp
 		src/gui/SettingsWindow.cpp
+		src/gui/EditorWindow.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
@@ -58,8 +59,8 @@ add_executable(DataMorph ${MAIN_FILE} ${PROJECT_SOURCES} ${DEPENDENCIES_SOURCES}
 
 
 # To hide the console on Windows
-#target_link_options(DataMorph PRIVATE "/SUBSYSTEM:WINDOWS")
-#target_link_options(DataMorph PRIVATE "/ENTRY:mainCRTStartup")
+target_link_options(DataMorph PRIVATE "/SUBSYSTEM:WINDOWS")
+target_link_options(DataMorph PRIVATE "/ENTRY:mainCRTStartup")
 
 add_subdirectory(nativefiledialog-extended)
 target_link_libraries(DataMorph PRIVATE nfd)
@@ -67,6 +68,7 @@ target_link_libraries(DataMorph PRIVATE nfd)
 target_include_directories(DataMorph PUBLIC include/)
 target_include_directories(DataMorph PRIVATE dependencies/include/imgui)
 target_include_directories(DataMorph PRIVATE dependencies/include)
+target_include_directories(DataMorph PRIVATE zep/include)
 
 target_link_libraries(DataMorph PRIVATE ${LIBS_LIB})
 
