@@ -22,7 +22,13 @@ void Project::addRow() {
 	}
 }
 
-void Project::removeRow() {
+void Project::removeRow(int idx) {
+	if (idx != -1) {
+		for (int i = 0; i < this->ids.size(); i++) {
+			this->headers[this->ids[i]].values.erase(this->headers[this->ids[i]].values.begin() + idx);
+		}
+		return;
+	}
 	for (int i = 0; i < this->ids.size(); i++) {
 		this->headers[this->ids[i]].values.pop_back();
 	}

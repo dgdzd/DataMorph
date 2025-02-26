@@ -131,8 +131,12 @@ void NewProjectWindow::onRender() {
 				nfdresult_t result = NFD::OpenDialog(outPath, filterItem, 1, "C:\\Users");
 				if (result == NFD_OKAY) {
 					this->path = outPath.get();
-					FileHandler::read_csv_headers(this->path, this->symbols[tab], this->filesize, this->filename);
-					FileHandler::read_csv_values(this->path, this->values, this->filesize, this->filename);
+					if (!FileHandler::read_csv_headers(this->path, this->symbols[tab], this->filesize, this->filename)) {
+						std::cout << "Failed to open file." << std::endl;
+					}
+					if (!FileHandler::read_csv_values(this->path, this->values, this->filesize, this->filename)) {
+						std::cout << "Failed to open file." << std::endl;
+					}
 					this->units[tab] = std::vector<std::string>(this->symbols[tab].size(), "");
 				}
 				else if (result == NFD_CANCEL) {

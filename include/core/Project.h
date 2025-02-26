@@ -23,7 +23,7 @@ struct Project {
 
 	void initValues();
 	void addRow();
-	void removeRow();
+	void removeRow(int idx = -1);
 	void addColumn(Header* header);
 	void removeColumn(unsigned int id);
 };
