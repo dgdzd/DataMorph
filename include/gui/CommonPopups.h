@@ -97,18 +97,4 @@ public:
 	static void removeInstance();
 };
 
-
-class LuaScript : public Window {
-	static LuaScript* inst;
-	MainWindow* parent;
-	Project* pr;
-	std::string text;
-
-public: 
-	LuaScript(MainWindow* parent);
-	void onRender() override;
-	static LuaScript* getInstance(MainWindow* mw);
-	static void removeInstance();
-};
-
 #endif

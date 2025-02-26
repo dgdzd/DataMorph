@@ -138,6 +138,10 @@ void GraphWindow::onRender() {
 					else {
 						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
 					}
+					TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
+					if (IsItemHovered()) {
+						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Note : the experimentals data musn't reverse the order of the model");
+					}
 
 					if (Button("Update model")) {
 						if (g.model->expr_str.size() == 0) {
