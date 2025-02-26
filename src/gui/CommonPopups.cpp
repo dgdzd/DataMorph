@@ -563,7 +563,9 @@ void NewGraphPopup::onRender() {
 			}
 		}
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
+			Line l(&pr->headers[pr->ids[0]]);
+			l.color = new ImVec4(ImPlot::GetColormapColor(0, std::stoi(this->settings->options_data["Graphs colormap"])));
+			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->ids[0]], { l }, 0, 0);
 			pr->graphs.push_back(g);
 		}
 		EndTabBar();
