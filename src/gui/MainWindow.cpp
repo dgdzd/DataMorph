@@ -242,7 +242,7 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->ids.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit, ImVec2(160.0f * pr->ids.size(), 0.0f))) {
+		if (BeginTable("##table", pr->ids.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX)) {
 			for (int i = 0; i < pr->ids.size(); i++) {
 				std::string header = pr->symbols[i];
 				if (pr->units[i] != "") {
@@ -287,8 +287,10 @@ void MainWindow::onRender() {
 			for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
 				TableNextRow();
 				for (int j = 0; j < pr->ids.size(); j++) {
-					Header& header = pr->headers[pr->ids[j]];
+					unsigned int id = pr->ids[j];
+					Header& header = pr->headers[id];
 					std::string symbol = header.name;
+					std::string unit = header.unit;
 					double& val = header.values[i];
 					TableNextColumn();
 					SetNextItemWidth(150);
@@ -300,9 +302,26 @@ void MainWindow::onRender() {
 					PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 					if (f) {
 						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_ReadOnly);
+						// CA MARCHE PAS CA CRASH JE SAIS PAS PK
+						if (BeginPopupContextItem(("##rctx:" + symbol + ":" + std::to_string(i)).c_str())) {
+							Text((symbol + " (in " + unit + ")").c_str());
+							Separator();
+						}
+						// ça, ça marche par contre
+						if (IsItemHovered()) {
+							SetTooltip("This value is locked.");
+						}
+
 					}
 					else {
-						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f", ImGuiInputTextFlags_AlwaysOverwrite);
+						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f");
+						// CA MARCHE PAS CETTE MERDZE
+						if (IsItemDeactivatedAfterEdit()) {
+							if (j == pr->ids.size() - 1 && i == header.values.size() - 1) { // If last cell
+								std::cout << "End reached\n";
+								pr->addRow(); // Add a new row
+							}
+						}
 					}
 					PopStyleColor();
 				}
@@ -310,11 +329,11 @@ void MainWindow::onRender() {
 			EndTable();
 		}
 
-		if (Button("+")) {
+		if (Button("+", ImVec2(30, 30))) {
 			pr->addRow();
 		}
 		SameLine();
-		if (Button("-")) {
+		if (Button("-", ImVec2(30, 30))) {
 			if (pr->headers[pr->ids[0]].values.size() > 1) {
 				pr->removeRow();
 			}
