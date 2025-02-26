@@ -32,6 +32,7 @@ set(PROJECT_SOURCES
 		src/core/Settings.cpp
 		src/gui/SettingsWindow.cpp
 		src/gui/EditorWindow.cpp
+		src/gui/PythonWindow.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

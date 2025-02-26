@@ -9,9 +9,7 @@
 NewVarPopup* NewVarPopup::inst = nullptr;
 EditVarPopup* EditVarPopup::inst = nullptr;
 NewGraphPopup* NewGraphPopup::inst = nullptr;
-NewStatsPopup* NewStatsPopup::inst = nullptr;
 ResolveEquation* ResolveEquation::inst = nullptr;
-LuaScript* LuaScript::inst = nullptr;
 
 NewVarPopup::NewVarPopup(MainWindow* parent) {
 	this->parent = parent;
@@ -588,90 +586,6 @@ NewGraphPopup* NewGraphPopup::getInstance(MainWindow* mw) {
 }
 
 void NewGraphPopup::removeInstance() {
-	delete inst;
-	inst = nullptr;
-}
-
-
-
-NewStatsPopup::NewStatsPopup(MainWindow* parent) {
-	this->parent = parent;
-	this->name = "Manage stats";
-	this->p_open = true;
-	this->showCloseButton = true;
-	this->style = ImGui::GetStyle();
-	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
-	this->pr = parent->state->openProject;
-}
-
-void NewStatsPopup::onRender() {
-	Project* pr = parent->state->openProject;
-	SetWindowSize(ImVec2(450, 700));
-
-	if (pr->graphs.size() == 0) {
-		TextWrapped("There is currently no stats.");
-		if (Button("Create one")) {
-			Stats g("New stats 1", &pr->headers[pr->ids[0]], { Bar(&pr->headers[pr->ids[0]]) }, 0, 0);
-			pr->stats.push_back(g);
-		}
-	}
-	else if (BeginTabBar("stats")) {
-		for (int i = 0; i < pr->stats.size(); i++) {
-			Stats& stats = pr->stats[i];
-			if (BeginTabItem(("Stat #" + std::to_string(i + 1)).c_str())) {
-				Text("Name");
-				InputText("##statsName", &stats.name, 32);
-				Dummy(ImVec2(0.0f, 10.0f));
-				if (BeginCombo("X axis", stats.xHeader->name.c_str())) {
-					for (unsigned int id : pr->ids) {
-						if (Selectable(pr->headers[id].name.c_str())) {
-							stats.xHeader = &pr->headers[id];
-						}
-					}
-					EndCombo();
-				}
-				Dummy(ImVec2(0.0f, 10.0f));
-				Separator();
-				Dummy(ImVec2(0.0f, 10.0f));
-				Text("Number");
-				Bar& bar = stats.bar;
-				if (BeginCombo("Data to plot", bar.header->name.c_str())) {
-					for (unsigned int id : pr->ids) {
-						if (Selectable(pr->headers[id].name.c_str())) {
-							bar.header = &pr->headers[id];
-						}
-					}
-					EndCombo();
-				}
-				ColorEdit4("Bar color", &bar.color->x);
-				Dummy(ImVec2(0.0f, 10.0f));
-				EndTabItem();
-			}
-		}
-		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
-			Stats s(("New graph " + std::to_string(pr->stats.size() + 1)), &pr->headers[pr->ids[0]], { Bar(&pr->headers[pr->ids[0]]) }, 0, 0);
-			pr->stats.push_back(s);
-		}
-		EndTabBar();
-	}
-	Dummy(ImVec2(0.0f, 15.0f));
-	if (Button("OK")) {
-		parent->state->popups[name] = false;
-		CloseCurrentPopup();
-		removeInstance();
-	}
-
-	EndPopup();
-}
-
-NewStatsPopup* NewStatsPopup::getInstance(MainWindow* mw) {
-	if (!inst) {
-		inst = new NewStatsPopup(mw);
-	}
-	return inst;
-}
-
-void NewStatsPopup::removeInstance() {
 	delete inst;
 	inst = nullptr;
 }
