@@ -21,6 +21,7 @@ class GraphWindow : public Window {
 	std::string model_message;
 	ImPlotRect limits;
 	std::string model_text;
+	bool a_sign;
 	unsigned int numbersVar;
 
 public:

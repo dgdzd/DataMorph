@@ -142,18 +142,143 @@ namespace Regression {
 		return true;
 	}
 
-	bool polynomial(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& c) {
+	bool polynomial(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& c, bool a_sign) {
 		if (x.size() != y.size()) {
 			return false;
 		}
 		if (x.size() < 3) {
 			return false;
 		}
-
-		//sachant : y​=ax^2+bx​+c
-		//on doit minimiser : sigma(n, i=1) = ( y - (a*x+b))^2
-		//puis on résoud la matrice
 		
+		auto f = [](double x_i, double a, double b, double c) {
+				return a * x_i * x_i + b * x_i + c;
+			};
+	
+		a = std::double_t(a_sign) * 2 - 1;
+		b = 1;
+		c = 1;
+
+		double precision = 1.0;
+		bool sign = 1;
+		double loss0 = 0.0;
+		double loss1 = 0.0;
+		bool delta_loss = false;
+
+		for (int i = 0; i < y.size(); i++) {
+			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		a++;
+		for (int i = 0; i < y.size(); i++) {
+			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		a--;
+		delta_loss = loss0 > loss1;
+
+		while (precision > 0.00001) {
+			if (delta_loss) {
+				while (delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					a -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			else {
+				while (!delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					a -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			precision /= 10;
+		}
+
+		for (int i = 0; i < y.size(); i++) {
+			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		b++;
+		for (int i = 0; i < y.size(); i++) {
+			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		b--;
+		delta_loss = loss0 > loss1;
+
+		while (precision > 0.00001) {
+			if (delta_loss) {
+				while (delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					b -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			else {
+				while (!delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					b -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			precision /= 10;
+		}
+
+		for (int i = 0; i < y.size(); i++) {
+			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		c++;
+		for (int i = 0; i < y.size(); i++) {
+			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+		}
+		c--;
+		delta_loss = loss0 > loss1;
+
+		while (precision > 0.00001) {
+			if (delta_loss) {
+				while (delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					c -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			else {
+				while (!delta_loss) {
+					for (int i = 0; i < y.size(); i++) {
+						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					c -= precision;
+					for (int i = 0; i < y.size(); i++) {
+						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
+					}
+					delta_loss = loss0 > loss1;
+				}
+			}
+			precision /= 10;
+		}
+
+		return true;
 	}
 
 	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
