@@ -2,12 +2,12 @@
 
 #include <FontManager.h>
 #include <implot.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 #include <iostream>
 #include <nfd.hpp>
-#include <string>
 #include <random>
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+#include <string>
 
 DataMorph* DataMorph::inst;
 
@@ -64,6 +64,7 @@ int DataMorph::initialize() {
 
 	this->io = &ImGui::GetIO();
 
+	this->io->ConfigWindowsMoveFromTitleBarOnly = true;
 	this->io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	this->io->ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
@@ -198,7 +199,6 @@ void DataMorph::update() {
 		ImGui::RenderPlatformWindowsDefault();
 		glfwMakeContextCurrent(this->window);
 	}
-
 
 	glfwSwapBuffers(this->window);
 	glfwPollEvents();

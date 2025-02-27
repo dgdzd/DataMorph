@@ -6,6 +6,7 @@
 #include <FontManager.h>
 #include <functional>
 #include <gui/CommonPopups.h>
+#include <gui/ConsoleWindow.h>
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
 #include <gui/PythonWindow.h>
@@ -172,8 +173,9 @@ void MainWindow::onRender() {
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {
-			if (MenuItem("Show log")) {}
-			if (MenuItem("Show console")) {}
+			if (MenuItem("Show console")) {
+				DataMorph::getInstance()->addLayer(new ConsoleWindow());
+			}
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("Help")) {
