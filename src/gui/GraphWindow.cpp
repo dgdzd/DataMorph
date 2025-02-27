@@ -89,6 +89,7 @@ void GraphWindow::onRender() {
 						if (Selectable("Quadratic")) {
 							g.model->type = ModelType::QUADRATIC;
 							g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
+							g.model->refresh();
 						}
 						if (Selectable("Cubic")) {
 							g.model->type = ModelType::CUBIC;
@@ -242,6 +243,13 @@ void GraphWindow::onRender() {
 								double x = g.limits.Min().x + idx * abs(g.limits.Max().x - g.limits.Min().x);
 								return ImPlotPoint(x, g.model->value(x));
 							}, (void*)&g, 2);
+						}
+						else {
+							ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
+								Graph& g = *(Graph*)data;
+								double x = g.limits.Min().x + (idx / 30.0f) * abs(g.limits.Max().x - g.limits.Min().x);
+								return ImPlotPoint(x, g.model->value(x));
+							}, (void*)&g, 31);
 						}
 					}
 					ImPlot::EndPlot();
