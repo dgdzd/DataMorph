@@ -150,7 +150,60 @@ namespace Regression {
 			return false;
 		}
 		
-		//given ax^2+bx+c with 3 points : 
+		auto gaussianElimination = [](std::vector<std::vector<double>>A, std::vector<double>B) {
+			int n = A.size();
+
+			for (int i = 0; i < n; i++) {
+				int maxRow = i;
+				for (int j = i + 1; j < n; j++) {
+					if (abs(A[j][i]) > abs(A[maxRow][i])) {
+						maxRow = j;
+					}
+				}
+
+				std::swap(A[i], A[maxRow]);
+				std::swap(B[i], B[maxRow]);
+
+				//pivot eliomition
+				for (int j = i + 1; j < n; j++) {
+					double factor = A[j][i] / A[i][i];
+					for (int k = i; k < n; k++) {
+						A[j][k] -= factor * A[i][k];
+					}
+					B[j] -= factor * B[i];
+				}
+			}
+
+			//substitution
+			std::vector<double> X(n);
+			for (int i = n - 1; i >= 0; i--) {
+				X[i] = B[i] / A[i][i];
+				for (int j = i - 1; j >= 0; j--) {
+					B[j] -= A[j][i] * X[i];
+				}
+			}
+			return X;
+			};
+
+		std::vector<std::vector<double>> A = {
+			{xs[0] * xs[0], xs[0], 1},
+			{xs[1] * xs[1], xs[1], 1},
+			{xs[2] * xs[2], xs[2], 1}
+		};
+		std::vector<double> B = { ys[0], ys[1], ys[2] };
+
+		std::vector<double> X = gaussianElimination(A, B);
+
+		a = X[0];
+		b = X[1];
+		c = X[2];
+
+		return true;
+	}
+}
+
+	/*
+		//given ax^2+bx+c with 3 points :
 		//equ1 : c = ax0^2 + bx0 - y0
 		//equ2 : ax1^2+bx1+c = y1
 		//equ3 : ax2^2+bx2+c = y2
@@ -201,153 +254,28 @@ namespace Regression {
 		if (e_6.value() == y1 - y2) {
 			same = true;
 		}
+		std::cout << "here" << std::endl;
 		while (precision > 0.00001 && !same) {
 			if (e_6.value() < y1 - y2) {
 				while (e_6.value() < y1 - y2) {
-					a++;
+					std::cout << "adding" << std::endl;
+					std::cout << a << std::endl;
+					a -= precision;
+					b -= precision;
 				}
 			}
 			else {
 				while (e_6.value() > y1 - y2) {
-					a--;
+					std::cout << "subtracting" << std::endl;
+					std::cout << a << std::endl;
+					a += precision;
+					b += precision;
 				}
 			}
 			precision /= 10;
 			if (e_6.value() == y1 - y2) {
 				same = true;
 			}
-		}
-
-		return true;
-	}
-}
-
-	/*
-		auto f = [](double x_i, double a, double b, double c) {
-			return a * x_i * x_i + b * x_i + c;
-		};
-	
-		a = std::double_t(a_sign) * 2 - 1;
-		b = 1;
-		c = 1;
-
-		double precision = 1.0;
-		bool sign = 1;
-		double loss0 = 0.0;
-		double loss1 = 0.0;
-		bool delta_loss = false;
-
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		a++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		a--;
-		delta_loss = loss0 > loss1;
-
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					a -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					a -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
-		}
-
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		b++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		b--;
-		delta_loss = loss0 > loss1;
-
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					b -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					b -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
-		}
-
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		c++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		c--;
-		delta_loss = loss0 > loss1;
-
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					c -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					c -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
+			std::cout << precision << std::endl;
 		}
 	*/
