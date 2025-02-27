@@ -17,7 +17,6 @@ class SettingsWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	Settings local_settings;
-	std::map<std::string, float*> colors;
 	bool applied;
 
 public:

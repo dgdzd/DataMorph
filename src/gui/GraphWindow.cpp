@@ -227,7 +227,7 @@ void GraphWindow::onRender() {
 						}
 					}
 					if (g.model && g.model->values.size() != 0) {
-						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size()+1, std::stoi(this->settings->options_data["Graphs colormap"])));
+						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size()+1, this->settings->get_int("graphs_cmap")));
 						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
 						g.limits = ImPlot::GetPlotLimits();
 

@@ -482,7 +482,7 @@ void NewGraphPopup::onRender() {
 		TextWrapped("There is currently no graph.");
 		if (Button("Create one")) {
 			Graph g("New graph 1", &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
-			g.lines[0].color = new ImVec4(ImPlot::GetColormapColor(0, std::stoi(this->settings->options_data["Graphs colormap"])));
+			g.lines[0].color = new ImVec4(ImPlot::GetColormapColor(0, this->settings->get_int("graphs_cmap")));
 			pr->graphs.push_back(g);
 		}
 	}
@@ -505,7 +505,7 @@ void NewGraphPopup::onRender() {
 				Separator();
 				Dummy(ImVec2(0.0f, 10.0f));
 				Text("Lines");
-				Text("Selected colormap : %s", ImPlotColormapToString(std::stoi(this->settings->options_data["Graphs colormap"])));
+				Text("Selected colormap : %s", ImPlotColormapToString(this->settings->get_int("graphs_cmap")));
 				for (int j = 0; j < graph.lines.size(); j++) {
 					if (TreeNode(("Line #" + std::to_string(j + 1)).c_str())) {
 						Line& line = graph.lines[j];
@@ -544,7 +544,7 @@ void NewGraphPopup::onRender() {
 				Dummy(ImVec2(0.0f, 10.0f));
 				if (Button("+")) {
 					Line l(&pr->headers[pr->ids[0]]);
-					l.color = new ImVec4(ImPlot::GetColormapColor(graph.lines.size()+1, std::stoi(this->settings->options_data["Graphs colormap"])));
+					l.color = new ImVec4(ImPlot::GetColormapColor(graph.lines.size()+1, this->settings->get_int("graphs_cmap")));
 					graph.lines.push_back(l);
 				}
 				if (pr->graphs.size() > 0) {
@@ -564,7 +564,7 @@ void NewGraphPopup::onRender() {
 		}
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
 			Line l(&pr->headers[pr->ids[0]]);
-			l.color = new ImVec4(ImPlot::GetColormapColor(0, std::stoi(this->settings->options_data["Graphs colormap"])));
+			l.color = new ImVec4(ImPlot::GetColormapColor(0, this->settings->get_int("graphs_cmap")));
 			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->ids[0]], { l }, 0, 0);
 			pr->graphs.push_back(g);
 		}

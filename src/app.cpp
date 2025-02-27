@@ -86,6 +86,22 @@ int DataMorph::initialize() {
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI bi.ttf", 23, "font23bi");
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI bi.ttf", 64, "font64bi");
 
+	fm->loadFontFromPath("resources\\fonts\\JB Mono.ttf", 20, "code20");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono.ttf", 23, "code23");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono.ttf", 64, "code64");
+
+	fm->loadFontFromPath("resources\\fonts\\JB Mono b.ttf", 20, "code20b");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono b.ttf", 23, "code23b");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono b.ttf", 64, "code64b");
+
+	fm->loadFontFromPath("resources\\fonts\\JB Mono i.ttf", 20, "code20i");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono i.ttf", 23, "code23i");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono i.ttf", 64, "code64i");
+
+	fm->loadFontFromPath("resources\\fonts\\JB Mono bi.ttf", 20, "code20bi");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono bi.ttf", 23, "code23bi");
+	fm->loadFontFromPath("resources\\fonts\\JB Mono bi.ttf", 64, "code64bi");
+
 	fm->loadFontFromPath("resources\\fonts\\Times New Roman.ttf", 23, "math23");
 
 	this->io->Fonts->Build();
@@ -93,7 +109,7 @@ int DataMorph::initialize() {
 	this->settings = new Settings("options.opt");
 	Settings::instance = this->settings;
 
-	if (this->settings->get_option("Theme") == "Dark") {
+	if (this->settings->get_string("theme") == "Dark") {
 		ImGui::StyleColorsDark();
 	}
 	else {
