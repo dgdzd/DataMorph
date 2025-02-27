@@ -149,6 +149,73 @@ namespace Regression {
 					precision /= 10;
 				}
 			}
+
+			if (yModel.find("b") != std::string::npos) {
+				y = {};
+				for (int i = 0; i < xs.size(); i++) {
+					x = xs[i];
+					y.push_back(m_e.value());
+				}
+				loss0 = mean(ys, y);
+				b++;
+				y = {};
+				for (int i = 0; i < xs.size(); i++) {
+					x = xs[i];
+					y.push_back(m_e.value());
+				}
+				loss1 = mean(ys, y);
+				b--;
+				if (loss1 > loss0) {
+					delta_loss = false;
+				}
+				while (precision > 0.00001 && not same) {
+					if (delta_loss) {
+						while (delta_loss && !same) {
+							y = {};
+							for (int i = 0; i < xs.size(); i++) {
+								x = xs[i];
+								y.push_back(m_e.value());
+							}
+							loss0 = mean(ys, y);
+							b += precision;
+							y = {};
+							for (int i = 0; i < xs.size(); i++) {
+								x = xs[i];
+								y.push_back(m_e.value());
+							}
+							loss1 = mean(ys, y);
+
+							delta_loss = loss1 < loss0;
+							if (loss1 == 0) {
+								same = true;
+							}
+						}
+					}
+					else {
+						while (!delta_loss && !same) {
+							y = {};
+							for (int i = 0; i < xs.size(); i++) {
+								x = xs[i];
+								y.push_back(m_e.value());
+							}
+							loss0 = mean(ys, y);
+							b -= precision;
+							y = {};
+							for (int i = 0; i < xs.size(); i++) {
+								x = xs[i];
+								y.push_back(m_e.value());
+							}
+							loss1 = mean(ys, y);
+
+							delta_loss = loss1 < loss0;
+							if (loss1 == 0) {
+								same = true;
+							}
+						}
+					}
+					precision /= 10;
+				}
+			}
 		}
 		return true;
 	}
