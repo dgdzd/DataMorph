@@ -142,155 +142,88 @@ namespace Regression {
 		return true;
 	}
 
-	bool polynomial(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& c, bool a_sign) {
-		if (x.size() != y.size()) {
+	std::vector<double> gaussianMethod(std::vector<std::vector<double>>A, std::vector<double>B) {
+		int n = A.size();
+
+		for (int i = 0; i < n; i++) {
+			int maxRow = i;
+			for (int j = i + 1; j < n; j++) {
+				if (abs(A[j][i]) > abs(A[maxRow][i])) {
+					maxRow = j;
+				}
+			}
+
+			std::swap(A[i], A[maxRow]);
+			std::swap(B[i], B[maxRow]);
+
+			//pivot eliomition
+			for (int j = i + 1; j < n; j++) {
+				double factor = A[j][i] / A[i][i];
+				for (int k = i; k < n; k++) {
+					A[j][k] -= factor * A[i][k];
+				}
+				B[j] -= factor * B[i];
+			}
+		}
+
+		//substitution
+		std::vector<double> X(n);
+		for (int i = n - 1; i >= 0; i--) {
+			X[i] = B[i] / A[i][i];
+			for (int j = i - 1; j >= 0; j--) {
+				B[j] -= A[j][i] * X[i];
+			}
+		}
+		return X;
+	}
+
+	bool quadratic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+		if (xs.size() != ys.size()) {
 			return false;
 		}
-		if (x.size() < 3) {
+		if (xs.size() < 3) {
 			return false;
 		}
-		
-		auto f = [](double x_i, double a, double b, double c) {
-				return a * x_i * x_i + b * x_i + c;
-			};
-	
-		a = std::double_t(a_sign) * 2 - 1;
-		b = 1;
-		c = 1;
 
-		double precision = 1.0;
-		bool sign = 1;
-		double loss0 = 0.0;
-		double loss1 = 0.0;
-		bool delta_loss = false;
+		std::vector<std::vector<double>> A = {
+			{xs[0] * xs[0], xs[0], 1},
+			{xs[1] * xs[1], xs[1], 1},
+			{xs[2] * xs[2], xs[2], 1}
+		};
+		std::vector<double> B = { ys[0], ys[1], ys[2] };
 
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		a++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		a--;
-		delta_loss = loss0 > loss1;
+		std::vector<double> X = gaussianMethod(A, B);
 
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					a -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					a -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
-		}
-
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		b++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		b--;
-		delta_loss = loss0 > loss1;
-
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					b -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					b -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
-		}
-
-		for (int i = 0; i < y.size(); i++) {
-			loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		c++;
-		for (int i = 0; i < y.size(); i++) {
-			loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-		}
-		c--;
-		delta_loss = loss0 > loss1;
-
-		while (precision > 0.00001) {
-			if (delta_loss) {
-				while (delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					c -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			else {
-				while (!delta_loss) {
-					for (int i = 0; i < y.size(); i++) {
-						loss0 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					c -= precision;
-					for (int i = 0; i < y.size(); i++) {
-						loss1 += std::abs(f(x[i], a, b, c) - y[i]);
-					}
-					delta_loss = loss0 > loss1;
-				}
-			}
-			precision /= 10;
-		}
+		a = X[0];
+		b = X[1];
+		c = X[2];
 
 		return true;
 	}
 
-	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
-		if (x.size() != y.size()) {
-			return 0.0;
+	bool cubic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c, double& d) {
+		if (xs.size() != ys.size()) {
+			return false;
 		}
-		double n = x.size();
-		double sum_x = std::sum(x);
-		double sum_y = std::sum(y);
-		double sum_x2 = std::sum(x, [](double val) { return val * val; });
-		double sum_xy = std::sum(x, [&y](double val, int i) { return val * y[i]; });
-		double w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
-		double w0 = (sum_y - w1 * sum_x) / n;
-	}*/
+		if (xs.size() < 4) {
+			return false;
+		}
+
+		std::vector<std::vector<double>> A = {
+			{xs[0] * xs[0] * xs[0], xs[0] * xs[0], xs[0], 1},
+			{xs[1] * xs[1] * xs[1], xs[1] * xs[1], xs[1], 1},
+			{xs[2] * xs[2] * xs[2], xs[2] * xs[2], xs[2], 1},
+			{xs[3] * xs[3] * xs[3], xs[3] * xs[3], xs[3], 1},
+		};
+		std::vector<double> B = { ys[0], ys[1], ys[2], ys[3]};
+
+		std::vector<double> X = gaussianMethod(A, B);
+
+		a = X[0];
+		b = X[1];
+		c = X[2];
+		d = X[3];
+
+		return true;
+	}
 }

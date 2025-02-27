@@ -50,7 +50,7 @@ void Expression::compileExpression() {
 	Header* h = this->parent;
 	Project* pr = h->parent;
 	if (this->specs.type == DERIVATIVE) {
-		h->values[0] = 0.0;
+		h->values[0] = (this->specs.header_dy->values[1] - this->specs.header_dy->values[0]) / (this->specs.header_dx->values[1] - this->specs.header_dx->values[0]);
 		for (int i = 1; i < h->values.size(); i++) {
 			h->values[i] = (this->specs.header_dy->values[i] - this->specs.header_dy->values[i - 1]) / (this->specs.header_dx->values[i] - this->specs.header_dx->values[i - 1]);
 		}
@@ -63,10 +63,11 @@ void Expression::compileExpression() {
 		return;
 	}
 	if (this->specs.type == INTEGRAL) {
-		double height = 0.0;
-		for (int i = 0; i < h->values.size() - 1; i++) {
-			height = this->specs.header_dx->values[i + 1] - this->specs.header_dx->values[i];
-			h->values[i] = (this->specs.header_dy->values[i + 1] + this->specs.header_dy->values[i]) * height / 2;
+		double height = this->specs.header_dx->values[1] - this->specs.header_dx->values[0];
+		h->values[0] = (this->specs.header_dy->values[1] + this->specs.header_dy->values[0]) * height / 2;
+		for (int i = 1; i < h->values.size() - 1; i++) {
+			height = this->specs.header_dx->values[i] - this->specs.header_dx->values[i - 1];
+			h->values[i] = (this->specs.header_dy->values[i] + this->specs.header_dy->values[i - 1]) * height / 2;
 		}
 		return;
 	}
