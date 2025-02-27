@@ -5,6 +5,7 @@
 #include <core/gui/Window.h>
 #include <core/imgui_extension.h>
 #include <imgui_internal.h>
+#include <map>
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,6 +17,7 @@ class SettingsWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	Settings local_settings;
+	std::map<std::string, float*> colors;
 	bool applied;
 
 public:

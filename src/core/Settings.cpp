@@ -13,6 +13,14 @@ Settings::Settings(const std::string& file) {
 	load_options();
 }
 
+float* Settings::get_color3(const std::string& option) {
+	return new float[3] {
+			std::stof(options_data[option + "_R"]),
+			std::stof(options_data[option + "_G"]),
+			std::stof(options_data[option + "_B"])
+		};
+}
+
 std::string Settings::get_option(const std::string& option) {
 	return options_data[option];
 }
@@ -25,7 +33,11 @@ void Settings::load_options() {
 	std::ifstream file(options_file);
 	options_data["Theme"] = "Dark";
 	options_data["Graphs colormap"] = "1";
+
 	options_data["Python executable path"] = "resources\\Python\\python3.exe";
+	options_data["KeywHC_R"] = "0.49803";
+	options_data["KeywHC_G"] = "0";
+	options_data["KeywHC_B"] = "0.33333";
 	if (file.is_open()) {
 		std::string line;
 		while (std::getline(file, line)) {

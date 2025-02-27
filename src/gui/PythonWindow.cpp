@@ -2,6 +2,7 @@
 
 # include <App.h>
 # include <FontManager.h>
+# include <imgui_stdlib.h>
 # include <iostream>
 # include <Utils.h>
 
@@ -18,7 +19,7 @@ PythonWindow::PythonWindow(Project* project) {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
-	this->editor_text = new char[1024 * 16] {""};
+	this->editor_text = "# New python file\n\nprint(\"Hello World!\")";
 	this->settings = Settings::instance;
 }
 
@@ -76,7 +77,9 @@ void PythonWindow::onRender() {
 		}
 		EndMenuBar();
 	}
-	InputTextMultiline("##editor", editor_text, 1024 * 16, ImVec2(1200.0f, 500.0f));
+	PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+	InputTextMultiline("##editor", &editor_text, window->Size);
+	PopStyleColor();
 
 
 }

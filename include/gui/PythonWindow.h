@@ -1,13 +1,10 @@
 #ifndef DM_PYTHONWINDOW_H
 #define DM_PYTHONWINDOW_H
 
-
-#include <core/gui/Window.h>
 #include <App.h>
+#include <core/gui/Window.h>
 #include <core/Project.h>
 #include <string>
-#include <vector>
-#include <utility>
 
 using namespace ImGui;
 
@@ -16,7 +13,7 @@ class PythonWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	Project* project;
-	char* editor_text;
+	std::string editor_text;
 
 public:
 	PythonWindow(Project* project);

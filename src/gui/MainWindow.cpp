@@ -242,7 +242,7 @@ void MainWindow::onRender() {
 	}
 	else {
 		Project* pr = this->state->openProject;
-		if (BeginTable("##table", pr->ids.size(), ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX)) {
+		if (BeginTable("##table", pr->ids.size() + 1, ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX)) {
 			for (int i = 0; i < pr->ids.size(); i++) {
 				std::string header = pr->symbols[i];
 				if (pr->units[i] != "") {
@@ -250,9 +250,10 @@ void MainWindow::onRender() {
 				}
 				TableSetupColumn(header.c_str(), ImGuiTableColumnFlags_WidthFixed, 150.0f);
 			}
+			TableSetupColumn("##del", ImGuiTableColumnFlags_WidthFixed, 20.0f);
 
 			TableNextRow();
-			for (int i = 0; i < TableGetColumnCount(); i++) {
+			for (int i = 0; i < TableGetColumnCount() - 1; i++) {
 				if (!TableSetColumnIndex(i)) {
 					continue;
 				}
@@ -284,6 +285,10 @@ void MainWindow::onRender() {
 					EndPopup();
 				}
 			}
+			if (TableSetColumnIndex(TableGetColumnCount() - 1)) {
+				TableHeader("##del");
+			}
+
 			for (int i = 0; i < pr->headers[pr->ids[0]].values.size(); i++) {
 				TableNextRow();
 				for (int j = 0; j < pr->ids.size(); j++) {
@@ -325,6 +330,18 @@ void MainWindow::onRender() {
 					}
 					PopStyleColor();
 				}
+
+				TableNextColumn();
+				SetNextItemWidth(20);
+				PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
+				PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
+				PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+				if (Button(("X##" + std::to_string(i)).c_str())) {
+					pr->removeRow(i);
+				}
+				PopStyleColor();
+				PopStyleColor();
+				PopStyleColor();
 			}
 			EndTable();
 		}

@@ -73,6 +73,19 @@ int DataMorph::initialize() {
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 20, "font20");
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 23, "font23");
 	fm->loadFontFromPath("resources\\fonts\\Segoe UI.ttf", 64, "font64");
+
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI b.ttf", 20, "font20b");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI b.ttf", 23, "font23b");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI b.ttf", 64, "font64b");
+
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI i.ttf", 20, "font20i");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI i.ttf", 23, "font23i");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI i.ttf", 64, "font64i");
+
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI bi.ttf", 20, "font20bi");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI bi.ttf", 23, "font23bi");
+	fm->loadFontFromPath("resources\\fonts\\Segoe UI bi.ttf", 64, "font64bi");
+
 	fm->loadFontFromPath("resources\\fonts\\Times New Roman.ttf", 23, "math23");
 
 	this->io->Fonts->Build();
