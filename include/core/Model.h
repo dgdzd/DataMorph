@@ -18,6 +18,7 @@ enum ModelType : int {
 	EXPONENTIAL,
 	LOGARITHMIC,
 	POWER,
+	SINUS,
 	OTHER
 };
 

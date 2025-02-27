@@ -206,6 +206,8 @@ std::string ModelTypeToString(ModelType type) {
 		return "Power";
 	case ModelType::OTHER:
 		return "Other";
+	case ModelType::SINUS:
+		return "Sinus";
 	default:
 		return "None";
 	}

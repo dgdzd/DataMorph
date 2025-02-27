@@ -149,73 +149,6 @@ namespace Regression {
 					precision /= 10;
 				}
 			}
-
-			if (yModel.find("b") != std::string::npos) {
-				y = {};
-				for (int i = 0; i < xs.size(); i++) {
-					x = xs[i];
-					y.push_back(m_e.value());
-				}
-				loss0 = mean(ys, y);
-				b++;
-				y = {};
-				for (int i = 0; i < xs.size(); i++) {
-					x = xs[i];
-					y.push_back(m_e.value());
-				}
-				loss1 = mean(ys, y);
-				b--;
-				if (loss1 > loss0) {
-					delta_loss = false;
-				}
-				while (precision > 0.00001 && not same) {
-					if (delta_loss) {
-						while (delta_loss && !same) {
-							y = {};
-							for (int i = 0; i < xs.size(); i++) {
-								x = xs[i];
-								y.push_back(m_e.value());
-							}
-							loss0 = mean(ys, y);
-							b += precision;
-							y = {};
-							for (int i = 0; i < xs.size(); i++) {
-								x = xs[i];
-								y.push_back(m_e.value());
-							}
-							loss1 = mean(ys, y);
-
-							delta_loss = loss1 < loss0;
-							if (loss1 == 0) {
-								same = true;
-							}
-						}
-					}
-					else {
-						while (!delta_loss && !same) {
-							y = {};
-							for (int i = 0; i < xs.size(); i++) {
-								x = xs[i];
-								y.push_back(m_e.value());
-							}
-							loss0 = mean(ys, y);
-							b -= precision;
-							y = {};
-							for (int i = 0; i < xs.size(); i++) {
-								x = xs[i];
-								y.push_back(m_e.value());
-							}
-							loss1 = mean(ys, y);
-
-							delta_loss = loss1 < loss0;
-							if (loss1 == 0) {
-								same = true;
-							}
-						}
-					}
-					precision /= 10;
-				}
-			}
 		}
 		return true;
 	}
@@ -303,5 +236,95 @@ namespace Regression {
 		d = X[3];
 
 		return true;
+	}
+
+	bool sinusoidal(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 4) {
+			return false;
+		}
+
+		auto f = [](double xi, double ai, double bi, double ci) {
+			return ai * std::sin(bi * xi + ci);
+			};
+		
+		a = std::max(ys);
+		bool sign = xs[0] > 0;
+		int index = 0;
+		double x0 = 0;
+		double x1 = 0;
+		while (xs[index] > 0 && sign) {
+			index++;
+		}
+		x0 = xs[index];
+		sign = not sign;
+		index = 0;
+		while (xs[index] > 0 && sign) {
+			index++;
+		}
+		x1 = xs[index];
+		b = x1 - x0;
+		c = 0;
+
+		double loss0 = 0;
+		double x = xs[0];
+		for (int i = 0; xs.size(); i++) {
+			x = xs[i];
+			loss0 += std::abs(f(x, a, b, c));
+		}
+		c++;
+		double loss1 = 0;
+		for (int i = 0; xs.size(); i++) {
+			x = xs[i];
+			loss1 += std::abs(f(x, a, b, c));
+		}
+
+		bool delta_loss = loss1 < loss0;
+		bool same = loss0 == 0;
+		double precision = 1;
+		while (precision > 0.00001 && !same) {
+			if (delta_loss) {
+				while (delta_loss && !same) {
+					loss0 = 0;
+					for (int i = 0; xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b, c));
+					}
+					c += precision;
+					loss1 = 0;
+					for (int i = 0; xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b, c));
+					}
+					delta_loss = loss1 < loss0;
+					if (loss1 == 0) {
+						same = true;
+					}
+				}
+			}
+			else {
+				while (!delta_loss && !same) {
+					loss0 = 0;
+					for (int i = 0; xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b, c));
+					}
+					c -= precision;
+					loss1 = 0;
+					for (int i = 0; xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b, c));
+					}
+					delta_loss = loss1 < loss0;
+					if (loss1 == 0) {
+						same = true;
+					}
+				}
+			}
+			precision /= 10;
+		}
+
 	}
 }

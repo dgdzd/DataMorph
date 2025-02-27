@@ -24,6 +24,7 @@ void Model::addVars() {
 	this->symbol_table.add_variable("a", this->a);
 	this->symbol_table.add_variable("b", this->b);
 	this->symbol_table.add_variable("c", this->c);
+	this->symbol_table.add_variable("d", this->c);
 	this->symbol_table.add_variable(xlabel, this->x);
 	this->expression_t.register_symbol_table(this->symbol_table);
 }
