@@ -23,7 +23,6 @@ SettingsWindow::SettingsWindow() : local_settings(local_settings) {
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 	this->settings = Settings::instance;
 	this->local_settings = Settings(*this->settings);
-	this->colors["KeywHC"] = local_settings.get_color3("KeywHC");
 	this->applied = true;
 }
 
@@ -76,13 +75,13 @@ void SettingsWindow::onRender() {
 
 				HeaderText("Main theme", "font64b", 0.4f);
 				TextWrapped("Choose between a dark or light theme.\nNote : you should restart DataMorph in order for the changes to apply.");
-				if (BeginCombo("##Main theme", this->local_settings.get_option("Theme").c_str())) {
+				if (BeginCombo("##Main theme", this->local_settings.get_string("theme").c_str())) {
 					if (Selectable("Dark")) {
-						local_settings.set_option("Theme", "Dark");
+						local_settings.set_string("theme", "Dark");
 						this->applied = false;
 					}
 					if (Selectable("Light")) {
-						local_settings.set_option("Theme", "Light");
+						local_settings.set_string("theme", "Light");
 						this->applied = false;
 					}
 					EndCombo();
@@ -92,11 +91,11 @@ void SettingsWindow::onRender() {
 				Dummy(ImVec2(0, 10));
 				HeaderText("Graph plots colormap", "font64b", 0.4f);
 				Text("Choose a colormap to use for plot lines' default colors.");
-				int cmap = std::stoi(local_settings.options_data["Graphs colormap"]);
+				int cmap = local_settings.get_int("graphs_cmap");
 				if (BeginCombo("##Lines color map", ImPlotColormapToString(cmap))) {
 					for (int i = 0; i < 16; i++) {
 						if (Selectable(ImPlotColormapToString(i))) {
-							local_settings.set_option("Graphs colormap", std::to_string(i));
+							local_settings.set_int("graphs_cmap", i);
 							this->applied = false;
 						}
 					}
@@ -123,7 +122,7 @@ void SettingsWindow::onRender() {
 
 				HeaderText("Python interpreter path", "font64b", 0.4f);
 				TextWrapped("Enter path to a Python interpreter.");
-				if (InputText("##Python interpreter path", &local_settings.options_data["Python executable path"])) {
+				if (InputText("##Python interpreter path", &local_settings.get_string("python_exec_path"))) {
 					this->applied = false;
 				}
 				SameLine();
@@ -135,7 +134,7 @@ void SettingsWindow::onRender() {
 
 					nfdresult_t result = NFD::OpenDialog(outPath, filterItem, 1, "C:\\Users");
 					if (result == NFD_OKAY) {
-						local_settings.set_option("Python executable path", outPath.get());
+						local_settings.set_string("Python executable path", outPath.get());
 						this->applied = false;
 					}
 					else if (result == NFD_CANCEL) {
@@ -148,22 +147,71 @@ void SettingsWindow::onRender() {
 				Dummy(ImVec2(0, 10));
 				Separator();
 				Dummy(ImVec2(0, 10));
-				HeaderText("Keywords highligh color", "font64b", 0.4f);
+				HeaderText("Keywords highlight color", "font64b", 0.4f);
 				TextWrapped("Choose a color to highlight Python keywords");
-				ColorPicker3("Keywords color", colors["KeywHC"]);
-				/*if (BeginChild("##Highlighexample", ImVec2(0, 75), ImGuiChildFlags_Border)) {
-					ImVec4 col = ImVec4(colors["KeywHC"][0], colors["KeywHC"][1], colors["KeywHC"][2], colors["KeywHC"][3]);
+				ColorEdit3("Keywords color", &local_settings.get_vec("py_keyw_highlight_c").x);
+				if (BeginChild("##Highlighexample", ImVec2(0, 65), ImGuiChildFlags_Border)) {
+					ImVec4 col = local_settings.get_vec("py_keyw_highlight_c");
 					PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+					PushFont(fm.getFont("code23"));
+					TextColored(col, "for"); SameLine(); Text(" i "); SameLine(); TextColored(col, "in "); SameLine(); Text("range(3):");
+					Text("    print(i)");
 
-					TextColored(col, "for"); SameLine(); Text(" i "); SameLine(); TextColored(col, "in"); SameLine(); Text("range(3):");
-					Indent(); Text("print(i)");
-
+					PopFont();
 					PopStyleVar();
-					EndChild();
-				}*/
+				}
+				EndChild();
+				Dummy(ImVec2(0, 10));
+				Separator();
+				Dummy(ImVec2(0, 10));
+				HeaderText("Functions definition", "font64b", 0.4f);
+				TextWrapped("Choose a color to highlight Python function definitions.");
+				ColorEdit3("Function definition color", &local_settings.get_vec("py_func_def_c").x);
+				if (BeginChild("##Funcdefexample", ImVec2(0, 65), ImGuiChildFlags_Border)) {
+					ImVec4 col = local_settings.get_vec("py_func_def_c");
+					PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+					PushFont(fm.getFont("code23"));
+					TextColored(col, "def"); SameLine(); Text(" hello_world(int i): ");
+					Text("    print(i)");
 
+					PopFont();
+					PopStyleVar();
+				}
+				EndChild();
+				Dummy(ImVec2(0, 10));
+				Separator();
+				Dummy(ImVec2(0, 10));
+				HeaderText("Comments", "font64b", 0.4f);
+				TextWrapped("Choose a color to highlight Python comments.");
+				ColorEdit3("Comment color", &local_settings.get_vec("py_comment_c").x);
+				if (BeginChild("##commentexample", ImVec2(0, 40), ImGuiChildFlags_Border)) {
+					ImVec4 col = local_settings.get_vec("py_comment_c");
+					PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+					PushFont(fm.getFont("code23"));
+					TextColored(col, "# This is a comment.");
+
+					PopFont();
+					PopStyleVar();
+				}
+				EndChild();
+				Dummy(ImVec2(0, 10));
+				Separator();
+				Dummy(ImVec2(0, 10));
+				HeaderText("Strings", "font64b", 0.4f);
+				TextWrapped("Choose a color to highlight Python strings.");
+				ColorEdit3("String color", &local_settings.get_vec("py_str_c").x);
+				if (BeginChild("##strexample", ImVec2(0, 40), ImGuiChildFlags_Border)) {
+					ImVec4 col = local_settings.get_vec("py_str_c");
+					PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 0.0f));
+					PushFont(fm.getFont("code23"));
+					TextColored(col, "\"This is a comment.\"");
+
+					PopFont();
+					PopStyleVar();
+				}
 				EndChild();
 			}
+			EndChild();
 			EndTabItem();
 		}
 		EndTabBar();
@@ -174,11 +222,11 @@ void SettingsWindow::onRender() {
 		BeginDisabled(this->applied);
 		{
 			if (Button("Apply")) {
-				Settings::instance->options_data = local_settings.options_data;
+				*Settings::instance = local_settings;
 				Settings::instance->write_options();
 				this->applied = true;
 
-				if (this->settings->get_option("Theme") == "Dark") {
+				if (this->settings->get_string("theme") == "Dark") {
 					ImGui::StyleColorsDark();
 				}
 				else {

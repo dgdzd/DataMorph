@@ -89,6 +89,7 @@ void GraphWindow::onRender() {
 						if (Selectable("Quadratic")) {
 							g.model->type = ModelType::QUADRATIC;
 							g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
+							g.model->refresh();
 						}
 						if (Selectable("Cubic")) {
 							g.model->type = ModelType::CUBIC;
@@ -232,7 +233,7 @@ void GraphWindow::onRender() {
 						}
 					}
 					if (g.model && g.model->values.size() != 0) {
-						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size()+1, std::stoi(this->settings->options_data["Graphs colormap"])));
+						ImPlot::SetNextLineStyle(ImPlot::GetColormapColor(g.lines.size()+1, this->settings->get_int("graphs_cmap")));
 						ImPlot::SetNextMarkerStyle(ImPlotMarker_None);
 						g.limits = ImPlot::GetPlotLimits();
 
@@ -242,6 +243,13 @@ void GraphWindow::onRender() {
 								double x = g.limits.Min().x + idx * abs(g.limits.Max().x - g.limits.Min().x);
 								return ImPlotPoint(x, g.model->value(x));
 							}, (void*)&g, 2);
+						}
+						else {
+							ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
+								Graph& g = *(Graph*)data;
+								double x = g.limits.Min().x + (idx / 30.0f) * abs(g.limits.Max().x - g.limits.Min().x);
+								return ImPlotPoint(x, g.model->value(x));
+							}, (void*)&g, 31);
 						}
 					}
 					ImPlot::EndPlot();
