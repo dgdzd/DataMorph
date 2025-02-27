@@ -24,7 +24,7 @@ enum ModelType : int {
 struct Model {
 	ModelType type;
 	std::string expr_str;
-	double a, b, c, x;
+	double a, b, c, d, x;
 	Line* dataset;
 	std::string xlabel;
 	std::vector<double> values;

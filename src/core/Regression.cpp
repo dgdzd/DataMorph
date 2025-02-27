@@ -142,48 +142,48 @@ namespace Regression {
 		return true;
 	}
 
-	bool polynomial(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+	std::vector<double> gaussianMethod(std::vector<std::vector<double>>A, std::vector<double>B) {
+		int n = A.size();
+
+		for (int i = 0; i < n; i++) {
+			int maxRow = i;
+			for (int j = i + 1; j < n; j++) {
+				if (abs(A[j][i]) > abs(A[maxRow][i])) {
+					maxRow = j;
+				}
+			}
+
+			std::swap(A[i], A[maxRow]);
+			std::swap(B[i], B[maxRow]);
+
+			//pivot eliomition
+			for (int j = i + 1; j < n; j++) {
+				double factor = A[j][i] / A[i][i];
+				for (int k = i; k < n; k++) {
+					A[j][k] -= factor * A[i][k];
+				}
+				B[j] -= factor * B[i];
+			}
+		}
+
+		//substitution
+		std::vector<double> X(n);
+		for (int i = n - 1; i >= 0; i--) {
+			X[i] = B[i] / A[i][i];
+			for (int j = i - 1; j >= 0; j--) {
+				B[j] -= A[j][i] * X[i];
+			}
+		}
+		return X;
+	}
+
+	bool quadratic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
 		if (xs.size() < 3) {
 			return false;
 		}
-		
-		auto gaussianElimination = [](std::vector<std::vector<double>>A, std::vector<double>B) {
-			int n = A.size();
-
-			for (int i = 0; i < n; i++) {
-				int maxRow = i;
-				for (int j = i + 1; j < n; j++) {
-					if (abs(A[j][i]) > abs(A[maxRow][i])) {
-						maxRow = j;
-					}
-				}
-
-				std::swap(A[i], A[maxRow]);
-				std::swap(B[i], B[maxRow]);
-
-				//pivot eliomition
-				for (int j = i + 1; j < n; j++) {
-					double factor = A[j][i] / A[i][i];
-					for (int k = i; k < n; k++) {
-						A[j][k] -= factor * A[i][k];
-					}
-					B[j] -= factor * B[i];
-				}
-			}
-
-			//substitution
-			std::vector<double> X(n);
-			for (int i = n - 1; i >= 0; i--) {
-				X[i] = B[i] / A[i][i];
-				for (int j = i - 1; j >= 0; j--) {
-					B[j] -= A[j][i] * X[i];
-				}
-			}
-			return X;
-			};
 
 		std::vector<std::vector<double>> A = {
 			{xs[0] * xs[0], xs[0], 1},
@@ -192,7 +192,7 @@ namespace Regression {
 		};
 		std::vector<double> B = { ys[0], ys[1], ys[2] };
 
-		std::vector<double> X = gaussianElimination(A, B);
+		std::vector<double> X = gaussianMethod(A, B);
 
 		a = X[0];
 		b = X[1];
@@ -200,82 +200,30 @@ namespace Regression {
 
 		return true;
 	}
+
+	bool cubic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c, double& d) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 4) {
+			return false;
+		}
+
+		std::vector<std::vector<double>> A = {
+			{xs[0] * xs[0] * xs[0], xs[0] * xs[0], xs[0], 1},
+			{xs[1] * xs[1] * xs[1], xs[1] * xs[1], xs[1], 1},
+			{xs[2] * xs[2] * xs[2], xs[2] * xs[2], xs[2], 1},
+			{xs[3] * xs[3] * xs[3], xs[3] * xs[3], xs[3], 1},
+		};
+		std::vector<double> B = { ys[0], ys[1], ys[2], ys[3]};
+
+		std::vector<double> X = gaussianMethod(A, B);
+
+		a = X[0];
+		b = X[1];
+		c = X[2];
+		d = X[3];
+
+		return true;
+	}
 }
-
-	/*
-		//given ax^2+bx+c with 3 points :
-		//equ1 : c = ax0^2 + bx0 - y0
-		//equ2 : ax1^2+bx1+c = y1
-		//equ3 : ax2^2+bx2+c = y2
-		//equ4 : ax1^2 + bx1 + (ax0^2 + bx0 - y0) = y1 -->to calculate b
-		//equ5 : ax2^2 + bx2 + (ax0^2 + bx0 - y0) = y2
-		//equ6 : ax1^2 + bx1 + (ax0^2 + bx0 - y0) - (ax2^2 + bx2 + (ax0^2 + bx0 - y0)) = y1 - y2 -->to calculate a
-
-		typedef exprtk::symbol_table<double> symbol_table_t;
-		typedef exprtk::expression<double>   expression_t;
-		typedef exprtk::parser<double>       parser_t;
-
-		double x0 = xs[0];
-		double x1 = xs[1];
-		double x2 = xs[2];
-		double y0 = ys[0];
-		double y1 = ys[1];
-		double y2 = ys[2];
-
-		a = 1.0;
-		b = 1.0;
-		c = 1.0;
-
-		symbol_table_t symbol_table;
-		symbol_table.add_variable("a", a);
-		symbol_table.add_variable("b", b);
-		symbol_table.add_variable("c", c);
-		symbol_table.add_variable("x0", x0);
-		symbol_table.add_variable("x1", x1);
-		symbol_table.add_variable("x2", x2);
-		symbol_table.add_variable("y0", y0);
-		symbol_table.add_variable("y1", y1);
-		symbol_table.add_variable("y2", y2);
-		symbol_table.add_constants();
-
-		expression_t e_4;
-		expression_t e_6;
-		e_4.register_symbol_table(symbol_table);
-		e_6.register_symbol_table(symbol_table);
-
-		parser_t parser;
-		std::string equ4_l = "a*x1^2 + b*x1 + (a*x0^2 + b*x0 - y0)";
-		std::string equ6_l = "a*x1^2 + b*x1 + (a*x0^2 + b*x0 - y0) - (a*x2^2 + b*x2 + (a*x0^2 + b*x0 - y0))";
-		parser.compile(equ4_l, e_4);
-		parser.compile(equ6_l, e_6);
-
-		double precision = 1.0;
-		bool same = false;
-		if (e_6.value() == y1 - y2) {
-			same = true;
-		}
-		std::cout << "here" << std::endl;
-		while (precision > 0.00001 && !same) {
-			if (e_6.value() < y1 - y2) {
-				while (e_6.value() < y1 - y2) {
-					std::cout << "adding" << std::endl;
-					std::cout << a << std::endl;
-					a -= precision;
-					b -= precision;
-				}
-			}
-			else {
-				while (e_6.value() > y1 - y2) {
-					std::cout << "subtracting" << std::endl;
-					std::cout << a << std::endl;
-					a += precision;
-					b += precision;
-				}
-			}
-			precision /= 10;
-			if (e_6.value() == y1 - y2) {
-				same = true;
-			}
-			std::cout << precision << std::endl;
-		}
-	*/
