@@ -142,17 +142,90 @@ namespace Regression {
 		return true;
 	}
 
-	bool polynomial(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& c, bool a_sign) {
-		if (x.size() != y.size()) {
+	bool polynomial(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+		if (xs.size() != ys.size()) {
 			return false;
 		}
-		if (x.size() < 3) {
+		if (xs.size() < 3) {
 			return false;
 		}
 		
+		//given ax^2+bx+c with 3 points : 
+		//equ1 : c = ax0^2 + bx0 - y0
+		//equ2 : ax1^2+bx1+c = y1
+		//equ3 : ax2^2+bx2+c = y2
+		//equ4 : ax1^2 + bx1 + (ax0^2 + bx0 - y0) = y1 -->to calculate b
+		//equ5 : ax2^2 + bx2 + (ax0^2 + bx0 - y0) = y2
+		//equ6 : ax1^2 + bx1 + (ax0^2 + bx0 - y0) - (ax2^2 + bx2 + (ax0^2 + bx0 - y0)) = y1 - y2 -->to calculate a
+
+		typedef exprtk::symbol_table<double> symbol_table_t;
+		typedef exprtk::expression<double>   expression_t;
+		typedef exprtk::parser<double>       parser_t;
+
+		double x0 = xs[0];
+		double x1 = xs[1];
+		double x2 = xs[2];
+		double y0 = ys[0];
+		double y1 = ys[1];
+		double y2 = ys[2];
+
+		a = 1.0;
+		b = 1.0;
+		c = 1.0;
+
+		symbol_table_t symbol_table;
+		symbol_table.add_variable("a", a);
+		symbol_table.add_variable("b", b);
+		symbol_table.add_variable("c", c);
+		symbol_table.add_variable("x0", x0);
+		symbol_table.add_variable("x1", x1);
+		symbol_table.add_variable("x2", x2);
+		symbol_table.add_variable("y0", y0);
+		symbol_table.add_variable("y1", y1);
+		symbol_table.add_variable("y2", y2);
+		symbol_table.add_constants();
+
+		expression_t e_4;
+		expression_t e_6;
+		e_4.register_symbol_table(symbol_table);
+		e_6.register_symbol_table(symbol_table);
+
+		parser_t parser;
+		std::string equ4_l = "a*x1^2 + b*x1 + (a*x0^2 + b*x0 - y0)";
+		std::string equ6_l = "a*x1^2 + b*x1 + (a*x0^2 + b*x0 - y0) - (a*x2^2 + b*x2 + (a*x0^2 + b*x0 - y0))";
+		parser.compile(equ4_l, e_4);
+		parser.compile(equ6_l, e_6);
+
+		double precision = 1.0;
+		bool same = false;
+		if (e_6.value() == y1 - y2) {
+			same = true;
+		}
+		while (precision > 0.00001 && !same) {
+			if (e_6.value() < y1 - y2) {
+				while (e_6.value() < y1 - y2) {
+					a++;
+				}
+			}
+			else {
+				while (e_6.value() > y1 - y2) {
+					a--;
+				}
+			}
+			precision /= 10;
+			if (e_6.value() == y1 - y2) {
+				same = true;
+			}
+		}
+
+		return true;
+	}
+}
+
+	/*
 		auto f = [](double x_i, double a, double b, double c) {
-				return a * x_i * x_i + b * x_i + c;
-			};
+			return a * x_i * x_i + b * x_i + c;
+		};
 	
 		a = std::double_t(a_sign) * 2 - 1;
 		b = 1;
@@ -277,20 +350,4 @@ namespace Regression {
 			}
 			precision /= 10;
 		}
-
-		return true;
-	}
-
-	/*double exponential(const std::vector<double>& x, const std::vector<double>& y) {
-		if (x.size() != y.size()) {
-			return 0.0;
-		}
-		double n = x.size();
-		double sum_x = std::sum(x);
-		double sum_y = std::sum(y);
-		double sum_x2 = std::sum(x, [](double val) { return val * val; });
-		double sum_xy = std::sum(x, [&y](double val, int i) { return val * y[i]; });
-		double w1 = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x * sum_x);
-		double w0 = (sum_y - w1 * sum_x) / n;
-	}*/
-}
+	*/
