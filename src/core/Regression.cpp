@@ -246,28 +246,37 @@ namespace Regression {
 			return false;
 		}
 
-		auto f = [](double xi, double ai, double bi, double ci) {
-			return ai * std::sin(bi * xi + ci);
-			};
-		a = std::max({ std::max(ys), std::abs(std::min(ys)) });
-
-		std::vector<double> y = {};
-		for (int i = 0; i < ys.size(); i++) {
-			y.push_back(std::asin(ys[i]/a));
+		a = (std::max(ys) - std::min(ys)) / 2;
+		if (a < 0) {
+			return false;
+		}
+		if (a == 0) {
+			b = 1;
+			c = 0;
+			return true;
 		}
 
-		b = 0;
-		for (int i = 0; i < xs.size() - 1; i++) {
-			b += (y[i + 1] - y[i]) / (xs[i + 1] - xs[i]);
+		std::vector<double> peak_xs = {};
+		for (int i = 1; i < xs.size() - 1; ++i) {
+			if (ys[i] > ys[i - 1] && ys[i] > ys[i + 1]) {
+				peak_xs.push_back(xs[i]);
+			}
 		}
-		b /= xs.size() - 1;
+		if (peak_xs.size() < 2) {
+			return false;
+		}
+
+		double av_period = 0.0;
+		for (int i = 1; i < peak_xs.size(); ++i) {
+			av_period += (peak_xs[i] - peak_xs[i - 1]);
+		}
+		av_period /= (peak_xs.size() - 1);
+		b = (2 * 3.14159) / av_period;
 
 		c = 0;
-		for (int i = 0; i < xs.size(); i++) {
-			c += y[i] - b * xs[i];
+		if (!peak_xs.empty()) {
+			c = ys[0] - b * xs[0];
 		}
-		c /= xs.size() - 1;
-
 		return true;
 	}
 }

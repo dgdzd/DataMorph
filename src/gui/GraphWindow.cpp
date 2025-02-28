@@ -120,10 +120,6 @@ void GraphWindow::onRender() {
 								g.model->expr_str = y + "=1/(1+2.71828^-" + x + ")";
 								//e = 2.71828
 							}
-							if (Selectable("Cosine")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*cos(b*" + x + "+c)";
-							}
 							EndDisabled();
 						}
 						EndCombo();
