@@ -94,10 +94,12 @@ void GraphWindow::onRender() {
 						if (Selectable("Cubic")) {
 							g.model->type = ModelType::CUBIC;
 							g.model->expr_str = y + "=a*" + x + "^3+b*" + x + "^2+c*x+d";
+							g.model->refresh();
 						}
 						if (Selectable("Sine")) {
 							g.model->type = ModelType::SINUS;
 							g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
+							g.model->refresh();
 						}
 
 						BeginDisabled();

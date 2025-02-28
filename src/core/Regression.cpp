@@ -273,9 +273,31 @@ namespace Regression {
 		av_period /= (peak_xs.size() - 1);
 		b = (2 * 3.14159) / av_period;
 
-		c = 0;
-		if (!peak_xs.empty()) {
-			c = ys[0] - b * xs[0];
+		auto f = [](double x, double a, double b, double c) {
+			return a * std::sin(b * x + c);
+			};
+
+		double precision = 0.1;
+		bool same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
+		bool sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+		while (precision > 0.00001 && !same) {
+			if (sign) {
+				while (sign && !same) {
+					c += precision;
+					same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
+					sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+				}
+				sign = not sign;
+			}
+			else {
+				while (!sign && !same) {
+					c -= precision;
+					same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
+					sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+				}
+				sign = not sign;
+			}
+			precision /= 10;
 		}
 		return true;
 	}
