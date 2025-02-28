@@ -33,6 +33,9 @@ set(PROJECT_SOURCES
 		src/gui/SettingsWindow.cpp
 		src/gui/EditorWindow.cpp
 		src/gui/PythonWindow.cpp
+		src/gui/ConsoleWindow.cpp
+		src/core/Console.cpp
+
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
@@ -48,6 +51,7 @@ set(DEPENDENCIES_SOURCES
 		dependencies/src/imgui/implot_demo.cpp
 		dependencies/src/imgui/implot_items.cpp
 		dependencies/src/imgui/imgui_stdlib.cpp
+		
 )
 
 file(GLOB LIBS_LIB "dependencies/libs/*.lib")

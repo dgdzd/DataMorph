@@ -9,7 +9,6 @@ class FontManager {
 	std::map<const char*, ImFont*> fonts;
 	ImVector<ImWchar> ranges;
 
-
 	FontManager();
 
 public:
