@@ -249,82 +249,25 @@ namespace Regression {
 		auto f = [](double xi, double ai, double bi, double ci) {
 			return ai * std::sin(bi * xi + ci);
 			};
-		
-		a = std::max(ys);
-		bool sign = xs[0] > 0;
-		int index = 0;
-		double x0 = 0;
-		double x1 = 0;
-		while (xs[index] > 0 && sign) {
-			index++;
+		a = std::max({ std::max(ys), std::abs(std::min(ys)) });
+
+		std::vector<double> y = {};
+		for (int i = 0; i < ys.size(); i++) {
+			y.push_back(std::asin(ys[i]/a));
 		}
-		x0 = xs[index];
-		sign = not sign;
-		index = 0;
-		while (xs[index] > 0 && sign) {
-			index++;
+
+		b = 0;
+		for (int i = 0; i < xs.size() - 1; i++) {
+			b += (y[i + 1] - y[i]) / (xs[i + 1] - xs[i]);
 		}
-		x1 = xs[index];
-		b = x1 - x0;
+		b /= xs.size() - 1;
+
 		c = 0;
-
-		double loss0 = 0;
-		double x = xs[0];
-		for (int i = 0; xs.size(); i++) {
-			x = xs[i];
-			loss0 += std::abs(f(x, a, b, c));
+		for (int i = 0; i < xs.size(); i++) {
+			c += y[i] - b * xs[i];
 		}
-		c++;
-		double loss1 = 0;
-		for (int i = 0; xs.size(); i++) {
-			x = xs[i];
-			loss1 += std::abs(f(x, a, b, c));
-		}
+		c /= xs.size() - 1;
 
-		bool delta_loss = loss1 < loss0;
-		bool same = loss0 == 0;
-		double precision = 1;
-		while (precision > 0.00001 && !same) {
-			if (delta_loss) {
-				while (delta_loss && !same) {
-					loss0 = 0;
-					for (int i = 0; xs.size(); i++) {
-						x = xs[i];
-						loss0 += std::abs(f(x, a, b, c));
-					}
-					c += precision;
-					loss1 = 0;
-					for (int i = 0; xs.size(); i++) {
-						x = xs[i];
-						loss1 += std::abs(f(x, a, b, c));
-					}
-					delta_loss = loss1 < loss0;
-					if (loss1 == 0) {
-						same = true;
-					}
-				}
-			}
-			else {
-				while (!delta_loss && !same) {
-					loss0 = 0;
-					for (int i = 0; xs.size(); i++) {
-						x = xs[i];
-						loss0 += std::abs(f(x, a, b, c));
-					}
-					c -= precision;
-					loss1 = 0;
-					for (int i = 0; xs.size(); i++) {
-						x = xs[i];
-						loss1 += std::abs(f(x, a, b, c));
-					}
-					delta_loss = loss1 < loss0;
-					if (loss1 == 0) {
-						same = true;
-					}
-				}
-			}
-			precision /= 10;
-		}
-
+		return true;
 	}
 }
