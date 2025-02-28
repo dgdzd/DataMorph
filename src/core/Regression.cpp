@@ -278,22 +278,55 @@ namespace Regression {
 			};
 
 		double precision = 0.1;
-		bool same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
-		bool sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+		double loss0 = 0.0;
+		double loss1 = 0.0;
+		double x = xs[0];
+		for (int i = 0; i < xs.size(); i++) {
+			x = xs[i];
+			loss0 += std::abs(f(x, a, b, c) - ys[i]);
+		}
+		c++;
+		for (int i = 0; i < xs.size(); i++) {
+			x = xs[i];
+			loss1 += std::abs(f(x, a, b, c) - ys[i]);
+		}
+		c--;
+		bool same = loss0 == 0;
+		bool sign = loss1 < loss0;
 		while (precision > 0.00001 && !same) {
 			if (sign) {
 				while (sign && !same) {
+					loss0 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b, c) - ys[i]);
+					}
 					c += precision;
-					same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
-					sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+					loss1 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b, c) - ys[i]);
+					}
+					same = loss1 == 0;
+					sign = loss1 < loss0;
 				}
 				sign = not sign;
 			}
 			else {
 				while (!sign && !same) {
+					loss0 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b, c) - ys[i]);
+					}
 					c -= precision;
-					same = f(xs[0], a, b, c) == ys[0] && f(xs[1], a, b, c) == ys[1];
-					sign = f(xs[0], a, b, c) > ys[0] && f(xs[1], a, b, c) > ys[1];
+					loss1 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b, c) - ys[i]);
+					}
+					same = loss1 == 0;
+					sign = loss1 < loss0;
 				}
 				sign = not sign;
 			}
