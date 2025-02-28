@@ -76,27 +76,27 @@ void GraphWindow::onRender() {
 							g.model->expr_str = y + "=" + x;
 							g.model->refresh();
 						}
-						if (Selectable("Linear")) {
+						if (Selectable("Linear (y=ax)")) {
 							g.model->type = ModelType::LINEAR;
 							g.model->expr_str = y + "=a*" + x;
 							g.model->refresh();
 						}
-						if (Selectable("Affine")) {
+						if (Selectable("Affine (y=ax+b)")) {
 							g.model->type = ModelType::AFFINE;
 							g.model->expr_str = y + "=a*" + x + "+b";
 							g.model->refresh();
 						}
-						if (Selectable("Quadratic")) {
+						if (Selectable("Quadratic (y=ax^2+bx+c)")) {
 							g.model->type = ModelType::QUADRATIC;
 							g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
 							g.model->refresh();
 						}
-						if (Selectable("Cubic")) {
+						if (Selectable("Cubic (y=ax^3+bx^2+cx+d)")) {
 							g.model->type = ModelType::CUBIC;
 							g.model->expr_str = y + "=a*" + x + "^3+b*" + x + "^2+c*x+d";
 							g.model->refresh();
 						}
-						if (Selectable("Sine")) {
+						if (Selectable("Sine (y=a*sin(bx+c)")) {
 							g.model->type = ModelType::SINUS;
 							g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
 							g.model->refresh();
@@ -143,7 +143,7 @@ void GraphWindow::onRender() {
 					}
 					TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 					if (IsItemHovered()) {
-						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Note : the experimentals data musn't reverse the order of the model");
+						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warnings : \n -the experimentals data musn't reverse the order of the model \n -avoid dividing by 0 (ex: x/a) \n -in the model log[a](x) a will always be a nutural number \n -sketchy custom models will make the software crash \n -any unfit model for your experimental data may cause errors \n ");
 					}
 
 					if (Button("Update model")) {

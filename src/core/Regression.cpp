@@ -71,79 +71,58 @@ namespace Regression {
 		double precision = 1.0;
 		bool same = false;
 		bool delta_loss = true;
-		std::vector<double> y = {};
-
-		auto mean = [](std::vector<double> y_true, std::vector<double> y_pred) {
-			double error_squared = 0;
-			for (int i = 0; i < y_true.size(); i++) {
-				error_squared = (y_true[i] - y_pred[i]) * (y_true[i] - y_pred[i]);
-			}
-			error_squared = error_squared / y_true.size();
-			return error_squared;
-			};
 
 		if (yModel.find(x_str) != std::string::npos) {
 			if (yModel.find("a") != std::string::npos) {
-				y = {};
+				loss0 = 0;
 				for (int i = 0; i < xs.size(); i++) {
 					x = xs[i];
-					y.push_back(m_e.value());
+					loss0 += std::abs(m_e.value() - ys[i]);
 				}
-				loss0 = mean(ys, y);
 				a++;
-				y = {};
+				loss1 = 0;
 				for (int i = 0; i < xs.size(); i++) {
 					x = xs[i];
-					y.push_back(m_e.value());
+					loss1 += std::abs(m_e.value() - ys[i]);
 				}
-				loss1 = mean(ys, y);
 				a--;
-				if (loss1 > loss0) {
-					delta_loss = false;
-				}
+				delta_loss = loss1 < loss0;
+
 				while (precision > 0.00001 && not same) {
 					if (delta_loss) {
 						while (delta_loss && !same) {
-							y = {};
+							loss0 = 0;
 							for (int i = 0; i < xs.size(); i++) {
 								x = xs[i];
-								y.push_back(m_e.value());
+								loss0 += std::abs(m_e.value() - ys[i]);
 							}
-							loss0 = mean(ys, y);
 							a += precision;
-							y = {};
+							loss1 = 0;
 							for (int i = 0; i < xs.size(); i++) {
 								x = xs[i];
-								y.push_back(m_e.value());
+								loss1 += std::abs(m_e.value() - ys[i]);
 							}
-							loss1 = mean(ys, y);
 
 							delta_loss = loss1 < loss0;
-							if (loss1 == 0) {
-								same = true;
-							}
+							same = loss1 == 0;
 						}
 					}
 					else {
 						while (!delta_loss && !same) {
-							y = {};
+							loss0 = 0;
 							for (int i = 0; i < xs.size(); i++) {
 								x = xs[i];
-								y.push_back(m_e.value());
+								loss0 += std::abs(m_e.value() - ys[i]);
 							}
-							loss0 = mean(ys, y);
 							a -= precision;
-							y = {};
+							loss1 = 0;
 							for (int i = 0; i < xs.size(); i++) {
 								x = xs[i];
-								y.push_back(m_e.value());
+								loss1 += std::abs(m_e.value() - ys[i]);
 							}
-							loss1 = mean(ys, y);
 
 							delta_loss = loss1 < loss0;
-							if (loss1 == 0) {
-								same = true;
-							}
+							same = loss1 == 0;
 						}
 					}
 					precision /= 10;
