@@ -198,16 +198,18 @@ std::string ModelTypeToString(ModelType type) {
 		return "Quadratic";
 	case ModelType::CUBIC:
 		return "Cubic";
-	case ModelType::EXPONENTIAL:
-		return "Exponential";
-	case ModelType::LOGARITHMIC:
-		return "Logarithmic";
-	case ModelType::POWER:
-		return "Power";
-	case ModelType::OTHER:
-		return "Other";
 	case ModelType::SINUS:
 		return "Sinus";
+	case ModelType::LOG:
+		return "Logarithmic";
+	case ModelType::LN:
+		return "Neperian Logarithmic";
+	case ModelType::EXPB:
+		return "Exponential Base b";
+	case ModelType::EXP:
+		return "Exponential";
+	case ModelType::OTHER:
+		return "Other";
 	default:
 		return "None";
 	}

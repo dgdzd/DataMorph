@@ -313,4 +313,100 @@ namespace Regression {
 		}
 		return true;
 	}
+
+	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		double X = 0;
+		int n = xs.size();
+		for (int i = 0; i < n; i++) {
+			X += std::log10(xs[i]);
+		}
+		X /= n;
+
+		double Y = 0;
+		for (int i = 0; i < n; i++) {
+			Y += ys[i];
+		}
+		Y /= n;
+
+		double a_up = 0;
+		for (int i = 0; i < n; i++) {
+			a_up += (std::log10(xs[i]) - X) * (ys[i] - Y);
+		}
+		
+		double a_down = 0;
+		for (int i = 0; i < n; i++) {
+			a_down += std::pow((std::log(xs[i]) - X), 2);
+		}
+
+		a = a_up / a_down;
+
+		b = Y - a * X;
+
+		return true;
+	}
+
+	bool nlogarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		double X = 0;
+		int n = xs.size();
+		for (int i = 0; i < n; i++) {
+			X += std::log(xs[i]);
+		}
+		X /= n;
+
+		double Y = 0;
+		for (int i = 0; i < n; i++) {
+			Y += ys[i];
+		}
+		Y /= n;
+
+		double a_up = 0;
+		for (int i = 0; i < n; i++) {
+			a_up += (std::log(xs[i]) - X) * (ys[i] - Y);
+		}
+
+		double a_down = 0;
+		for (int i = 0; i < n; i++) {
+			a_down += std::pow((std::log(xs[i]) - X), 2);
+		}
+
+		a = a_up / a_down;
+
+		b = Y - a * X;
+
+		return true;
+	}
+
+	bool exponentialb(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+	}
+
+	bool exponential(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+	}
 }

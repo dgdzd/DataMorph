@@ -101,26 +101,35 @@ void GraphWindow::onRender() {
 							g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
 							g.model->refresh();
 						}
+						if (Selectable("Logarithmic Base 10 (y=a*log10(x)+c)")) {
+							g.model->type = ModelType::LOG;
+							g.model->expr_str = y + "=a*log10(" + x + ")+c";
+							g.model->refresh();
+						}
+						if (Selectable("Neperian Logarithmic (y=a*log(x)+c)")) {
+							g.model->type = ModelType::LN;
+							g.model->expr_str = y + "=a*log(" + x + ")+c";
+							g.model->refresh();
+						}
+						if (Selectable("Exponential Base b")) {
+							g.model->type = ModelType::EXPB;
+							g.model->expr_str = y + "=a*b^(c*" + x + ")";
+						}
+						if (Selectable("Exponential")) {
+							g.model->type = ModelType::EXP;
+							g.model->expr_str = y + "=a*e^(b*" + x + ")";
+							//e = 2.71828
+						}
 
 						BeginDisabled();
 						{
-							if (Selectable("Exponential")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=b*a^("+ x +")";
-								//e = 2.71828
-							}
-							if (Selectable("Logarithmic")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*log[b](" + x + ")+c";
-							}
 							if (Selectable("Square Root")) {
 								g.model->type = ModelType::LINEAR;
 								g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
 							}
 							if (Selectable("Sigmoid")) {
 								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=1/(1+2.71828^-" + x + ")";
-								//e = 2.71828
+								g.model->expr_str = y + "=1/(1+e^-" + x + ")";
 							}
 							EndDisabled();
 						}
@@ -138,12 +147,16 @@ void GraphWindow::onRender() {
 					if (g.model->type == CUSTOM) {
 						InputText("No blank", &g.model->expr_str);
 					}
+					else if (g.model->type == EXPB) {
+						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
+						InputDouble("##EXPB", &g.model->b);
+					}
 					else {
 						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
 					}
 					TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 					if (IsItemHovered()) {
-						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warnings : \n -the experimentals data musn't reverse the order of the model \n -avoid dividing by 0 (ex: x/a) \n -in the model log[a](x) a will always be a nutural number \n -sketchy custom models will make the software crash \n -any unfit model for your experimental data may cause errors \n ");
+						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n -the experimentals data musn't reverse the order of the model \n -avoid dividing by 0 (ex: x/a) \n -sketchy custom models will make the software crash \n -any unfit model for your experimental data may cause errors \n -the constant e (2.7...) is not usable in custom models");
 					}
 
 					if (Button("Update model")) {
@@ -212,6 +225,46 @@ void GraphWindow::onRender() {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
+							}
+						}
+						else if (g.model->type == LOG) {
+							if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+							}
+						}
+						else if (g.model->type == LN) {
+							if (Regression::nlogarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+							}
+						}
+						else if (g.model->type == EXPB) {
+							if (Regression::exponentialb(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
+							}
+						}
+						else if (g.model->type == EXPB) {
+							if (Regression::exponential(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
 							}
 						}
 						else {
