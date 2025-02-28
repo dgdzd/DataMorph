@@ -57,7 +57,7 @@ void Expression::compileExpression() {
 		return;
 	}
 	if (this->specs.type == LINESPACE) {
-		for (int i = 1; i < h->values.size(); i++) {
+		for (int i = 0; i < h->values.size(); i++) {
 			h->values[i] = this->args[0] + i * this->args[1];
 		}
 		return;

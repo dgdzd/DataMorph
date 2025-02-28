@@ -200,14 +200,18 @@ std::string ModelTypeToString(ModelType type) {
 		return "Cubic";
 	case ModelType::SINUS:
 		return "Sinus";
+	case ModelType::LOG10:
+		return "Logarithmic Base 10";
+	case ModelType::LOGN:
+		return "Logarithmic Base n";
 	case ModelType::LOG:
-		return "Logarithmic";
-	case ModelType::LN:
-		return "Neperian Logarithmic";
-	case ModelType::EXPB:
-		return "Exponential Base b";
+		return "Natural Logarithmic";
+	case ModelType::EXPN:
+		return "Exponential Base n";
 	case ModelType::EXP:
 		return "Exponential";
+	case ModelType::SQRT:
+		return "Square Root";
 	case ModelType::OTHER:
 		return "Other";
 	default:

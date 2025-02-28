@@ -314,7 +314,7 @@ namespace Regression {
 		return true;
 	}
 
-	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool logarithmic10(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -342,7 +342,7 @@ namespace Regression {
 		
 		double a_down = 0;
 		for (int i = 0; i < n; i++) {
-			a_down += std::pow((std::log(xs[i]) - X), 2);
+			a_down += std::pow((std::log10(xs[i]) - X), 2);
 		}
 
 		a = a_up / a_down;
@@ -352,18 +352,25 @@ namespace Regression {
 		return true;
 	}
 
-	bool nlogarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& base_n) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
 		if (xs.size() < 2) {
 			return false;
 		}
+		if (base_n <= 0) {
+			return false;
+		}
+
+		auto log = [](double x, double n) {
+			return std::log(x)/std::log(n);	
+			};
 
 		double X = 0;
 		int n = xs.size();
 		for (int i = 0; i < n; i++) {
-			X += std::log(xs[i]);
+			X += log(xs[i], base_n);
 		}
 		X /= n;
 
@@ -375,12 +382,12 @@ namespace Regression {
 
 		double a_up = 0;
 		for (int i = 0; i < n; i++) {
-			a_up += (std::log(xs[i]) - X) * (ys[i] - Y);
+			a_up += (log(xs[i], base_n) - X) * (ys[i] - Y);
 		}
 
 		double a_down = 0;
 		for (int i = 0; i < n; i++) {
-			a_down += std::pow((std::log(xs[i]) - X), 2);
+			a_down += std::pow((log(xs[i], base_n) - X), 2);
 		}
 
 		a = a_up / a_down;
@@ -390,7 +397,7 @@ namespace Regression {
 		return true;
 	}
 
-	bool exponentialb(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
+	bool exponential(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& n) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -398,9 +405,29 @@ namespace Regression {
 			return false;
 		}
 
+		auto log = [](double x, double n) {
+			return std::log(x) / std::log(n);
+			};
+
+		std::vector<double> Y = {};
+		for (int i = 0; i < xs.size(); i++) {
+			Y.push_back(log(ys[i], n));
+		}
+
+
+		double xm = std::mean(xs);
+		double ym = std::mean(Y);
+		double sum_x2 = std::sum<double>(xs, [](double val, int i) { return val * val; });
+		double sum_xy = std::sum<double>(xs, [&Y](double val, int i) { return val * Y[i]; });
+		double quadratic_variation = std::sum<double>(xs, [&Y, &xm, &ym](double val, int i) { return (val - xm) * (Y[i] - ym); });
+		b = quadratic_variation / std::sum<double>(xs, [&xm](double val, int i) { return pow(val - xm, 2); });
+		a = ym - b * xm;
+		a = std::pow(n, a);
+
+		return true;
 	}
 
-	bool exponential(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool sqrt(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -408,5 +435,17 @@ namespace Regression {
 			return false;
 		}
 
+		std::vector<double> X = {};
+		for (int i = 0; i < xs.size(); i++) {
+			X.push_back(std::sqrt(xs[i]));
+		}
+
+		double xm = std::mean(X);
+		double ym = std::mean(ys);
+		double sum_x2 = std::sum<double>(X, [](double val, int i) { return val * val; });
+		double sum_xy = std::sum<double>(X, [&ys](double val, int i) { return val * ys[i]; });
+		double quadratic_variation = std::sum<double>(X, [&ys, &xm, &ym](double val, int i) { return (val - xm) * (ys[i] - ym); });
+		b = quadratic_variation / std::sum<double>(X, [&xm](double val, int i) { return pow(val - xm, 2); });
+		a = ym - b * xm;
 	}
 }

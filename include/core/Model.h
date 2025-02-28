@@ -14,18 +14,20 @@ enum ModelType : int {
 	AFFINE,
 	QUADRATIC,
 	CUBIC,
+	LOG10,
 	LOG,
-	LN,
+	LOGN,
 	SINUS,
-	EXPB,
+	EXPN,
 	EXP,
+	SQRT,
 	OTHER
 };
 
 struct Model {
 	ModelType type;
 	std::string expr_str;
-	double a, b, c, d, x;
+	double a, b, c, d, n, x;
 	Line* dataset;
 	std::string xlabel;
 	std::vector<double> values;

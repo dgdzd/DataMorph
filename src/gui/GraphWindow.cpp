@@ -101,38 +101,38 @@ void GraphWindow::onRender() {
 							g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
 							g.model->refresh();
 						}
-						if (Selectable("Logarithmic Base 10 (y=a*log10(x)+c)")) {
+						if (Selectable("Logarithmic Base 10 (y=a*log10(x)+b)")) {
+							g.model->type = ModelType::LOG10;
+							g.model->expr_str = y + "=a*log10(" + x + ")+b";
+							g.model->refresh();
+						}
+						if (Selectable("Neperian Logarithmic (y=a*log(x)+b)")) {
 							g.model->type = ModelType::LOG;
-							g.model->expr_str = y + "=a*log10(" + x + ")+c";
+							g.model->expr_str = y + "=a*log(" + x + ")+b";
 							g.model->refresh();
 						}
-						if (Selectable("Neperian Logarithmic (y=a*log(x)+c)")) {
-							g.model->type = ModelType::LN;
-							g.model->expr_str = y + "=a*log(" + x + ")+c";
+						if (Selectable("Logarithmic Base n (y=a*logn(x,n)+b)")) {
+							g.model->type = ModelType::LOGN;
+							g.model->expr_str = y + "=a*logn(" + x + ",n)+b";
 							g.model->refresh();
 						}
-						if (Selectable("Exponential Base b")) {
-							g.model->type = ModelType::EXPB;
-							g.model->expr_str = y + "=a*b^(c*" + x + ")";
-						}
-						if (Selectable("Exponential")) {
+						if (Selectable("Exponential (y=a*exp(b*x)")) {
 							g.model->type = ModelType::EXP;
-							g.model->expr_str = y + "=a*e^(b*" + x + ")";
+							g.model->expr_str = y + "=a*exp(b*" + x + ")";
+							g.model->refresh();
 							//e = 2.71828
 						}
-
-						BeginDisabled();
-						{
-							if (Selectable("Square Root")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
-							}
-							if (Selectable("Sigmoid")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=1/(1+e^-" + x + ")";
-							}
-							EndDisabled();
+						if (Selectable("Exponential Base n (y=a*n^(b*x)")) {
+							g.model->type = ModelType::EXPN;
+							g.model->expr_str = y + "=a*n^(b*" + x + ")";
+							g.model->refresh();
 						}
+						if (Selectable("Square Root (y=a*sqrt(x)+c)")) {
+							g.model->type = ModelType::SQRT;
+							g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
+							g.model->refresh();
+						}
+
 						EndCombo();
 					}
 					if (BeginCombo("Choose dataset", g.model->dataset->header->name.c_str())) {
@@ -147,9 +147,11 @@ void GraphWindow::onRender() {
 					if (g.model->type == CUSTOM) {
 						InputText("No blank", &g.model->expr_str);
 					}
-					else if (g.model->type == EXPB) {
+					else if (g.model->type == EXPN || g.model->type == LOGN) {
 						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
-						InputDouble("##EXPB", &g.model->b);
+						Text("n = ");
+						SameLine();
+						InputDouble("##baseN", &g.model->n);
 					}
 					else {
 						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
@@ -167,7 +169,7 @@ void GraphWindow::onRender() {
 							model_text = "model invalid";
 
 						}
-						else if (g.model->type == AFFINE) { // Affine
+						else if (g.model->type == AFFINE) {
 							if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
 								Model* m = g.model;
 								m->values = {};
@@ -177,7 +179,7 @@ void GraphWindow::onRender() {
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b);
 							}
 						}
-						else if (g.model->type == LINEAR) { // Linear
+						else if (g.model->type == LINEAR) {
 							if (Regression::linear(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 								Model* m = g.model;
 								m->values = {};
@@ -227,8 +229,20 @@ void GraphWindow::onRender() {
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
 							}
 						}
+						else if (g.model->type == LOG10) {
+							g.model->n = 10;
+							if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+							}
+						}
 						else if (g.model->type == LOG) {
-							if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+							g.model->n = 1;
+							if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 								Model* m = g.model;
 								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -237,8 +251,8 @@ void GraphWindow::onRender() {
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
 							}
 						}
-						else if (g.model->type == LN) {
-							if (Regression::nlogarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+						else if (g.model->type == LOGN) {
+							if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 								Model* m = g.model;
 								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -247,24 +261,35 @@ void GraphWindow::onRender() {
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
 							}
 						}
-						else if (g.model->type == EXPB) {
-							if (Regression::exponentialb(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
-								Model* m = g.model;
-								m->values = {};
-								for (int i = 0; i < g.xHeader->values.size(); i++) {
-									m->values.push_back(m->value(g.xHeader->values[i]));
-								}
-								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
-							}
-						}
-						else if (g.model->type == EXPB) {
-							if (Regression::exponential(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+						else if (g.model->type == EXP) {
+							g.model->n = 2.71828;
+							if (Regression::exponential(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 								Model* m = g.model;
 								m->values = {};
 								for (int i = 0; i < g.xHeader->values.size(); i++) {
 									m->values.push_back(m->value(g.xHeader->values[i]));
 								}
 								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+							}
+						}
+						else if (g.model->type == EXPN) {
+							if (Regression::exponential(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+							}
+						}
+						else if (g.model->type == SQRT) {
+							if (Regression::sqrt(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
+								Model* m = g.model;
+								m->values = {};
+								for (int i = 0; i < g.xHeader->values.size(); i++) {
+									m->values.push_back(m->value(g.xHeader->values[i]));
+								}
+								model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "b = " + std::to_string(g.model->c) + "\n";
 							}
 						}
 						else {
@@ -308,9 +333,9 @@ void GraphWindow::onRender() {
 						else {
 							ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
 								Graph& g = *(Graph*)data;
-								double x = g.limits.Min().x + (idx / 30.0f) * abs(g.limits.Max().x - g.limits.Min().x);
+								double x = g.limits.Min().x + (idx / 100.0f) * abs(g.limits.Max().x - g.limits.Min().x);
 								return ImPlotPoint(x, g.model->value(x));
-							}, (void*)&g, 31);
+							}, (void*)&g, 101);
 						}
 					}
 					ImPlot::EndPlot();

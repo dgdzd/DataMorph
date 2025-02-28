@@ -33,6 +33,7 @@ struct Graph {
 	double b;
 	double c;
 	double d;
+	double n;
 
 	Graph(std::string name, Header* xHeader, std::vector<Line> lines, int width, int height);
 };

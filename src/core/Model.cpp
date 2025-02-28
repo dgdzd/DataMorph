@@ -9,6 +9,8 @@ Model::Model(std::string expression, std::vector<std::string> symbols, std::vect
 	this->a = 0;
 	this->b = 0;
 	this->c = 0;
+	this->d = 0;
+	this->n = 0;
 	this->x = 0;
 	this->addVars();
 	this->compile();
@@ -24,7 +26,8 @@ void Model::addVars() {
 	this->symbol_table.add_variable("a", this->a);
 	this->symbol_table.add_variable("b", this->b);
 	this->symbol_table.add_variable("c", this->c);
-	this->symbol_table.add_variable("d", this->c);
+	this->symbol_table.add_variable("d", this->d);
+	this->symbol_table.add_variable("n", this->n);
 	this->symbol_table.add_variable(xlabel, this->x);
 	this->expression_t.register_symbol_table(this->symbol_table);
 }
