@@ -57,7 +57,7 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f + 100, 300), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
+				if (BeginChild("Infos", ImVec2(GetContentRegionAvail().x * 0.5f + 70, 400), ImGuiChildFlags_Borders, ImGuiWindowFlags_MenuBar)) {
 					if (BeginMenuBar()) {
 						if (BeginMenu("Infos")) {
 							ImGui::EndMenu();
