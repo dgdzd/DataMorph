@@ -12,6 +12,7 @@ Model::Model(std::string expression, std::vector<std::string> symbols, std::vect
 	this->d = 0;
 	this->n = 0;
 	this->x = 0;
+	this->u = 0;
 	this->addVars();
 	this->compile();
 }

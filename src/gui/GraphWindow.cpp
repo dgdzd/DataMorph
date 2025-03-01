@@ -295,6 +295,16 @@ void GraphWindow::onRender() {
 						else {
 							
 						}
+						Model* m = g.model;
+						if (m->values.size() > 0) {
+							m->u = 0;
+							for (int i = 0; i < m->values.size(); i++) {
+								m->u += std::abs((m->values[i] - m->dataset->header->values[i]) / m->dataset->header->values[i]);
+							}
+							m->u /= m->values.size();
+							m->u *= 100;
+						}
+						model_text += "Mean Relative Error Model-Data: " + std::to_string(m->u) + "%";
 					}
 					Text(model_text.c_str());
 

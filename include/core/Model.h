@@ -28,6 +28,7 @@ struct Model {
 	ModelType type;
 	std::string expr_str;
 	double a, b, c, d, n, x;
+	double u;
 	Line* dataset;
 	std::string xlabel;
 	std::vector<double> values;
