@@ -29,7 +29,7 @@
 - [ ] Modeling
 	- [ ] Customize the modeling plot
 	- [x] Modeling for linear and affine functions
-	- [ ] Modeling for more complex functions
+	- [x] Modeling for more complex functions
 
 - [ ] Translation
 	- [ ] Add class and methods which can translate a string of a label ID, such as "welcome.datamorph" into a string corresponding to the chosen language. The class can be something like `Translator(Language* language)` which has a method like `translate(std::string id)`
