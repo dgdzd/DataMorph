@@ -179,12 +179,6 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 
-		if (BeginTabItem("Fluid Simulation")) {
-			tab = 4;
-			Text("not yet !");
-			EndTabItem();
-		}
-
 		EndTabBar();
 
 		Text("Enter Project Name");

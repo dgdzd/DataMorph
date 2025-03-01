@@ -10,6 +10,7 @@
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
 #include <gui/PythonWindow.h>
+#include <gui/FuildWindow.h>
 #include <gui/SettingsWindow.h>
 #include <gui/StatsWindow.h>
 #include <imgui_stdlib.h>
@@ -169,6 +170,9 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Open Python IDE")) {
 				DataMorph::getInstance()->addLayer(new PythonWindow(pr));
+			}
+			if (MenuItem("Start Fluid Simulation")) {
+				DataMorph::getInstance()->addLayer(new FluidWindow(pr));
 			}
 			ImGui::EndMenu();
 		}
