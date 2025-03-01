@@ -311,6 +311,7 @@ namespace Regression {
 			}
 			precision /= 10;
 		}
+
 		return true;
 	}
 

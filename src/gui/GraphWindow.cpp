@@ -145,10 +145,10 @@ void GraphWindow::onRender() {
 					}
 
 					if (g.model->type == CUSTOM) {
-						InputText("No blank", &g.model->expr_str);
+						InputText("##model", &g.model->expr_str);
 					}
 					else if (g.model->type == EXPN || g.model->type == LOGN) {
-						InputText("No blank", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
+						InputText("##model", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
 						Text("n = ");
 						SameLine();
 						InputDouble("##baseN", &g.model->n);
