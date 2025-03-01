@@ -1,4 +1,4 @@
-# include <gui/FluidWindow.h>
+#include <gui/FluidWindow.h>
 
 #include <App.h>
 #include <FontManager.h>
@@ -20,8 +20,17 @@ FluidWindow::FluidWindow(Project* project) {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
-	this->editor_text = "# New python file\n\nprint(\"Hello World!\")";
 	this->settings = Settings::instance;
+	this->width = 900.0;
+	this->height = 900.0;
+	this->size = 4.0;
+	this->densities = {};
+	for (int x = 0; x < (this->width - 100) / size; x++) {
+		this->densities.push_back({});
+		for (int y = 0; y < (this->height - 100) / size; y++) {
+			this->densities[x].push_back(0.0);
+		}
+	}
 }
 
 void FluidWindow::onAttach() {
@@ -47,19 +56,32 @@ void FluidWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 900.0f));
+	SetWindowSize(ImVec2(this->width, this->width));
 
-	ImPlot::ShowColormapSelector();
+	if (BeginChild("##canva", ImVec2(this->width-100, this->width - 100))) {
+		render();
 
-	if (ImPlot::BeginPlot("##CustomRend", ImVec2(800.0f, 800.0f))) {
-		ImPlot::GetPlotDrawList()->AddRect(ImVec2(-400, 400), ImVec2(400, -400), IM_COL32(128, 0, 255, 255));
-
-
-		ImPlot::EndPlot();
+		EndChild();
 	}
-	ImPlot::ColormapScale("Density", 0.0, 1.0, ImVec2(0, 0), "%g dB");
+	SameLine();
+	//ImPlot::PushColormap(ImPlotColormap_Hot);
+	//ImPlot::ColormapScale("Density", 0.0, 100.0, ImVec2(0, 0), "%g dB");
+}
 
+void FluidWindow::render() {
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
+	ImVec2 p_min = ImGui::GetCursorScreenPos();
+	ImVec2 p_max = ImVec2(p_min.x + this->width - 100, p_min.y + this->width - 100);
+
+	draw_list->AddRectFilled(p_min, p_max, IM_COL32(0, 0, 0, 255));
+	draw_list->AddRect(p_min, p_max, IM_COL32(255, 255, 255, 255), 2.0f);
+
+	for (int x = 0; x < densities.size(); x++) {
+		for (int y = 0; y < densities[x].size(); y++) {
+			draw_list->AddRectFilled(ImVec2(x*size + p_min.x, y*size + p_min.y), ImVec2(size, size), IM_COL32(0, 255, 0, 255));
+		}
+	}
 }
 
 void FluidWindow::message(std::string header, ...) {

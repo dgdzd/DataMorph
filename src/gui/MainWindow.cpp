@@ -10,7 +10,7 @@
 #include <gui/NewProjectWindow.h>
 #include <gui/GraphWindow.h>
 #include <gui/PythonWindow.h>
-#include <gui/FuildWindow.h>
+#include <gui/FluidWindow.h>
 #include <gui/SettingsWindow.h>
 #include <gui/StatsWindow.h>
 #include <imgui_stdlib.h>

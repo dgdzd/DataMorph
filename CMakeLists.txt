@@ -33,6 +33,7 @@ set(PROJECT_SOURCES
 		src/gui/SettingsWindow.cpp
 		src/gui/EditorWindow.cpp
 		src/gui/PythonWindow.cpp
+		src/gui/FluidWindow.cpp
 		src/gui/ConsoleWindow.cpp
 		src/core/Console.cpp
 

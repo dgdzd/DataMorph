@@ -14,6 +14,10 @@ class FluidWindow : public Window {
 	ImFont* font23;
 	ImFont* font64;
 	Project* project;
+	double width;
+	double height;
+	double size;
+	std::vector<std::vector<double>> densities;
 
 public:
 	FluidWindow(Project* project);
@@ -23,6 +27,7 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void render();
 	void message(std::string header, ...) override;
 };
 
