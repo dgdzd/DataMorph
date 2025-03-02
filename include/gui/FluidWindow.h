@@ -7,8 +7,7 @@ class FluidWindow {
 public:
     GLFWwindow* window;
 
-    FluidWindow();
-    bool innit();
+    int main();
     void renderLoop();
 };
 

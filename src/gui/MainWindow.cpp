@@ -173,9 +173,7 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Start Fluid Simulation")) {
 				FluidWindow* fluid_window = new FluidWindow();
-				if (fluid_window->innit()) {
-					fluid_window->renderLoop();
-				}
+				fluid_window->main();
 
 			}
 			ImGui::EndMenu();
