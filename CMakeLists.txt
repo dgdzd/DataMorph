@@ -52,6 +52,7 @@ set(DEPENDENCIES_SOURCES
 		dependencies/src/imgui/implot_demo.cpp
 		dependencies/src/imgui/implot_items.cpp
 		dependencies/src/imgui/imgui_stdlib.cpp
+		dependencies/include/GLFW/glfw3.h
 		
 )
 

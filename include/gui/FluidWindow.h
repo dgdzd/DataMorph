@@ -1,34 +1,15 @@
-#ifndef DM_FUILDWINDOW_H
+#ifndef DM_FLUIDWINDOW_H
 #define DM_FLUIDWINDOW_H
 
-#include <App.h>
-#include <core/gui/Window.h>
-#include <core/Project.h>
-#include <core/imgui_extension.h>
-#include <string>
+#include <GLFW/glfw3.h>
 
-using namespace ImGui;
-
-class FluidWindow : public Window {
-	ImFont* font20;
-	ImFont* font23;
-	ImFont* font64;
-	Project* project;
-	double width;
-	double height;
-	double size;
-	std::vector<std::vector<double>> densities;
-
+class FluidWindow {
 public:
-	FluidWindow(Project* project);
+    GLFWwindow* window;
 
-	void onAttach() override;
-	void onDetach() override;
-	void onPreRender() override;
-	void onPostRender() override;
-	void onRender() override;
-	void render();
-	void message(std::string header, ...) override;
+    FluidWindow();
+    bool innit();
+    void renderLoop();
 };
 
 #endif

@@ -172,7 +172,11 @@ void MainWindow::onRender() {
 				DataMorph::getInstance()->addLayer(new PythonWindow(pr));
 			}
 			if (MenuItem("Start Fluid Simulation")) {
-				DataMorph::getInstance()->addLayer(new FluidWindow(pr));
+				FluidWindow* fluid_window = new FluidWindow();
+				if (fluid_window->innit()) {
+					fluid_window->renderLoop();
+				}
+
 			}
 			ImGui::EndMenu();
 		}
