@@ -162,15 +162,15 @@ void GraphWindow::onRender() {
 					}
 					TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 					if (IsItemHovered()) {
-						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n -the experimentals data musn't reverse the order of the model \n -avoid dividing by 0 (ex: x/a) \n -sketchy custom models will make the software crash \n -any unfit model for your experimental data may cause errors \n -the constant e (2.7...) is not usable in custom models");
+						SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n - The experimental data musn't reverse the order of the model \n - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash \n - Any unfit model for your experimental data may cause errors \n - The constant e (2.7...) is not usable in custom models");
 					}
 
 					if (Button("Update model")) {
 						if (g.model->expr_str.size() == 0) {
-							model_text = "model empty";
+							model_text = "empty model";
 						}
 						else if (g.model->expr_str == g.xHeader->name+"="+x) {
-							model_text = "model invalid";
+							model_text = "invalid model";
 
 						}
 						else if (g.model->type == AFFINE) {
@@ -308,9 +308,9 @@ void GraphWindow::onRender() {
 							m->u /= m->values.size();
 							m->u *= 100;
 						}
-						model_text += "Mean Relative Error Model-Data: " + std::to_string(m->u) + "%";
+						model_text += "\nMean-relative error: " + std::to_string(m->u) + "%";
 					}
-					Text(model_text.c_str());
+					TextUnformatted(model_text.c_str());
 
 					EndChild();
 				}
