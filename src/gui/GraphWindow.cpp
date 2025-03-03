@@ -12,6 +12,8 @@
 
 using namespace ImGui;
 
+GraphWindow* GraphWindow::current = nullptr;
+
 GraphWindow::GraphWindow(Project* project) {
 	this->project = project;
 	this->name = "Graphs - " + project->name;
@@ -26,6 +28,8 @@ GraphWindow::GraphWindow(Project* project) {
 	this->model_text = "";
 	this->numbersVar = 0;
 	this->settings = Settings::instance;
+
+	GraphWindow::current = this;
 }
 
 void GraphWindow::onAttach() {
@@ -36,7 +40,7 @@ void GraphWindow::onAttach() {
 }
 
 void GraphWindow::onDetach() {
-	
+	GraphWindow::current = nullptr;
 }
 
 void GraphWindow::onPreRender() {

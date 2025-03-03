@@ -16,6 +16,8 @@ class PythonWindow : public Window {
 	std::string editor_text;
 
 public:
+	static PythonWindow* current;
+
 	PythonWindow(Project* project);
 
 	void onAttach() override;

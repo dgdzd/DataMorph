@@ -22,6 +22,8 @@ class NewProjectWindow : public Window {
 	char project_name[32] = "New project";
 
 public:
+	static NewProjectWindow* current;
+
 	NewProjectWindow();
 
 	void onAttach() override;

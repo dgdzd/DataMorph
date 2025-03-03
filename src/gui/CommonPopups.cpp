@@ -486,7 +486,7 @@ void NewGraphPopup::onRender() {
 			pr->graphs.push_back(g);
 		}
 	}
-	else if (BeginTabBar("graphs")) {
+	else if (BeginTabBar("graphs", ImGuiTabBarFlags_AutoSelectNewTabs)) {
 		for (int i = 0; i < pr->graphs.size(); i++) {
 			Graph& graph = pr->graphs[i];
 			if (BeginTabItem(("Graph #" + std::to_string(i + 1)).c_str())) {

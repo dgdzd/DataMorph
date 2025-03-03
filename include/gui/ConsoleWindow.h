@@ -14,6 +14,8 @@ class ConsoleWindow : public Window {
 	std::string content;
 
 public:
+	static ConsoleWindow* current;
+
 	ConsoleWindow();
 
 	void onAttach() override;

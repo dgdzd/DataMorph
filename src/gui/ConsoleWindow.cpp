@@ -8,6 +8,8 @@
 
 using namespace ImGui;
 
+ConsoleWindow* ConsoleWindow::current = nullptr;
+
 ConsoleWindow::ConsoleWindow() {
 	this->name = "Console";
 	this->font20 = nullptr;
@@ -17,6 +19,8 @@ ConsoleWindow::ConsoleWindow() {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->mainConsole = new Console("Main", std::cout);
+
+	ConsoleWindow::current = this;
 }
 
 void ConsoleWindow::onAttach() {
@@ -29,6 +33,7 @@ void ConsoleWindow::onAttach() {
 
 void ConsoleWindow::onDetach() {
 	mainConsole->unuse();
+	ConsoleWindow::current = nullptr;
 }
 
 void ConsoleWindow::onPreRender() {

@@ -20,6 +20,8 @@ class SettingsWindow : public Window {
 	bool applied;
 
 public:
+	static SettingsWindow* current;
+
 	SettingsWindow();
 
 	void onAttach() override;

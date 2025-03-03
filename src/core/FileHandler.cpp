@@ -3,7 +3,7 @@
 #include <iostream>
 #include <Utils.h>
 
-namespace FileHandler {
+namespace files {
 	bool read_csv_headers(const std::string& path, std::vector<std::string>& data, int& size, std::string& filename) {
 		filename = path.substr(path.find_last_of("\\") + 1);
 		std::string file_extension = filename.substr(filename.find_last_of(".") + 1);
@@ -75,5 +75,19 @@ namespace FileHandler {
 			}
 		}
 		return "";
+	}
+
+	char* get_content(const std::string& filepath) {
+		std::ifstream file(filepath, std::ios::in | std::ios::binary);
+		if (file.is_open()) {
+			file.seekg(0, std::ios::end);
+			int size = file.tellg();
+			file.seekg(0, std::ios::beg);
+			char* file_data = new char[size];
+			file.read(file_data, size);
+
+			return file_data;
+		}
+		return new char[] { "" };
 	}
 }

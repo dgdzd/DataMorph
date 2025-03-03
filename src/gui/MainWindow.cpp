@@ -110,7 +110,12 @@ void MainWindow::onRender() {
 			EndDisabled();
 			Separator();
 			if (MenuItem("Settings")) {
-				DataMorph::getInstance()->addLayer(new SettingsWindow());
+				if (!SettingsWindow::current) {
+					DataMorph::getInstance()->addLayer(new SettingsWindow());
+				}
+				else {
+					SetWindowFocus(SettingsWindow::current->name.c_str());
+				}
 			}
 			Separator();
 			if (MenuItem("Exit")) {
@@ -159,7 +164,12 @@ void MainWindow::onRender() {
 					state->popups["Manage graphs"] = true;
 				}
 				if (MenuItem("View graphs")) {
-					DataMorph::getInstance()->addLayer(new GraphWindow(pr));
+					if (!GraphWindow::current) {
+						DataMorph::getInstance()->addLayer(new GraphWindow(pr));
+					}
+					else {
+						SetWindowFocus(GraphWindow::current->name.c_str());
+					}
 				}
 				ImGui::EndMenu();
 			}
@@ -169,18 +179,31 @@ void MainWindow::onRender() {
 				state->popups["Resolve Equation"] = true;
 			}
 			if (MenuItem("Open Python IDE")) {
-				DataMorph::getInstance()->addLayer(new PythonWindow(pr));
+				if (!PythonWindow::current) {
+					DataMorph::getInstance()->addLayer(new PythonWindow(pr));
+				}
+				else {
+					SetWindowFocus(PythonWindow::current->name.c_str());
+				}
 			}
 			if (MenuItem("Start Fluid Simulation")) {
-				FluidWindow* fluid_window = new FluidWindow();
-				fluid_window->main();
-
+				if (!FluidWindow::current) {
+					DataMorph::getInstance()->addLayer(new FluidWindow());
+				}
+				else {
+					SetWindowFocus(FluidWindow::current->name.c_str());
+				}
 			}
 			ImGui::EndMenu();
 		}
 		if (BeginMenu("View")) {
 			if (MenuItem("Show console")) {
-				DataMorph::getInstance()->addLayer(new ConsoleWindow());
+				if (!ConsoleWindow::current) {
+					DataMorph::getInstance()->addLayer(new ConsoleWindow());
+				}
+				else {
+					SetWindowFocus(ConsoleWindow::current->name.c_str());
+				}
 			}
 			ImGui::EndMenu();
 		}

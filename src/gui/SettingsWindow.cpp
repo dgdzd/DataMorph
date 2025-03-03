@@ -12,6 +12,8 @@
 
 using namespace ImGui;
 
+SettingsWindow* SettingsWindow::current = nullptr;
+
 SettingsWindow::SettingsWindow() : local_settings(local_settings) {
 	this->name = "Settings";
 	this->font20 = nullptr;
@@ -24,6 +26,8 @@ SettingsWindow::SettingsWindow() : local_settings(local_settings) {
 	this->settings = Settings::instance;
 	this->local_settings = Settings(*this->settings);
 	this->applied = true;
+
+	SettingsWindow::current = this;
 }
 
 void SettingsWindow::onAttach() {
@@ -34,7 +38,7 @@ void SettingsWindow::onAttach() {
 }
 
 void SettingsWindow::onDetach() {
-
+	SettingsWindow::current = nullptr;
 }
 
 void SettingsWindow::onPreRender() {

@@ -1,13 +1,14 @@
-﻿# include <gui/PythonWindow.h>
+﻿#include <gui/PythonWindow.h>
 
-# include <App.h>
-# include <FontManager.h>
-# include <imgui_stdlib.h>
-# include <iostream>
-# include <Utils.h>
-
+#include <App.h>
+#include <FontManager.h>
+#include <imgui_stdlib.h>
+#include <iostream>
+#include <Utils.h>
 
 using namespace ImGui;
+
+PythonWindow* PythonWindow::current = nullptr;
 
 PythonWindow::PythonWindow(Project* project) {
 	this->project = project;
@@ -21,6 +22,8 @@ PythonWindow::PythonWindow(Project* project) {
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 	this->editor_text = "# New python file\n\nprint(\"Hello World!\")";
 	this->settings = Settings::instance;
+
+	PythonWindow::current = this;
 }
 
 void PythonWindow::onAttach() {
@@ -31,7 +34,7 @@ void PythonWindow::onAttach() {
 }
 
 void PythonWindow::onDetach() {
-
+	PythonWindow::current = nullptr;
 }
 
 void PythonWindow::onPreRender() {

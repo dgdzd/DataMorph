@@ -37,7 +37,7 @@ set(PROJECT_SOURCES
 		src/gui/ConsoleWindow.cpp
 		src/core/Console.cpp
 
-)
+ "src/core/Shader.cpp")
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
 		dependencies/src/imgui/imgui.cpp

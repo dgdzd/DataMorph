@@ -24,6 +24,8 @@ class GraphWindow : public Window {
 	unsigned int numbersVar;
 
 public:
+	static GraphWindow* current;
+
 	GraphWindow(Project* project);
 
 	void onAttach() override;
