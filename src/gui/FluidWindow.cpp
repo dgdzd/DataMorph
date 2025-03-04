@@ -90,11 +90,39 @@ void FluidWindow::onRender() {
 		}
 		EndMenuBar();
 	}
+
+	frame();
+}
+
+void FluidWindow::frame() {
+	rescale_framebuffer(800.0f, 800.0f);
+	glViewport(0, 0, 800.0f, 800.0f);
+
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backup_current_context);
+	}
+
+	glfwPollEvents();
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	if (glfwWindowShouldClose(this->window)) {
+		glfwDestroyWindow(this->window);
+		glfwTerminate();
+		this->p_open = false;
+	}
+
+	glfwSwapBuffers(this->window);
 }
 
 
-void FluidWindow::create_framebuffer()
-{
+void FluidWindow::create_framebuffer() {
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
@@ -118,16 +146,24 @@ void FluidWindow::create_framebuffer()
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
-// here we bind our framebuffer
-void FluidWindow::bind_framebuffer()
-{
+void FluidWindow::bind_framebuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 }
 
-// here we unbind our framebuffer
-void FluidWindow::unbind_framebuffer()
-{
+void FluidWindow::unbind_framebuffer() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FluidWindow::rescale_framebuffer(float width, float height) {
+	glBindTexture(GL_TEXTURE_2D, texture_id);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_id, 0);
+
+	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 }
 
 void FluidWindow::message(std::string header, ...) {

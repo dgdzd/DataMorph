@@ -37,9 +37,11 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void frame();
 	void create_framebuffer();
 	void bind_framebuffer();
 	void unbind_framebuffer();
+	void rescale_framebuffer(float width, float height);
 	void message(std::string header, ...) override;
 };
 #endif
