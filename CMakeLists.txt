@@ -36,8 +36,10 @@ set(PROJECT_SOURCES
 		src/gui/FluidWindow.cpp
 		src/gui/ConsoleWindow.cpp
 		src/core/Console.cpp
-
- "src/core/Shader.cpp")
+		src/core/Shader.cpp
+		src/core/Framebuffer.cpp
+		src/core/Texture.cpp
+)
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c
 		dependencies/src/imgui/imgui.cpp
