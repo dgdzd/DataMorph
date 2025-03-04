@@ -18,6 +18,17 @@ class FluidWindow : public Window {
 
 public:
 	static FluidWindow* current;
+	//truc de opengl
+	const GLuint WIDTH = 800;
+	const GLint HEIGHT = 800;
+	GLuint VAO;
+	GLuint VBO;
+	GLuint FBO;
+	GLuint RBO;
+	GLuint texture_id;
+	GLuint shader;
+
+	GLFWwindow* window;
 
 	FluidWindow();
 
@@ -26,6 +37,9 @@ public:
 	void onPreRender() override;
 	void onPostRender() override;
 	void onRender() override;
+	void create_framebuffer();
+	void bind_framebuffer();
+	void unbind_framebuffer();
 	void message(std::string header, ...) override;
 };
 #endif
