@@ -295,7 +295,7 @@ void MainWindow::onRender() {
 				TableHeader((symbol + (unit.empty() ? "" : " (in " + unit + ")")).c_str());
 
 				if (BeginPopupContextItem()) {
-					Text((symbol + " (in " + unit + ")").c_str());
+					Text((symbol + (unit.empty() ? "" : " (in " + unit + ")")).c_str());
 					Separator();
 					if (MenuItem("Edit...")) {
 						EditVarPopup::getInstance(this, id);

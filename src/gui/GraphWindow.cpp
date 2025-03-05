@@ -61,8 +61,8 @@ void GraphWindow::onRender() {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
 			if (BeginTabItem(g.name.c_str())) {
-				if (BeginChild("UpLayer", ImVec2(0, GetContentRegionAvail().y * 0.75f), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) {
-					if (BeginChild("Model", ImVec2(GetContentRegionAvail().x * 0.5f, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX, ImGuiWindowFlags_MenuBar)) {
+				if (BeginChild("UpLayer", ImVec2(0, window->Size.y * 0.75), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) {
+					if (BeginChild("Model", ImVec2(window->Size.x * 0.5f, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX, ImGuiWindowFlags_MenuBar)) {
 						if (BeginMenuBar()) {
 							if (BeginMenu("Infos")) {
 								ImGui::EndMenu();
@@ -167,12 +167,8 @@ void GraphWindow::onRender() {
 						}
 
 						if (Button("Update model")) {
-							if (g.model->expr_str.size() == 0) {
-								model_text = "empty model";
-							}
-							else if (g.model->expr_str == g.xHeader->name + "=" + x) {
+							if (g.model->expr_str == g.xHeader->name + "=" + x) {
 								model_text = "invalid model";
-
 							}
 							else if (g.model->type == AFFINE) {
 								if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
@@ -308,8 +304,8 @@ void GraphWindow::onRender() {
 								}
 								m->u /= m->values.size();
 								m->u *= 100;
+								model_text += "\nMean-relative error: " + std::to_string(m->u) + "%";
 							}
-							model_text += "\nMean-relative error: " + std::to_string(m->u) + "%";
 						}
 						TextUnformatted(model_text.c_str());
 
