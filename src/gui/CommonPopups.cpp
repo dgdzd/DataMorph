@@ -31,7 +31,7 @@ NewVarPopup::NewVarPopup(MainWindow* parent) {
 void NewVarPopup::onRender() {
 	Project* pr = parent->state->openProject;
 	int tab = -1;
-	SetWindowSize(ImVec2(900, 500));
+	SetWindowSize(ImVec2(900, 500), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("NewVar")) {
 		if (BeginTabItem("Dummy")) {
@@ -529,9 +529,14 @@ void NewGraphPopup::onRender() {
 							EndCombo();
 						}
 						if (graph.lines.size() > 1) {
-							PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-							PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-							PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+							ImVec4 col1 = ImVec4(0.7f, 0.2f, 0.2f, 1.0f);
+							ImVec4 col2 = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+							ImVec4 col3 = ImVec4(0.85f, 0.2f, 0.2f, 1.0f);
+							bool dark = this->settings->get_string("theme") == "Dark";
+
+							PushStyleColor(ImGuiCol_Button, dark ? col1 : col2);
+							PushStyleColor(ImGuiCol_ButtonHovered, dark ? col2 : col3);
+							PushStyleColor(ImGuiCol_ButtonActive, dark ? col3 : col1);
 							if (Button(("Remove###" + std::to_string(j)).c_str())) {
 								graph.lines.erase(graph.lines.begin() + j);
 							}

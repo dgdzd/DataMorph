@@ -31,6 +31,7 @@ public:
 	std::string name;
 	std::string version;
 	bool shouldClose;
+	ImGuiStyle defaultStyle;
 	GLFWwindow* window;
 
 	static DataMorph* getInstance();

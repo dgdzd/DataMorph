@@ -55,7 +55,7 @@ void GraphWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 800.0f));
+	SetWindowSize(ImVec2(1200.0f, 800.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("graphs_tabs")) {
 		for (int i = 0; i < project->graphs.size(); i++) {

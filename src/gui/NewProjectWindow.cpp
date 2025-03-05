@@ -57,7 +57,7 @@ void NewProjectWindow::onRender() {
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
 
-	SetWindowSize(ImVec2(900.0f, 500.0f));
+	SetWindowSize(ImVec2(900.0f, 500.0f), ImGuiCond_FirstUseEver);
 	SetWindowFocus();
 
 	int tab = -1;
@@ -102,9 +102,14 @@ void NewProjectWindow::onRender() {
 					Text("%s : %s", magnitude, unit == "" ? "(No unit)" : unit);
 					SameLine();
 
-					PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-					PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-					PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+					ImVec4 col1 = ImVec4(0.7f, 0.2f, 0.2f, 1.0f);
+					ImVec4 col2 = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+					ImVec4 col3 = ImVec4(0.85f, 0.2f, 0.2f, 1.0f);
+					bool dark = this->settings->get_string("theme") == "Dark";
+
+					PushStyleColor(ImGuiCol_Button, dark ? col1 : col2);
+					PushStyleColor(ImGuiCol_ButtonHovered, dark ? col2 : col3);
+					PushStyleColor(ImGuiCol_ButtonActive, dark ? col3 : col1);
 					if (Button(("Remove##" + std::to_string(i)).c_str())) {
 						this->symbols[tab].erase(this->symbols[tab].begin() + i);
 						this->units[tab].erase(this->units[tab].begin() + i);
@@ -188,7 +193,7 @@ void NewProjectWindow::onRender() {
 		Text("Enter Project Name");
 		InputText("32 characters max", this->project_name, 32, ImGuiInputTextFlags_AlwaysOverwrite);
 
-		BeginDisabled(this->project_name[0] == '\0' || this->symbols.empty());
+		BeginDisabled(this->project_name[0] == '\0' || this->symbols[tab].empty());
 		{
 			if (Button("Create Project")) {
 				this->p_open = false;

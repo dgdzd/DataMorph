@@ -116,6 +116,13 @@ int DataMorph::initialize() {
 	else {
 		ImGui::StyleColorsLight();
 	}
+
+	this->defaultStyle = ImGui::GetStyle();
+	defaultStyle.FrameRounding = 3.0f;
+	defaultStyle.FramePadding = ImVec2(5.0f, 5.0f);
+	defaultStyle.WindowRounding = 10.0f;
+	defaultStyle.ChildRounding = 3.0f;
+
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
@@ -175,8 +182,8 @@ void DataMorph::update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 	for (Window* layer : this->layers) {
-		ImGuiStyle defaultStyle = ImGui::GetStyle();
-		*(&ImGui::GetStyle()) = layer->style;
+		ImGuiStyle baseStyle = ImGui::GetStyle();
+		*(&ImGui::GetStyle()) = this->defaultStyle;
 		if (!layer->p_open) {
 			this->layers.erase(std::remove(this->layers.begin(), this->layers.end(), layer), this->layers.end());
 			layer->onDetach();
@@ -188,7 +195,7 @@ void DataMorph::update() {
 		}
 		ImGui::End();
 		layer->onPostRender();
-		*(&ImGui::GetStyle()) = defaultStyle;
+		*(&ImGui::GetStyle()) = baseStyle;
 	}
 
 	ImGui::Render();

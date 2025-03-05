@@ -54,7 +54,7 @@ void SettingsWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 500.0f));
+	SetWindowSize(ImVec2(1200.0f, 500.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("stats_tabs")) {
 		if (BeginTabItem("General")) {
@@ -85,13 +85,14 @@ void SettingsWindow::onRender() {
 
 				HeaderText("Main theme", "font64b", 0.4f);
 				TextWrapped("Choose between a dark or light theme.\nNote : you should restart DataMorph in order for the changes to apply.");
-				if (BeginCombo("##Main theme", this->local_settings.get_string("theme").c_str())) {
-					if (Selectable("Dark")) {
-						local_settings.set_string("theme", "Dark");
+				std::string& theme = this->local_settings.get_string("theme");
+				if (BeginCombo("##Main theme", theme.c_str())) {
+					if (Selectable("Dark", theme == "Dark")) {
+						theme = "Dark";
 						this->applied = false;
 					}
-					if (Selectable("Light")) {
-						local_settings.set_string("theme", "Light");
+					if (Selectable("Light", theme == "Light")) {
+						theme = "Light";
 						this->applied = false;
 					}
 					EndCombo();
@@ -101,11 +102,11 @@ void SettingsWindow::onRender() {
 				Dummy(ImVec2(0, 10));
 				HeaderText("Graph plots colormap", "font64b", 0.4f);
 				Text("Choose a colormap to use for plot lines' default colors.");
-				int cmap = local_settings.get_int("graphs_cmap");
+				int& cmap = local_settings.get_int("graphs_cmap");
 				if (BeginCombo("##Lines color map", ImPlotColormapToString(cmap))) {
 					for (int i = 0; i < 16; i++) {
-						if (Selectable(ImPlotColormapToString(i))) {
-							local_settings.set_int("graphs_cmap", i);
+						if (Selectable(ImPlotColormapToString(i), cmap == i)) {
+							cmap = i;
 							this->applied = false;
 						}
 					}
@@ -113,7 +114,7 @@ void SettingsWindow::onRender() {
 				}
 				if (BeginChild("##Colors", ImVec2(0, 40), 0, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoResize)) {
 					for (int i = 0; i < ImPlot::GetColormapSize(); i++) {
-						ColorButton(("Color #" + std::to_string(i)).c_str(), ImPlot::GetColormapColor(i, cmap));
+						ColorButton(("Color #" + std::to_string(i+1)).c_str(), ImPlot::GetColormapColor(i, cmap));
 						SameLine();
 					}
 					EndChild();
@@ -121,11 +122,11 @@ void SettingsWindow::onRender() {
 				Dummy(ImVec2(0, 10));
 				HeaderText("Default plots marker", "font64b", 0.4f);
 				Text("Choose a shape to use as default marker for plots points");
-				int mker = local_settings.get_int("default_marker");
+				int& mker = local_settings.get_int("default_marker");
 				if (BeginCombo("##Default marker", ImPlotMarkerToString(mker))) {
 					for (int i = -1; i < ImPlotMarker_COUNT; i++) {
-						if (Selectable(ImPlotMarkerToString(i))) {
-							local_settings.set_int("default_marker", i);
+						if (Selectable(ImPlotMarkerToString(i), mker == i)) {
+							mker = i;
 							this->applied = false;
 						}
 					}
@@ -252,9 +253,11 @@ void SettingsWindow::onRender() {
 
 				if (this->settings->get_string("theme") == "Dark") {
 					ImGui::StyleColorsDark();
+					DataMorph::getInstance()->defaultStyle = ImGui::GetStyle();
 				}
 				else {
 					ImGui::StyleColorsLight();
+					DataMorph::getInstance()->defaultStyle = ImGui::GetStyle();
 				}
 			}
 		}

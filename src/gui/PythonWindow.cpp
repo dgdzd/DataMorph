@@ -49,7 +49,7 @@ void PythonWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 800.0f));
+	SetWindowSize(ImVec2(1200.0f, 800.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginMenuBar()) {
 		if (BeginMenu("File")) {

@@ -61,7 +61,7 @@ void MainWindow::onRender() {
 	State* state = this->state;
 	SetWindowFontScale(1.0f);
 
-	SetWindowSize(ImVec2(1200.0f, 700.0f));
+	SetWindowSize(ImVec2(1200.0f, 700.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginMenuBar()) {
 		if (BeginMenu("File")) {
@@ -364,9 +364,14 @@ void MainWindow::onRender() {
 
 				TableNextColumn();
 				SetNextItemWidth(20);
-				PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.2f, 0.2f, 1.0f));
-				PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.2f, 0.2f, 1.0f));
-				PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.85f, 0.2f, 0.2f, 1.0f));
+				ImVec4 col1 = ImVec4(0.7f, 0.2f, 0.2f, 1.0f);
+				ImVec4 col2 = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+				ImVec4 col3 = ImVec4(0.85f, 0.2f, 0.2f, 1.0f);
+				bool dark = this->settings->get_string("theme") == "Dark";
+
+				PushStyleColor(ImGuiCol_Button, dark ? col1 : col2);
+				PushStyleColor(ImGuiCol_ButtonHovered, dark ? col2 : col3);
+				PushStyleColor(ImGuiCol_ButtonActive, dark ? col3 : col1);
 				if (Button(("X##" + std::to_string(i)).c_str())) {
 					pr->removeRow(i);
 				}

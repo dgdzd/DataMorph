@@ -50,7 +50,7 @@ void ConsoleWindow::onRender() {
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
 
-	SetWindowSize(ImVec2(800.0f, 550.0f));
+	SetWindowSize(ImVec2(800.0f, 550.0f), ImGuiCond_FirstUseEver);
 
 	PushClipRect(titlebar.Min, titlebar.Max, false); // Start editing titlebar area
 
