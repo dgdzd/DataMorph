@@ -10,7 +10,7 @@
 int main()
 {
 	DataMorph* app = DataMorph::getInstance();
-	app->setIcon("resources\\icon.png");
+	app->setIcon("resources\\icon.ico");
 	if (app->initialize() != 0) {
 		std::cout << "Error while initializing the app.\n";
 		return -1;

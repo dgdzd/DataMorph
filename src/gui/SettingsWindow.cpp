@@ -65,6 +65,12 @@ void SettingsWindow::onRender() {
 				Separator();
 				Dummy(ImVec2(0, 15));
 
+				HeaderText("Automatic updates check", "font64b", 0.4f);
+				TextWrapped("Choose whether or not DataMorph should independantly search for updates.");
+				if (Checkbox("Automatic updates check", &local_settings.get_bool("autocheck_updates"))) {
+					this->applied = false;
+				}
+
 				EndChild();
 			}
 			EndTabItem();
@@ -105,13 +111,27 @@ void SettingsWindow::onRender() {
 					}
 					EndCombo();
 				}
-				if (BeginChild("##Colors", ImVec2(0, 40), ImGuiWindowFlags_HorizontalScrollbar, ImGuiWindowFlags_NoResize)) {
+				if (BeginChild("##Colors", ImVec2(0, 40), 0, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_NoResize)) {
 					for (int i = 0; i < ImPlot::GetColormapSize(); i++) {
 						ColorButton(("Color #" + std::to_string(i)).c_str(), ImPlot::GetColormapColor(i, cmap));
 						SameLine();
 					}
 					EndChild();
 				}
+				Dummy(ImVec2(0, 10));
+				HeaderText("Default plots marker", "font64b", 0.4f);
+				Text("Choose a shape to use as default marker for plots points");
+				int mker = local_settings.get_int("default_marker");
+				if (BeginCombo("##Default marker", ImPlotMarkerToString(mker))) {
+					for (int i = -1; i < ImPlotMarker_COUNT; i++) {
+						if (Selectable(ImPlotMarkerToString(i))) {
+							local_settings.set_int("default_marker", i);
+							this->applied = false;
+						}
+					}
+					EndCombo();
+				}
+
 				EndChild();
 			}
 			EndTabItem();

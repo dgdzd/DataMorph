@@ -6,6 +6,7 @@ class Framebuffer {
 	unsigned int VAO;
 
 	void init();
+	void rescale_buffer(float width, float height);
 
 public:
 	Texture texture;

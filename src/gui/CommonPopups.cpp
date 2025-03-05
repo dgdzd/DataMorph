@@ -483,6 +483,7 @@ void NewGraphPopup::onRender() {
 		if (Button("Create one")) {
 			Graph g("New graph 1", &pr->headers[pr->ids[0]], { Line(&pr->headers[pr->ids[0]]) }, 0, 0);
 			g.lines[0].color = new ImVec4(ImPlot::GetColormapColor(0, this->settings->get_int("graphs_cmap")));
+			g.lines[0].marker = this->settings->get_int("default_marker");
 			pr->graphs.push_back(g);
 		}
 	}
@@ -545,6 +546,7 @@ void NewGraphPopup::onRender() {
 				if (Button("+")) {
 					Line l(&pr->headers[pr->ids[0]]);
 					l.color = new ImVec4(ImPlot::GetColormapColor(graph.lines.size()+1, this->settings->get_int("graphs_cmap")));
+					l.marker = this->settings->get_int("default_marker");
 					graph.lines.push_back(l);
 				}
 				if (pr->graphs.size() > 0) {
@@ -565,6 +567,7 @@ void NewGraphPopup::onRender() {
 		if (TabItemButton("+", ImGuiTabItemFlags_Trailing)) {
 			Line l(&pr->headers[pr->ids[0]]);
 			l.color = new ImVec4(ImPlot::GetColormapColor(0, this->settings->get_int("graphs_cmap")));
+			l.marker = this->settings->get_int("default_marker");
 			Graph g(("New graph " + std::to_string(pr->graphs.size() + 1)), &pr->headers[pr->ids[0]], { l }, 0, 0);
 			pr->graphs.push_back(g);
 		}

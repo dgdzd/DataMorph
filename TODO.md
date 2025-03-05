@@ -45,3 +45,8 @@
 
 - [ ] Resources
 	- [	] Embed resources in the executable
+
+- [ ] Projects
+	- [ ] Add possibility to save projects to files
+	- [ ] Add possibility to load them
+	- [x] Export project as a data file (.csv, .txt, etc...)

@@ -1,11 +1,11 @@
 #include <gui/FluidWindow.h>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <iostream>
 #include <App.h>
 #include <FontManager.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <imgui_stdlib.h>
+#include <iostream>
 #include <Utils.h>
 
 using namespace ImGui;
@@ -13,7 +13,7 @@ using namespace ImGui;
 FluidWindow* FluidWindow::current = nullptr;
 
 FluidWindow::FluidWindow() {
-	this->name = "Python IDE";
+	this->name = "Fluid Simulation";
 	this->font20 = nullptr;
 	this->font23 = nullptr;
 	this->font64 = nullptr;
@@ -23,7 +23,7 @@ FluidWindow::FluidWindow() {
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 	this->settings = Settings::instance;
 	this->window = DataMorph::getInstance()->window;
-	this->fb = new Framebuffer(WIDTH, HEIGHT);
+	this->fb = new Framebuffer(1100, 700);
 	this->shader = new Shader("resources\\shaders\\test.vert", "resources\\shaders\\test.frag");
 
 	FluidWindow::current = this;
@@ -78,17 +78,23 @@ void FluidWindow::onRender() {
 	frame();
 
 	Texture& tex = fb->texture;
-	Image(tex.id, ImVec2(WIDTH, HEIGHT), ImVec2(0, 1), ImVec2(1, 0)); // On render la texture imprimée par le framebuffer dans la fenêtre ImGUI 
+		PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+	if (BeginChild("##fluidrender", ImVec2(fb->width, fb->height), ImGuiChildFlags_Border | ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY)) {
+		ImVec2 size = GetContentRegionAvail();
+		Image(tex.id, size, ImVec2(0, 1), ImVec2(1, 0)); // On render la texture imprimée par le framebuffer dans la fenêtre ImGUI
+		PopStyleVar();
+	}
+	EndChild();
 }
 
 void FluidWindow::frame() {
 	shader->use();
 	fb->use();
 
-	glClearColor(1.0f, 1.0f, 0.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
-
 	fb->render();
+
 	fb->unuse();
 }
 

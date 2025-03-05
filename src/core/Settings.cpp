@@ -13,6 +13,10 @@ Settings::Settings(const std::string& file) {
 	load_options();
 }
 
+bool& Settings::get_bool(const std::string& option) {
+	return data_bools[option];
+}
+
 int& Settings::get_int(const std::string& option) {
 	return data_ints[option];
 }
@@ -31,6 +35,10 @@ std::string& Settings::get_string(const std::string& option) {
 
 ImVec4& Settings::get_vec(const std::string& option) {
 	return data_vecs[option];
+}
+
+void Settings::set_bool(const std::string& option, bool value) {
+	data_bools[option] = value;
 }
 
 void Settings::set_int(const std::string& option, int value) {
@@ -54,13 +62,16 @@ void Settings::set_vec(const std::string& option, const ImVec4& value) {
 }
 
 void Settings::init_defaults() {
+	set_bool("autocheck_updates", 1);
+
 	set_string("theme", "Dark");
 	set_int("graphs_cmap", 1);
+	set_int("default_marker", 1);
 
 	set_string("python_exec_path", "resources\\Python\\python3.exe");
 	set_vec("py_keyw_highlight_c", ImVec4(197.0f/255, 134.0f/255, 192.0f/255, 1.0f));
 	set_vec("py_comment_c", ImVec4(56.0f/255, 56.0f/255, 56.0f/255, 1.0f));
-	set_vec("py_str_c", ImVec4(212.0f / 255, 157.0f / 255, 133.0f / 255, 1.0f));
+	set_vec("py_str_c", ImVec4(212.0f/255, 157.0f/255, 133.0f/255, 1.0f));
 	set_vec("py_func_def_c", ImVec4(45.0f/255, 122.0f/255, 214.0f/255, 1.0f));
 }
 
@@ -73,6 +84,9 @@ void Settings::load_options() {
 			std::vector<std::string> parts = std::split(line, '=', 1);
 			std::vector<std::string> name_part = std::split(parts[0], ':', 1);
 
+			if (name_part[1] == "bol") {
+				data_bools[name_part[0]] = std::stoi(parts[1]);
+			}
 			if (name_part[1] == "int") {
 				data_ints[name_part[0]] = std::stoi(parts[1]);
 			}
@@ -105,6 +119,9 @@ void Settings::load_options() {
 void Settings::write_options() {
 	std::ofstream file(options_file);
 	if (file.is_open()) {
+		for (auto& [key, value] : data_bools) {
+			file << key << ":bol=" << value << "\n";
+		}
 		for (auto& [key, value] : data_ints) {
 			file << key << ":int=" << value << "\n";
 		}

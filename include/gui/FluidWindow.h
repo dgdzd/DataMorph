@@ -22,9 +22,6 @@ class FluidWindow : public Window {
 
 public:
 	static FluidWindow* current;
-	//truc de opengl
-	const GLuint WIDTH = 800;
-	const GLint HEIGHT = 800;
 
 	GLFWwindow* window;
 

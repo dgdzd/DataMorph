@@ -30,6 +30,7 @@ void Shader::compile() {
         if(!success) {
             glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
             //logger.error("Failed to compile vertex shader\n" + std::string(infoLog));
+            printf("Failed to compile vertex shader :\n%s", infoLog);
         }
 
         fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -39,6 +40,7 @@ void Shader::compile() {
         if(!success) {
             glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
             //logger.error("Failed to compile fragment shader\n" + std::string(infoLog));
+            printf("Failed to compile fragment shader :\n%s", infoLog);
         }
 
         id = glCreateProgram();
