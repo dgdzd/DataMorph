@@ -510,18 +510,64 @@ namespace Regression {
 			return false;
 		}
 
-		auto f = [](double r1, double r2, double& b, double t1, double t2, double precision, bool& order) {
-			double y0 = (r1 * std::sin(b * t2)) / (r2 * t1);
-			b += precision * (2 * order - 1);
-			double y1 = (r1 * std::sin(b * t2)) / (r2 * t1);
-			order = y1 > y0;
+		auto f = [](double x, double a, double b) {
+			return a*std::sin(b*x);
 			};
 
-		a = 1;
-		bool order = true;
-		f(ys[0], ys[1], b, xs[0], xs[1], 0.1, order);
-		while ((order and order) or (!order and !order)) {
-			f(ys[0], ys[1], b, xs[0], xs[1], 0.1, order);
+		double precision = 0.1;
+		double loss0 = 0.0;
+		double loss1 = 0.0;
+		double x = xs[0];
+		for (int i = 0; i < xs.size(); i++) {
+			x = xs[i];
+			loss0 += std::abs(f(x, a, b) - ys[i]);
+		}
+		b++;
+		for (int i = 0; i < xs.size(); i++) {
+			x = xs[i];
+			loss1 += std::abs(f(x, a, b) - ys[i]);
+		}
+		b--;
+		bool same = loss0 == 0;
+		bool sign = loss1 < loss0;
+		while (precision > 0.00001 && !same) {
+			if (sign) {
+				while (sign && !same) {
+					loss0 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b) - ys[i]);
+					}
+					c += precision;
+					loss1 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b) - ys[i]);
+					}
+					same = loss1 == 0;
+					sign = loss1 < loss0;
+				}
+				sign = not sign;
+			}
+			else {
+				while (!sign && !same) {
+					loss0 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss0 += std::abs(f(x, a, b) - ys[i]);
+					}
+					c -= precision;
+					loss1 = 0;
+					for (int i = 0; i < xs.size(); i++) {
+						x = xs[i];
+						loss1 += std::abs(f(x, a, b) - ys[i]);
+					}
+					same = loss1 == 0;
+					sign = loss1 < loss0;
+				}
+				sign = not sign;
+			}
+			precision /= 10;
 		}
 
 		return true;
