@@ -212,6 +212,8 @@ std::string ModelTypeToString(ModelType type) {
 		return "Exponential";
 	case ModelType::SQRT:
 		return "Square Root";
+	case ModelType::INV:
+		return "Inverse";
 	case ModelType::OTHER:
 		return "Other";
 
@@ -219,6 +221,10 @@ std::string ModelTypeToString(ModelType type) {
 		return "Rhodonea Curve";
 	case ModelType::LS:
 		return "Rhodonea Curve";
+	case ModelType::HS:
+		return "Hyperbolic Spiral";
+	case ModelType::LIS:
+		return "Lituus Spiral";
 	case ModelType::RHO:
 		return "Rhodonea Curve";
 	case ModelType::RHO2:
@@ -226,7 +232,9 @@ std::string ModelTypeToString(ModelType type) {
 	case ModelType::BL:
 		return "Bernoulli's Lemniscate";
 	case ModelType::CARD:
-		return "Cardioid";
+		return "Limaçon of Pascal";
+	case ModelType::LP:
+		return "Lituus Spiral";
 	case ModelType::EH:
 		return "Epicycloid or Hypocycloid";
 	case ModelType::LC:

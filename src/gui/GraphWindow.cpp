@@ -102,6 +102,22 @@ void GraphWindow::onRender() {
 									g.model->expr_str = y + "=a*exp(b*" + x + ")";
 									g.model->refresh();
 								}
+								if (Selectable((const char*)u8"Hyperbolic Spiral (r=a/θ)")) {
+									g.model->type = ModelType::HS;
+									g.model->expr_str = y + "=a/" + x;
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Lituus Spiral (r=sqrt(a^2/θ))")) {
+									g.model->type = ModelType::LIS;
+									g.model->expr_str = y + "=sqrt(a^2/" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Cochleoid (r=a*sin(θ)/θ")) {
+									g.model->type = ModelType::COCH;
+									g.model->expr_str = y + "=(a*sin(" + x + "))/ " + x;
+									g.model->refresh();
+								}
+								//to do
 								if (Selectable((const char*)u8"Rhodonea Curve (r=a*sin(b*θ))")) {
 									g.model->type = ModelType::RHO;
 									g.model->expr_str = y + "=a*sin(b*" + x + ")";
@@ -120,6 +136,11 @@ void GraphWindow::onRender() {
 								if (Selectable((const char*)u8"Cardioid (r=a(1+cos(θ)))")) {
 									g.model->type = ModelType::CARD;
 									g.model->expr_str = y + "=a*(1+cos(" + x + "))";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Limaçon of Pascal (r=a+b*cos(θ))")) {
+									g.model->type = ModelType::LP;
+									g.model->expr_str = y + "=a+b*cos(" + x + ")";
 									g.model->refresh();
 								}
 								if (Selectable((const char*)u8"Epicycloid or Hypocycloid (r=a+b*cos(c*θ))")) {
@@ -191,6 +212,11 @@ void GraphWindow::onRender() {
 								}
 								if (Selectable("Square Root (y=a*sqrt(x)+c)")) {
 									g.model->type = ModelType::SQRT;
+									g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
+									g.model->refresh();
+								}
+								if (Selectable("Inverse (y=a/x)")) {
+									g.model->type = ModelType::INV;
 									g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
 									g.model->refresh();
 								}
@@ -348,7 +374,69 @@ void GraphWindow::onRender() {
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
 										m->values.push_back(m->value(g.xHeader->values[i]));
 									}
-									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "b = " + std::to_string(g.model->c) + "\n";
+									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
+								}
+							}
+							else if (g.model->type == INV) {
+								if (Regression::inverse(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.xHeader->values[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+								}
+							//polar
+							else if (g.model->type == AS) {
+								if (Regression::affine(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+								}
+							}
+							else if (g.model->type == LS) {
+								g.model->n = 2.71828;
+								if (Regression::exponential(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b, g.model->n)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
+								}
+							}
+							else if (g.model->type == HS) {
+								if (Regression::inverse(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+							}
+							else if (g.model->type == LIS) {
+								if (Regression::lituus(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+							}
+							else if (g.model->type == COCH) {
+								if (Regression::cochleoid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
 							}
 							else {

@@ -15,6 +15,9 @@ namespace Regression {
 	extern bool logarithmic(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& n);
 	extern bool exponential(const std::vector<double>& x, const std::vector<double>& y, double& a, double& b, double& n);
 	extern bool sqrt(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& c);
+	extern bool inverse(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
+	extern bool lituus(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
+	extern bool cochleoid(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
 	//to do
 	extern double logistic(const std::vector<double>& x, const std::vector<double>& y);
 }

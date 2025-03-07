@@ -448,5 +448,57 @@ namespace Regression {
 		double quadratic_variation = std::sum<double>(X, [&ys, &xm, &ym](double val, int i) { return (val - xm) * (ys[i] - ym); });
 		b = quadratic_variation / std::sum<double>(X, [&xm](double val, int i) { return pow(val - xm, 2); });
 		a = ym - b * xm;
+
+		return true;
+	}
+	bool inverse(const std::vector<double>& xs, const std::vector<double>& ys, double& a) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			as.push_back(xs[i] * ys[i]);
+		}
+		a = std::sum(as) / as.size();
+
+		return true;
+	}
+
+	bool lituus(const std::vector<double>& xs, const std::vector<double>& ys, double& a) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			as.push_back(ys[i] * std::sqrt(xs[i]));
+		}
+		a = std::sum(as) / as.size();
+
+		return true;
+	}
+
+	bool cochleoid(const std::vector<double>& xs, const std::vector<double>& ys, double& a) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			as.push_back(ys[i] * xs[i] / std::sin(xs[i]));
+		}
+		a = std::sum(as) / as.size();
+
+		return true;
 	}
 }
