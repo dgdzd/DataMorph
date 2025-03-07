@@ -501,4 +501,29 @@ namespace Regression {
 
 		return true;
 	}
+
+	bool rhodonea(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		auto f = [](double r1, double r2, double& b, double t1, double t2, double precision, bool& order) {
+			double y0 = (r1 * std::sin(b * t2)) / (r2 * t1);
+			b += precision * (2 * order - 1);
+			double y1 = (r1 * std::sin(b * t2)) / (r2 * t1);
+			order = y1 > y0;
+			};
+
+		a = 1;
+		bool order = true;
+		f(ys[0], ys[1], b, xs[0], xs[1], 0.1, order);
+		while ((order and order) or (!order and !order)) {
+			f(ys[0], ys[1], b, xs[0], xs[1], 0.1, order);
+		}
+
+		return true;
+	}
 }

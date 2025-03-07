@@ -439,6 +439,17 @@ void GraphWindow::onRender() {
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
 							}
+							
+							else if (g.model->type == RHO) {
+								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+								}
 							else {
 
 							}

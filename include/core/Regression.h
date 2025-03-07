@@ -18,6 +18,7 @@ namespace Regression {
 	extern bool inverse(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
 	extern bool lituus(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
 	extern bool cochleoid(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
+	extern bool rhodonea(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b);
 	//to do
 	extern double logistic(const std::vector<double>& x, const std::vector<double>& y);
 }
