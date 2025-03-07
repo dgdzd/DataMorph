@@ -92,19 +92,49 @@ void GraphWindow::onRender() {
 								g.model->refresh();
 							}
 							if (g.isPolar) {
-								if (Selectable((const char*)u8"Affine (r=aθ+b)")) {
-									g.model->type = ModelType::AFFINE;
+								if (Selectable((const char*)u8"Archimedean Spiral (r=aθ+b)")) {
+									g.model->type = ModelType::AS;
 									g.model->expr_str = y + "=a*" + x + "+b";
 									g.model->refresh();
 								}
-								if (Selectable("Exponential (r=a*exp(b*θ)")) {
-									g.model->type = ModelType::EXP;
+								if (Selectable((const char*)u8"Logarithmic Spiral (r=a*exp(b*θ))")) {
+									g.model->type = ModelType::LS;
 									g.model->expr_str = y + "=a*exp(b*" + x + ")";
 									g.model->refresh();
 								}
-								if (Selectable("Rhodonea (r=a*sin(b*θ)")) {
+								if (Selectable((const char*)u8"Rhodonea Curve (r=a*sin(b*θ))")) {
 									g.model->type = ModelType::RHO;
-									g.model->expr_str = y + "=a*exp(b*" + x + ")";
+									g.model->expr_str = y + "=a*sin(b*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Rhodonea Curve 2 (r=a*cos(b*θ))")) {
+									g.model->type = ModelType::RHO2;
+									g.model->expr_str = y + "=a*cos(b*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Bernoulli's Lemniscate (r=sqrt(a^2*cos(2*θ)))")) {
+									g.model->type = ModelType::BL;
+									g.model->expr_str = y + "sqrt(a^2*cos(2*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Cardioid (r=a(1+cos(θ)))")) {
+									g.model->type = ModelType::CARD;
+									g.model->expr_str = y + "=a*(1+cos(" + x + "))";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Epicycloid or Hypocycloid (r=a+b*cos(c*θ))")) {
+									g.model->type = ModelType::EH;
+									g.model->expr_str = y + "=a+b*cos(c*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Lissajous Curve (r=a*sin(b*θ+c)")) {
+									g.model->type = ModelType::LC;
+									g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
+									g.model->refresh();
+								}
+								if (Selectable((const char*)u8"Cassini Oval (r=sqrt(b^2*cos(2*θ)±sqrt(b^4*cos(2*θ)^2+(a^4-c^4))))")) {
+									g.model->type = ModelType::CO;
+									g.model->expr_str = y + "sqrt(b^2*cos(2*"+x+")±sqrt(b ^ 4 * cos(2 * "+x+") ^ 2 + (a ^ 4 - c ^ 4)))";
 									g.model->refresh();
 								}
 							}
@@ -191,7 +221,7 @@ void GraphWindow::onRender() {
 						}
 						TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 						if (IsItemHovered()) {
-							SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n - The experimental data musn't reverse the order of the model \n - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash \n - Any unfit model for your experimental data may cause errors \n - The constant e (2.7...) is not usable in custom models");
+							SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n - The experimental data musn't reverse the order of the model \n - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash \n - Any unfit model for your experimental data may cause errors \n - Any constant like e is not usable \n Polar models may be not self explanatory, i recommand learning about them before using them");
 						}
 
 						if (Button("Update model")) {

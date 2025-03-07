@@ -21,7 +21,17 @@ enum ModelType : int {
 	EXPN,
 	EXP,
 	SQRT,
-	OTHER
+	OTHER,
+
+	AS,
+	LS,
+	RHO,
+	RHO2,
+	BL,
+	CARD,
+	EH,
+	LC,
+	CO
 };
 
 struct Model {

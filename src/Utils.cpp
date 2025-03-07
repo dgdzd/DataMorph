@@ -214,6 +214,26 @@ std::string ModelTypeToString(ModelType type) {
 		return "Square Root";
 	case ModelType::OTHER:
 		return "Other";
+
+	case ModelType::AS:
+		return "Rhodonea Curve";
+	case ModelType::LS:
+		return "Rhodonea Curve";
+	case ModelType::RHO:
+		return "Rhodonea Curve";
+	case ModelType::RHO2:
+		return "Rhodonea Curve 2";
+	case ModelType::BL:
+		return "Bernoulli's Lemniscate";
+	case ModelType::CARD:
+		return "Cardioid";
+	case ModelType::EH:
+		return "Epicycloid or Hypocycloid";
+	case ModelType::LC:
+		return "Lissajous Curve";
+	case ModelType::CO:
+		return "Cassini Oval";
+
 	default:
 		return "None";
 	}
