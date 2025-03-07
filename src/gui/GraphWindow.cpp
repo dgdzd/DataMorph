@@ -60,6 +60,16 @@ void GraphWindow::onRender() {
 	if (BeginTabBar("graphs_tabs")) {
 		for (int i = 0; i < project->graphs.size(); i++) {
 			Graph& g = project->graphs[i];
+			if (g.isPolar) {
+				for (int j; j < g.lines.size(); j++) {
+					g.lines[j].xPolar = {};
+					g.lines[j].yPolar = {};
+					for (int k; k < g.lines[j].header->values.size(); k++) {
+						g.lines[j].xPolar.push_back(g.lines[j].header->values[k] * std::cos(g.xHeader->values[k]));
+						g.lines[j].yPolar.push_back(g.lines[j].header->values[k] * std::sin(g.xHeader->values[k]));
+					}
+				}
+			}
 			if (BeginTabItem(g.name.c_str())) {
 				if (BeginChild("UpLayer", ImVec2(0, window->Size.y * 0.75), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) {
 					if (BeginChild("Model", ImVec2(window->Size.x * 0.5f, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX, ImGuiWindowFlags_MenuBar)) {
@@ -81,61 +91,65 @@ void GraphWindow::onRender() {
 								g.model->expr_str = y + "=" + x;
 								g.model->refresh();
 							}
-							if (Selectable("Linear (y=ax)")) {
-								g.model->type = ModelType::LINEAR;
-								g.model->expr_str = y + "=a*" + x;
-								g.model->refresh();
+							if (g.isPolar) {
 							}
-							if (Selectable("Affine (y=ax+b)")) {
-								g.model->type = ModelType::AFFINE;
-								g.model->expr_str = y + "=a*" + x + "+b";
-								g.model->refresh();
-							}
-							if (Selectable("Quadratic (y=ax^2+bx+c)")) {
-								g.model->type = ModelType::QUADRATIC;
-								g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
-								g.model->refresh();
-							}
-							if (Selectable("Cubic (y=ax^3+bx^2+cx+d)")) {
-								g.model->type = ModelType::CUBIC;
-								g.model->expr_str = y + "=a*" + x + "^3+b*" + x + "^2+c*x+d";
-								g.model->refresh();
-							}
-							if (Selectable("Sine (y=a*sin(bx+c)")) {
-								g.model->type = ModelType::SINUS;
-								g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
-								g.model->refresh();
-							}
-							if (Selectable("Logarithmic Base 10 (y=a*log10(x)+b)")) {
-								g.model->type = ModelType::LOG10;
-								g.model->expr_str = y + "=a*log10(" + x + ")+b";
-								g.model->refresh();
-							}
-							if (Selectable("Neperian Logarithmic (y=a*log(x)+b)")) {
-								g.model->type = ModelType::LOG;
-								g.model->expr_str = y + "=a*log(" + x + ")+b";
-								g.model->refresh();
-							}
-							if (Selectable("Logarithmic Base n (y=a*logn(x,n)+b)")) {
-								g.model->type = ModelType::LOGN;
-								g.model->expr_str = y + "=a*logn(" + x + ",n)+b";
-								g.model->refresh();
-							}
-							if (Selectable("Exponential (y=a*exp(b*x)")) {
-								g.model->type = ModelType::EXP;
-								g.model->expr_str = y + "=a*exp(b*" + x + ")";
-								g.model->refresh();
-								//e = 2.71828
-							}
-							if (Selectable("Exponential Base n (y=a*n^(b*x)")) {
-								g.model->type = ModelType::EXPN;
-								g.model->expr_str = y + "=a*n^(b*" + x + ")";
-								g.model->refresh();
-							}
-							if (Selectable("Square Root (y=a*sqrt(x)+c)")) {
-								g.model->type = ModelType::SQRT;
-								g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
-								g.model->refresh();
+							else {
+								if (Selectable("Linear (y=ax)")) {
+									g.model->type = ModelType::LINEAR;
+									g.model->expr_str = y + "=a*" + x;
+									g.model->refresh();
+								}
+								if (Selectable("Affine (y=ax+b)")) {
+									g.model->type = ModelType::AFFINE;
+									g.model->expr_str = y + "=a*" + x + "+b";
+									g.model->refresh();
+								}
+								if (Selectable("Quadratic (y=ax^2+bx+c)")) {
+									g.model->type = ModelType::QUADRATIC;
+									g.model->expr_str = y + "=a*" + x + "^2+b*" + x + "+c";
+									g.model->refresh();
+								}
+								if (Selectable("Cubic (y=ax^3+bx^2+cx+d)")) {
+									g.model->type = ModelType::CUBIC;
+									g.model->expr_str = y + "=a*" + x + "^3+b*" + x + "^2+c*x+d";
+									g.model->refresh();
+								}
+								if (Selectable("Sine (y=a*sin(bx+c)")) {
+									g.model->type = ModelType::SINUS;
+									g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
+									g.model->refresh();
+								}
+								if (Selectable("Logarithmic Base 10 (y=a*log10(x)+b)")) {
+									g.model->type = ModelType::LOG10;
+									g.model->expr_str = y + "=a*log10(" + x + ")+b";
+									g.model->refresh();
+								}
+								if (Selectable("Neperian Logarithmic (y=a*log(x)+b)")) {
+									g.model->type = ModelType::LOG;
+									g.model->expr_str = y + "=a*log(" + x + ")+b";
+									g.model->refresh();
+								}
+								if (Selectable("Logarithmic Base n (y=a*logn(x,n)+b)")) {
+									g.model->type = ModelType::LOGN;
+									g.model->expr_str = y + "=a*logn(" + x + ",n)+b";
+									g.model->refresh();
+								}
+								if (Selectable("Exponential (y=a*exp(b*x)")) {
+									g.model->type = ModelType::EXP;
+									g.model->expr_str = y + "=a*exp(b*" + x + ")";
+									g.model->refresh();
+									//e = 2.71828
+								}
+								if (Selectable("Exponential Base n (y=a*n^(b*x)")) {
+									g.model->type = ModelType::EXPN;
+									g.model->expr_str = y + "=a*n^(b*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable("Square Root (y=a*sqrt(x)+c)")) {
+									g.model->type = ModelType::SQRT;
+									g.model->expr_str = y + "=a*sqrt(" + x + ")+c";
+									g.model->refresh();
+								}
 							}
 
 							EndCombo();
@@ -320,13 +334,23 @@ void GraphWindow::onRender() {
 								int _size = g.xHeader->values.size();
 								ImPlot::SetNextLineStyle(*l.color);
 								ImPlot::SetNextMarkerStyle(l.marker);
-								ImPlot::PlotScatter((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+								if (g.isPolar) {
+									ImPlot::PlotScatter((l.header->name + "##Plot" + std::to_string(j)).c_str(), &l.xPolar[0], &l.yPolar[0], _size);
+								}
+								else {
+									ImPlot::PlotScatter((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+								}
 							}
 							else {
 								int _size = g.xHeader->values.size();
 								ImPlot::SetNextLineStyle(*l.color);
 								ImPlot::SetNextMarkerStyle(l.marker);
-								ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+								if (g.isPolar) {
+									ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &l.xPolar[0], &l.yPolar[0], _size);
+								}
+								else {
+									ImPlot::PlotLine((l.header->name + "##Plot" + std::to_string(j)).c_str(), &g.xHeader->values[0], &l.header->values[0], _size);
+								}
 							}
 						}
 						if (g.model && g.model->values.size() != 0) {

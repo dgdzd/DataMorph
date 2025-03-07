@@ -13,6 +13,8 @@ struct Line {
 	bool scatter;
 	ImVec4* color;
 	ImPlotMarker marker;
+	std::vector<double> xPolar;
+	std::vector<double> yPolar;
 
 	Line();
 	Line(Header* header);
@@ -29,6 +31,7 @@ struct Graph {
 	std::vector<Line> lines;
 	std::string name;
 	ImPlotRect limits;
+	bool isPolar = false;
 	double a;
 	double b;
 	double c;

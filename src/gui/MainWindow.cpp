@@ -155,6 +155,11 @@ void MainWindow::onRender() {
 							pr->addRow();
 						}
 					}
+					if (MenuItem("Add 100 Rows")) {
+						for (int i = 0; i < 100; i++) {
+							pr->addRow();
+						}
+					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();

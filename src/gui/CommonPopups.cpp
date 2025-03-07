@@ -1,4 +1,4 @@
-#include <gui/CommonPopups.h>
+﻿#include <gui/CommonPopups.h>
 
 #include <gui/MainWindow.h>
 #include <imgui_stdlib.h>
@@ -494,7 +494,18 @@ void NewGraphPopup::onRender() {
 				Text("Name");
 				InputText("##graphName", &graph.name, 32);
 				Dummy(ImVec2(0.0f, 10.0f));
-				if (BeginCombo("X axis", graph.xHeader->name.c_str())) {
+				Text("Graph type");
+				if (BeginCombo("##graphType", graph.isPolar ? "Polar" : "Cartesian")) {
+					if (Selectable("Polar")) {
+						graph.isPolar = true;
+					}
+					if (Selectable("Cartesian")) {
+						graph.isPolar = false;
+					}
+					EndCombo();
+				}
+				Dummy(ImVec2(0.0f, 10.0f));
+				if (BeginCombo(graph.isPolar ? (const char*)u8"θ axis" : "X axis", graph.xHeader->name.c_str())) {
 					for (unsigned int id : pr->ids) {
 						if (Selectable(pr->headers[id].name.c_str())) {
 							graph.xHeader = &pr->headers[id];
@@ -518,6 +529,21 @@ void NewGraphPopup::onRender() {
 							}
 							EndCombo();
 						}
+						if (graph.isPolar) {
+							if (Button("Convert to Polar Axes")) {
+								for (int i = 0; i < line.header->values.size(); i++) {
+									line.header->values[i] = std::atan2(line.header->values[i], graph.xHeader->values[i]);
+								}
+							}
+						}
+						else {
+							if (Button("Convert to Cartesian Axes")) {
+								for (int i = 0; i < line.header->values.size(); i++) {
+									line.header->values[i] = line.header->values[i]*std::sin(graph.xHeader->values[i]);
+								}
+							}
+						}
+
 						Checkbox("Scatter", &line.scatter);
 						ColorEdit4("Line color", &line.color->x);
 						if (BeginCombo("Marker", ImPlotMarkerToString(line.marker))) {
