@@ -92,6 +92,21 @@ void GraphWindow::onRender() {
 								g.model->refresh();
 							}
 							if (g.isPolar) {
+								if (Selectable((const char*)u8"Affine (r=aθ+b)")) {
+									g.model->type = ModelType::AFFINE;
+									g.model->expr_str = y + "=a*" + x + "+b";
+									g.model->refresh();
+								}
+								if (Selectable("Exponential (r=a*exp(b*θ)")) {
+									g.model->type = ModelType::EXP;
+									g.model->expr_str = y + "=a*exp(b*" + x + ")";
+									g.model->refresh();
+								}
+								if (Selectable("Rhodonea (r=a*sin(b*θ)")) {
+									g.model->type = ModelType::RHO;
+									g.model->expr_str = y + "=a*exp(b*" + x + ")";
+									g.model->refresh();
+								}
 							}
 							else {
 								if (Selectable("Linear (y=ax)")) {
@@ -138,7 +153,6 @@ void GraphWindow::onRender() {
 									g.model->type = ModelType::EXP;
 									g.model->expr_str = y + "=a*exp(b*" + x + ")";
 									g.model->refresh();
-									//e = 2.71828
 								}
 								if (Selectable("Exponential Base n (y=a*n^(b*x)")) {
 									g.model->type = ModelType::EXPN;
