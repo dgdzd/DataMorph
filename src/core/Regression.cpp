@@ -599,9 +599,12 @@ namespace Regression {
 		if (xs.size() < 2) {
 			return false;
 		}
+		if (n == 0) {
+			return false;
+		}
 
 		auto f = [](double r1, double r2, double t1, double t2, double n) {
-			return ((r1 - r2) / (std::cos(n * t1) - std::cos(n * t2)));
+			return (r1 - r2) / (std::cos(n * t1) - std::cos(n * t2));
 			};
 
 		std::vector<double> bs = {};

@@ -529,20 +529,6 @@ void NewGraphPopup::onRender() {
 							}
 							EndCombo();
 						}
-						if (graph.isPolar) {
-							if (Button("Convert to Polar Axes")) {
-								for (int i = 0; i < line.header->values.size(); i++) {
-									line.header->values[i] = std::atan2(line.header->values[i], graph.xHeader->values[i]);
-								}
-							}
-						}
-						else {
-							if (Button("Convert to Cartesian Axes")) {
-								for (int i = 0; i < line.header->values.size(); i++) {
-									line.header->values[i] = line.header->values[i]*std::sin(graph.xHeader->values[i]);
-								}
-							}
-						}
 
 						Checkbox("Scatter", &line.scatter);
 						ColorEdit4("Line color", &line.color->x);
