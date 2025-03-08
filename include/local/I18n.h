@@ -5,6 +5,7 @@
 #include <string>
 
 enum Lang : int {
+	None = -1,
 	en_us,
 	en_uk,
 	fr_fr,
@@ -16,16 +17,17 @@ enum Lang : int {
 };
 const int LANG_COUNT = 8;
 
-extern std::string LangToString(Lang lang);
 extern std::string LangToString(int lang);
+extern std::string LangToCode(int lang);
 
 class I18n {
 	std::map<std::string, std::string> translations;
+	I18n* fallback;
 
 public:
-	Lang lang;
-	I18n(Lang lang = en_us);
-	const std::string& t(const std::string& key);
+	int lang;
+	I18n(int lang = en_us, Lang fallback = en_us);
+	const char* t(const std::string& key);
 };
 
 #endif

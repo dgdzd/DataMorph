@@ -12,6 +12,7 @@ namespace std {
 	extern string trim_leading(const string& str, const char c = ' ');
 	extern string trim(const string& str, const char c = ' ');
 	extern std::vector<std::string> split(const std::string& str, const char c = ' ', int limit = 0);
+	extern std::vector<std::u8string> split(const std::u8string& str, const char8_t c = ' ', int limit = 0);
 	extern std::string format_num(double val, std::string prefix);
 
 	template <typename T>

@@ -30,6 +30,7 @@ class MainWindow : public Window {
 	ImFont* font64;
 public:
 	State* state;
+	I18n& i18n;
 
 	MainWindow();
 

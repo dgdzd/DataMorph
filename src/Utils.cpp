@@ -42,6 +42,24 @@ std::vector<std::string> std::split(const std::string& str, const char c, int li
 	return parts;
 }
 
+std::vector<std::u8string> std::split(const std::u8string& str, const char8_t c, int limit) {
+	std::vector<std::u8string> parts;
+	std::u8string part = u8"";
+	int count = 0;
+	for (int i = 0; i < str.size(); i++) {
+		if (str[i] == c && (limit == 0 || count < limit)) {
+			parts.push_back(part);
+			part = u8"";
+			count++;
+		}
+		else {
+			part += str[i];
+		}
+	}
+	parts.push_back(part);
+	return parts;
+}
+
 std::string std::format_num(double val, std::string prefix) {
 	if (val > 10e2) {
 		std::string strval = std::to_string(val / 10e2);

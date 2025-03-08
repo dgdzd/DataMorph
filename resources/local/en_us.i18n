@@ -1,0 +1,16 @@
+ok=Ok
+cancel=Cancel
+file=File
+file.new_project=New project...
+file.open_project=Open project...
+file.recent_projects=Recent projects...
+file.save=Save
+file.export_to=Export to...
+file.settings=Settings...
+file.exit=Exit
+edit=Edit
+edit.undo=Undo
+edit.redo=Redo
+edit.cut=Cut
+edit.copy=Copy
+edit.paste=Paste

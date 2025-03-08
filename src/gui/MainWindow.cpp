@@ -22,7 +22,7 @@
 using namespace ImGui;
 
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow() : i18n(DataMorph::i18n) {
 	this->name = "DataMorph";
 	this->font20 = nullptr;
 	this->font23 = nullptr;
@@ -64,17 +64,17 @@ void MainWindow::onRender() {
 	SetWindowSize(ImVec2(1200.0f, 700.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginMenuBar()) {
-		if (BeginMenu("File")) {
-			if (MenuItem("New project...", "Ctrl+N")) {
+		if (BeginMenu(i18n.t("file"))) {
+			if (MenuItem(i18n.t("file.new_project"), "Ctrl+N")) {
 				DataMorph::getInstance()->addLayer(new NewProjectWindow());
 			}
-			if (MenuItem("Open project...", "Ctrl+O")) {
+			if (MenuItem(i18n.t("file.open_project"), "Ctrl+O")) {
 			}
-			if (MenuItem("Save", "Ctrl+S")) {
+			if (MenuItem(i18n.t("file.save"), "Ctrl+S")) {
 			}
 			BeginDisabled(!pr);
 			{
-				if (BeginMenu("Export to...")) {
+				if (BeginMenu(i18n.t("file.export_to"))) {
 					if (MenuItem("CSV")) {
 						NFD::UniquePath outPath;
 						outPath;
@@ -109,7 +109,7 @@ void MainWindow::onRender() {
 			}
 			EndDisabled();
 			Separator();
-			if (MenuItem("Settings...")) {
+			if (MenuItem(i18n.t("file.settings"))) {
 				if (!SettingsWindow::current) {
 					DataMorph::getInstance()->addLayer(new SettingsWindow());
 				}
@@ -118,22 +118,22 @@ void MainWindow::onRender() {
 				}
 			}
 			Separator();
-			if (MenuItem("Exit")) {
+			if (MenuItem(i18n.t("file.exit"))) {
 				this->p_open = false;
 			}
 			ImGui::EndMenu();
 		}
-		if (BeginMenu("Edit")) {
-			if (MenuItem("Undo", "Ctrl+Z")) {}
-			if (MenuItem("Redo", "Ctrl+Y")) {}
+		if (BeginMenu(i18n.t("edit"))) {
+			if (MenuItem(i18n.t("edit.undo"), "Ctrl+Z")) {}
+			if (MenuItem(i18n.t("edit.redo"), "Ctrl+Y")) {}
 			Separator();
-			if (MenuItem("Cut", "Ctrl+X")) {}
-			if (MenuItem("Copy", "Ctrl+C")) {}
-			if (MenuItem("Paste", "Ctrl+V")) {}
+			if (MenuItem(i18n.t("edit.cut"), "Ctrl+X")) {}
+			if (MenuItem(i18n.t("edit.copy"), "Ctrl+C")) {}
+			if (MenuItem(i18n.t("edit.paste"), "Ctrl+V")) {}
 			ImGui::EndMenu();
 		}
 		if (pr) {
-			if (BeginMenu("Table")) {
+			if (BeginMenu(i18n.t("table"))) {
 				if (MenuItem("Add Variable...")) {
 					state->popups["Add a column"] = true;
 				}

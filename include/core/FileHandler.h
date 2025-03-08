@@ -16,6 +16,7 @@ namespace files {
 	extern void set_option(const std::string& option, const std::string& value);
 
 	extern char* get_content(const std::string& filepath);
+	extern char8_t* get_u8content(const std::string& filepath);
 }
 
 #endif
