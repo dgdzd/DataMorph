@@ -353,14 +353,14 @@ namespace Regression {
 		return true;
 	}
 
-	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& base_n) {
+	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n_) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
 		if (xs.size() < 2) {
 			return false;
 		}
-		if (base_n <= 0) {
+		if (n_ <= 0) {
 			return false;
 		}
 
@@ -371,7 +371,7 @@ namespace Regression {
 		double X = 0;
 		int n = xs.size();
 		for (int i = 0; i < n; i++) {
-			X += log(xs[i], base_n);
+			X += log(xs[i], n_);
 		}
 		X /= n;
 
@@ -383,12 +383,12 @@ namespace Regression {
 
 		double a_up = 0;
 		for (int i = 0; i < n; i++) {
-			a_up += (log(xs[i], base_n) - X) * (ys[i] - Y);
+			a_up += (log(xs[i], n_) - X) * (ys[i] - Y);
 		}
 
 		double a_down = 0;
 		for (int i = 0; i < n; i++) {
-			a_down += std::pow((log(xs[i], base_n) - X), 2);
+			a_down += std::pow((log(xs[i], n_) - X), 2);
 		}
 
 		a = a_up / a_down;
@@ -398,7 +398,7 @@ namespace Regression {
 		return true;
 	}
 
-	bool exponential(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double& n) {
+	bool exponential(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -478,9 +478,17 @@ namespace Regression {
 
 		std::vector<double> as = {};
 		for (int i = 0; i < xs.size(); i++) {
-			as.push_back(ys[i] * std::sqrt(xs[i]));
+			if (xs[i] <= 0) {
+				as.push_back(ys[i] * std::sqrt(xs[i]));
+			}
 		}
-		a = std::sum(as) / as.size();
+
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
+		}
+		else {
+			return false;
+		}
 
 		return true;
 	}
@@ -495,14 +503,47 @@ namespace Regression {
 
 		std::vector<double> as = {};
 		for (int i = 0; i < xs.size(); i++) {
-			as.push_back(ys[i] * xs[i] / std::sin(xs[i]));
+			if (std::sin(xs[i]) != 0) {
+				as.push_back(ys[i] * xs[i] / std::sin(xs[i]));
+			}
 		}
-		a = std::sum(as) / as.size();
+
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
+		}
+		else {
+			return false;
+		}
 
 		return true;
 	}
 
-	bool rhodonea(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool rhodonea(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double n) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+		
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			if (std::sin(n * xs[i] != 0)) {
+				as.push_back(ys[i] / std::sin(n * xs[i]));
+			}
+		}
+
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
+		}
+		else {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool lemniscate(const std::vector<double>& xs, const std::vector<double>& ys, double& a) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -510,66 +551,81 @@ namespace Regression {
 			return false;
 		}
 
-		auto f = [](double x, double a, double b) {
-			return a * std::sin(b * x);
-		};
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			if (std::cos(2 * xs[i] > 0)) {
+				as.push_back(ys[i] / std::sqrt(std::cos(2 * xs[i])));
+			}
+		}
 
-		double precision = 0.1;
-		double loss0 = 0.0;
-		double loss1 = 0.0;
-		double x = xs[0];
-		for (int i = 0; i < xs.size(); i++) {
-			x = xs[i];
-			loss0 += std::abs(f(x, a, b) - ys[i]);
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
 		}
-		b++;
-		for (int i = 0; i < xs.size(); i++) {
-			x = xs[i];
-			loss1 += std::abs(f(x, a, b) - ys[i]);
-		}
-		b--;
-		bool same = loss0 == 0;
-		bool sign = loss1 < loss0;
-		while (precision > 0.00001 && !same) {
-			if (sign) {
-				while (sign && !same) {
-					loss0 = 0;
-					for (int i = 0; i < xs.size(); i++) {
-						x = xs[i];
-						loss0 += std::abs(f(x, a, b) - ys[i]);
-					}
-					// c += precision; c est pas défini
-					loss1 = 0;
-					for (int i = 0; i < xs.size(); i++) {
-						x = xs[i];
-						loss1 += std::abs(f(x, a, b) - ys[i]);
-					}
-					same = loss1 == 0;
-					sign = loss1 < loss0;
-				}
-				sign = not sign;
-			}
-			else {
-				while (!sign && !same) {
-					loss0 = 0;
-					for (int i = 0; i < xs.size(); i++) {
-						x = xs[i];
-						loss0 += std::abs(f(x, a, b) - ys[i]);
-					}
-					// c -= precision; c est pas défini
-					loss1 = 0;
-					for (int i = 0; i < xs.size(); i++) {
-						x = xs[i];
-						loss1 += std::abs(f(x, a, b) - ys[i]);
-					}
-					same = loss1 == 0;
-					sign = loss1 < loss0;
-				}
-				sign = not sign;
-			}
-			precision /= 10;
+		else {
+			return false;
 		}
 
 		return true;
 	}
+
+	bool cardioid(const std::vector<double>& xs, const std::vector<double>& ys, double& a) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			if (1 + std::cos(xs[i]) != 0)
+			as.push_back(ys[i] / (1 + std::cos(xs[i])));
+		}
+
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
+		}
+		else {
+			return false;
+		}
+
+		return true;
+	}
+
+	bool limacon(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+		if (xs.size() != ys.size()) {
+			return false;
+		}
+		if (xs.size() < 2) {
+			return false;
+		}
+
+		auto f = [](double r1, double r2, double t1, double t2) {
+			return r1 - ((r2 - r1) * std::cos(t1) / (std::cos(t2) - std::cos(t1)));
+			};
+
+		std::vector<double> bs = {};
+		for (int i = 0; i < xs.size() - 1; i++) {
+			if (xs[i] != xs[i + 1]) {
+				bs.push_back(f(ys[i], ys[i + 1], xs[i], xs[i + 1]));
+			}
+		}
+
+		if (bs.size() > 0) {
+			b = std::sum(bs) / bs.size();
+		}
+		else {
+			return false;
+		}
+
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size(); i++) {
+			as.push_back(ys[i] - b * std::cos(xs[i]));
+		}
+
+		a = std::sum(as) / as.size();
+
+		return true;
+	}
+
 }

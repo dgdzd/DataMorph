@@ -58,18 +58,19 @@ void GraphWindow::onRender() {
 	SetWindowSize(ImVec2(1200.0f, 800.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("graphs_tabs")) {
-		for (int i = 0; i < project->graphs.size(); i++) {
-			Graph& g = project->graphs[i];
+		for (int i_ = 0; i_ < project->graphs.size(); i_++) {
+			Graph& g = project->graphs[i_];
 			if (g.isPolar) {
-				for (int j; j < g.lines.size(); j++) {
+				for (int j = 0; j < g.lines.size(); j++) {
 					g.lines[j].xPolar = {};
 					g.lines[j].yPolar = {};
-					for (int k; k < g.lines[j].header->values.size(); k++) {
+					for (int k = 0; k < g.lines[j].header->values.size(); k++) {
 						g.lines[j].xPolar.push_back(g.lines[j].header->values[k] * std::cos(g.xHeader->values[k]));
 						g.lines[j].yPolar.push_back(g.lines[j].header->values[k] * std::sin(g.xHeader->values[k]));
 					}
 				}
 			}
+
 			if (BeginTabItem(g.name.c_str())) {
 				if (BeginChild("UpLayer", ImVec2(0, window->Size.y * 0.75), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeY)) {
 					if (BeginChild("Model", ImVec2(window->Size.x * 0.5f, 0), ImGuiChildFlags_Borders | ImGuiChildFlags_ResizeX, ImGuiWindowFlags_MenuBar)) {
@@ -117,15 +118,9 @@ void GraphWindow::onRender() {
 									g.model->expr_str = y + "=(a*sin(" + x + "))/ " + x;
 									g.model->refresh();
 								}
-								//to do
-								if (Selectable((const char*)u8"Rhodonea Curve (r=a*sin(b*θ))")) {
+								if (Selectable((const char*)u8"Rhodonea Curve (r=a*sin(n*θ))")) {
 									g.model->type = ModelType::RHO;
-									g.model->expr_str = y + "=a*sin(b*" + x + ")";
-									g.model->refresh();
-								}
-								if (Selectable((const char*)u8"Rhodonea Curve 2 (r=a*cos(b*θ))")) {
-									g.model->type = ModelType::RHO2;
-									g.model->expr_str = y + "=a*cos(b*" + x + ")";
+									g.model->expr_str = y + "=a*sin(n*" + x + ")";
 									g.model->refresh();
 								}
 								if (Selectable((const char*)u8"Bernoulli's Lemniscate (r=sqrt(a^2*cos(2*θ)))")) {
@@ -143,6 +138,7 @@ void GraphWindow::onRender() {
 									g.model->expr_str = y + "=a+b*cos(" + x + ")";
 									g.model->refresh();
 								}
+								/*to do
 								if (Selectable((const char*)u8"Epicycloid or Hypocycloid (r=a+b*cos(c*θ))")) {
 									g.model->type = ModelType::EH;
 									g.model->expr_str = y + "=a+b*cos(c*" + x + ")";
@@ -155,9 +151,10 @@ void GraphWindow::onRender() {
 								}
 								if (Selectable((const char*)u8"Cassini Oval (r=sqrt(b^2*cos(2*θ)±sqrt(b^4*cos(2*θ)^2+(a^4-c^4))))")) {
 									g.model->type = ModelType::CO;
-									g.model->expr_str = y + "sqrt(b^2*cos(2*"+x+")±sqrt(b ^ 4 * cos(2 * "+x+") ^ 2 + (a ^ 4 - c ^ 4)))";
+									g.model->expr_str = y + "sqrt(b^2*cos(2*" + x + ")±sqrt(b ^ 4 * cos(2 * " + x + ") ^ 2 + (a ^ 4 - c ^ 4)))";
 									g.model->refresh();
 								}
+								*/
 							}
 							else {
 								if (Selectable("Linear (y=ax)")) {
@@ -236,7 +233,7 @@ void GraphWindow::onRender() {
 						if (g.model->type == CUSTOM) {
 							InputText("##model", &g.model->expr_str);
 						}
-						else if (g.model->type == EXPN || g.model->type == LOGN) {
+						else if (g.model->type == EXPN || g.model->type == LOGN || g.model->type == RHO) {
 							InputText("##model", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
 							Text("n = ");
 							SameLine();
@@ -386,8 +383,7 @@ void GraphWindow::onRender() {
 									}
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
-								}
-							//polar
+							}
 							else if (g.model->type == AS) {
 								if (Regression::affine(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
 									Model* m = g.model;
@@ -439,15 +435,44 @@ void GraphWindow::onRender() {
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
 							}
-							
 							else if (g.model->type == RHO) {
-								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
+								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->n)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
 										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
 									}
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+							}
+							else if (g.model->type == BL) {
+								if (Regression::lemniscate(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = { " + std::to_string(g.model->a) + "; -" + std::to_string(g.model->a) + " } \n";
+								}
+							}
+							else if (g.model->type == CARD) {
+								if (Regression::cardioid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n";
+								}
+							}
+							else if (g.model->type == CARD) {
+								if (Regression::limacon(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
+									Model* m = g.model;
+									m->values = {};
+									for (int i = 0; i < g.xHeader->values.size(); i++) {
+										m->values.push_back(m->value(g.model->dataset->xPolar[i]));
+									}
+									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
 								}
 							}
 							else {
@@ -461,11 +486,10 @@ void GraphWindow::onRender() {
 								}
 								m->u /= m->values.size();
 								m->u *= 100;
-								model_text += "\nMean-relative error: " + std::to_string(m->u) + "%";
+								model_text += "\n Mean-relative error (MSR): " + std::to_string(m->u) + "%";
 							}
 						}
 						TextUnformatted(model_text.c_str());
-
 					}
 					EndChild();
 					SameLine();
@@ -474,7 +498,7 @@ void GraphWindow::onRender() {
 							Line& l = g.lines[j];
 
 							if (l.scatter) {
-								int _size = g.xHeader->values.size();
+								int _size = l.header->values.size();
 								ImPlot::SetNextLineStyle(*l.color);
 								ImPlot::SetNextMarkerStyle(l.marker);
 								if (g.isPolar) {
@@ -485,7 +509,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else {
-								int _size = g.xHeader->values.size();
+								int _size = l.header->values.size();
 								ImPlot::SetNextLineStyle(*l.color);
 								ImPlot::SetNextMarkerStyle(l.marker);
 								if (g.isPolar) {

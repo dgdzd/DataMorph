@@ -30,7 +30,6 @@ enum ModelType : int {
 	LIS,
 	COCH,
 	RHO,
-	RHO2,
 	BL,
 	CARD,
 	LP,

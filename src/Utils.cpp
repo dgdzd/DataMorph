@@ -216,19 +216,16 @@ std::string ModelTypeToString(ModelType type) {
 		return "Inverse";
 	case ModelType::OTHER:
 		return "Other";
-
 	case ModelType::AS:
-		return "Rhodonea Curve";
+		return "Archimedean Spiral";
 	case ModelType::LS:
-		return "Rhodonea Curve";
+		return "Logarithmic Spiral";
 	case ModelType::HS:
 		return "Hyperbolic Spiral";
 	case ModelType::LIS:
 		return "Lituus Spiral";
 	case ModelType::RHO:
 		return "Rhodonea Curve";
-	case ModelType::RHO2:
-		return "Rhodonea Curve 2";
 	case ModelType::BL:
 		return "Bernoulli's Lemniscate";
 	case ModelType::CARD:
