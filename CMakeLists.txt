@@ -39,6 +39,7 @@ set(PROJECT_SOURCES
 		src/core/Shader.cpp
 		src/core/Framebuffer.cpp
 		src/core/Texture.cpp
+		src/local/I18n.cpp
 )
 set(DEPENDENCIES_SOURCES 
 		dependencies/src/glad/glad.c

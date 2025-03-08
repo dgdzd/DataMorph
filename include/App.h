@@ -9,6 +9,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <local/I18n.h>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include <string>
@@ -16,7 +17,6 @@
 
 class DataMorph {
 	static DataMorph* inst;
-	Settings* settings;
 	FT_Library ftlib;
 	ImGuiIO* io;
 	ImFont* baseFont;
@@ -28,6 +28,8 @@ class DataMorph {
 	int init_libs();
 
 public:
+	static Settings* settings;
+	static I18n i18n;
 	std::string name;
 	std::string version;
 	bool shouldClose;

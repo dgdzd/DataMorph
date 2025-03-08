@@ -24,7 +24,7 @@ NewProjectWindow::NewProjectWindow() {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDocking;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 	this->inputs = { new char[100] {""}, new char[100] {""} };
 	this->symbols = { {}, {} };
 	this->units = { {}, {} };

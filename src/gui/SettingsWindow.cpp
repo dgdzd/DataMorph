@@ -7,6 +7,7 @@
 #include <imgui_stdlib.h>
 #include <implot.h>
 #include <iostream>
+#include <local/I18n.h>
 #include <nfd.hpp>
 #include <Utils.h>
 
@@ -23,7 +24,7 @@ SettingsWindow::SettingsWindow() : local_settings(local_settings) {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 	this->local_settings = Settings(*this->settings);
 	this->applied = true;
 
@@ -58,12 +59,26 @@ void SettingsWindow::onRender() {
 
 	if (BeginTabBar("stats_tabs")) {
 		if (BeginTabItem("General")) {
-			if (BeginChild("Styles", ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+			if (BeginChild("General", ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
 				HeaderText("General", "font64b", 0.5f);
 				Text("General options.");
 				Dummy(ImVec2(0, 15));
 				Separator();
 				Dummy(ImVec2(0, 15));
+
+				HeaderText("Language", "font64b", 0.4f);
+				Text("Choose a language to use.");
+				int& lang = local_settings.get_int("lang");
+				if (BeginCombo("##Lines color map", LangToString(lang).c_str())) {
+					for (int i = 0; i < LANG_COUNT; i++) {
+						if (Selectable(LangToString(i).c_str(), lang == i)) {
+							lang = i;
+							this->applied = false;
+						}
+					}
+					EndCombo();
+				}
+				Dummy(ImVec2(0, 10));
 
 				HeaderText("Automatic updates check", "font64b", 0.4f);
 				TextWrapped("Choose whether or not DataMorph should independantly search for updates.");
@@ -247,8 +262,8 @@ void SettingsWindow::onRender() {
 		BeginDisabled(this->applied);
 		{
 			if (Button("Apply")) {
-				*Settings::instance = local_settings;
-				Settings::instance->write_options();
+				*DataMorph::settings = local_settings;
+				DataMorph::settings->write_options();
 				this->applied = true;
 
 				if (this->settings->get_string("theme") == "Dark") {

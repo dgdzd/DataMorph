@@ -40,8 +40,6 @@
 	- [ ] Español
 	- [ ] Русский
 	- [ ] українська
-	- [ ] 廣州話 (Cantonese)
-	- [ ] 简体中文 (Simplified chinese)
 
 - [ ] Resources
 	- [	] Embed resources in the executable

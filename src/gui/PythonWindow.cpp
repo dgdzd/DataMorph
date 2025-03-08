@@ -21,7 +21,7 @@ PythonWindow::PythonWindow(Project* project) {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
 	this->editor_text = "# New python file\n\nprint(\"Hello World!\")";
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 
 	PythonWindow::current = this;
 }

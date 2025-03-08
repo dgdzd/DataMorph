@@ -31,7 +31,7 @@ MainWindow::MainWindow() {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 	this->state = new State();
 }
 
@@ -70,7 +70,7 @@ void MainWindow::onRender() {
 			}
 			if (MenuItem("Open project...", "Ctrl+O")) {
 			}
-			if (MenuItem("Save project", "Ctrl+S")) {
+			if (MenuItem("Save", "Ctrl+S")) {
 			}
 			BeginDisabled(!pr);
 			{
@@ -109,7 +109,7 @@ void MainWindow::onRender() {
 			}
 			EndDisabled();
 			Separator();
-			if (MenuItem("Settings")) {
+			if (MenuItem("Settings...")) {
 				if (!SettingsWindow::current) {
 					DataMorph::getInstance()->addLayer(new SettingsWindow());
 				}
@@ -356,13 +356,6 @@ void MainWindow::onRender() {
 					}
 					else {
 						InputDouble(("##val:" + symbol + ":" + std::to_string(i)).c_str(), &val, 0.0, 0.0, "%.6f");
-						// CA MARCHE PAS CETTE MERDZE
-						if (IsItemDeactivatedAfterEdit()) {
-							if (j == pr->ids.size() - 1 && i == header.values.size() - 1) { // If last cell
-								std::cout << "End reached\n";
-								pr->addRow(); // Add a new row
-							}
-						}
 					}
 					PopStyleColor();
 				}

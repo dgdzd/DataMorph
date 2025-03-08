@@ -511,8 +511,8 @@ namespace Regression {
 		}
 
 		auto f = [](double x, double a, double b) {
-			return a*std::sin(b*x);
-			};
+			return a * std::sin(b * x);
+		};
 
 		double precision = 0.1;
 		double loss0 = 0.0;
@@ -538,7 +538,7 @@ namespace Regression {
 						x = xs[i];
 						loss0 += std::abs(f(x, a, b) - ys[i]);
 					}
-					c += precision;
+					// c += precision; c est pas défini
 					loss1 = 0;
 					for (int i = 0; i < xs.size(); i++) {
 						x = xs[i];
@@ -556,7 +556,7 @@ namespace Regression {
 						x = xs[i];
 						loss0 += std::abs(f(x, a, b) - ys[i]);
 					}
-					c -= precision;
+					// c -= precision; c est pas défini
 					loss1 = 0;
 					for (int i = 0; i < xs.size(); i++) {
 						x = xs[i];

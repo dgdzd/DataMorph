@@ -78,7 +78,7 @@ namespace files {
 	}
 
 	char* get_content(const std::string& filepath) {
-		std::ifstream file(filepath, std::ios::in | std::ios::binary);
+		std::ifstream file(filepath, std::ios::in | std::ios::binary | std::ios::ate);
 		if (file.is_open()) {
 			file.seekg(0, std::ios::end);
 			int size = file.tellg();

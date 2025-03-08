@@ -21,7 +21,7 @@ FluidWindow::FluidWindow() {
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoSavedSettings;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 	this->window = DataMorph::getInstance()->window;
 	this->fb = new Framebuffer(1100, 700);
 	this->shader = new Shader("resources\\shaders\\test.vert", "resources\\shaders\\test.frag");

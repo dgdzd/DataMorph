@@ -62,6 +62,7 @@ void Settings::set_vec(const std::string& option, const ImVec4& value) {
 }
 
 void Settings::init_defaults() {
+	set_int("lang", 0);
 	set_bool("autocheck_updates", 1);
 
 	set_string("theme", "Dark");

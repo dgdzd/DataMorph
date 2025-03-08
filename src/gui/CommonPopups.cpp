@@ -471,7 +471,7 @@ NewGraphPopup::NewGraphPopup(MainWindow* parent) {
 	this->style = ImGui::GetStyle();
 	this->wflags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize;
 	this->pr = parent->state->openProject;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 }
 
 void NewGraphPopup::onRender() {
@@ -638,7 +638,7 @@ ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->equation = "";
 	this->result = "";
 	this->error = "";
-	this->from = 0.0;
+	this->from = -100.0;
 	this->to = 100.0;
 }
 

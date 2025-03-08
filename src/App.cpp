@@ -10,6 +10,8 @@
 #include <string>
 
 DataMorph* DataMorph::inst;
+Settings* DataMorph::settings;
+I18n DataMorph::i18n = I18n();
 
 DataMorph::DataMorph() {
 	this->name = "DataMorph";
@@ -122,6 +124,7 @@ int DataMorph::initialize() {
 	defaultStyle.FramePadding = ImVec2(5.0f, 5.0f);
 	defaultStyle.WindowRounding = 10.0f;
 	defaultStyle.ChildRounding = 3.0f;
+	defaultStyle.TabRounding = 3.0f;
 
 	ImGui_ImplGlfw_InitForOpenGL(this->window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");

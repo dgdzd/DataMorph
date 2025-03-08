@@ -27,7 +27,7 @@ GraphWindow::GraphWindow(Project* project) {
 	this->statsVar = 0;
 	this->model_text = "";
 	this->numbersVar = 0;
-	this->settings = Settings::instance;
+	this->settings = DataMorph::settings;
 
 	GraphWindow::current = this;
 }
@@ -441,7 +441,7 @@ void GraphWindow::onRender() {
 							}
 							
 							else if (g.model->type == RHO) {
-								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -449,7 +449,7 @@ void GraphWindow::onRender() {
 									}
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
-								}
+							}
 							else {
 
 							}
@@ -466,8 +466,8 @@ void GraphWindow::onRender() {
 						}
 						TextUnformatted(model_text.c_str());
 
-						EndChild();
 					}
+					EndChild();
 					SameLine();
 					if (ImPlot::BeginPlot("Graph", ImVec2(-1, -1))) {
 						for (int j = 0; j < g.lines.size(); j++) {
@@ -518,8 +518,8 @@ void GraphWindow::onRender() {
 						}
 						ImPlot::EndPlot();
 					}
-					EndChild();
 				}
+				EndChild();
 				if (TreeNode("Statistics")) {
 					if (BeginChild("##StatsChild", ImVec2(0, 0), ImGuiChildFlags_Borders)) {
 						if (BeginCombo("Data", this->statsVar == 0 ? "None" : project->headers[this->statsVar].name.c_str())) {
@@ -644,8 +644,8 @@ void GraphWindow::onRender() {
 							SameLine();
 							Text((const char*)u8"s(%s) = %.5f %s", h->name, standard_deviation1, h->unit);
 						}
-						EndChild();
 					}
+					EndChild();
 
 					TreePop();
 				}
