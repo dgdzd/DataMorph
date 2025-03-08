@@ -21,7 +21,7 @@ namespace Regression {
 	extern bool rhodonea(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double n);
 	extern bool lemniscate(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
 	extern bool cardioid(const std::vector<double>& xs, const std::vector<double>& ys, double& a);
-	extern bool limacon(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b);
+	extern bool epicycloid(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n);
 	//to do
 	extern double logistic(const std::vector<double>& x, const std::vector<double>& y);
 }

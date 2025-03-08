@@ -592,7 +592,7 @@ namespace Regression {
 		return true;
 	}
 
-	bool limacon(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool epicycloid(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
@@ -600,18 +600,18 @@ namespace Regression {
 			return false;
 		}
 
-		auto f = [](double r1, double r2, double t1, double t2) {
-			return r1 - ((r2 - r1) * std::cos(t1) / (std::cos(t2) - std::cos(t1)));
+		auto f = [](double r1, double r2, double t1, double t2, double n) {
+			return ((r1 - r2) / (std::cos(n * t1) - std::cos(n * t2)));
 			};
 
 		std::vector<double> bs = {};
 		for (int i = 0; i < xs.size() - 1; i++) {
 			if (xs[i] != xs[i + 1]) {
-				bs.push_back(f(ys[i], ys[i + 1], xs[i], xs[i + 1]));
+				bs.push_back(f(ys[i], ys[i + 1], xs[i], xs[i + 1], n));
 			}
 		}
 
-		if (bs.size() > 0) {
+		if (bs.size() != 0) {
 			b = std::sum(bs) / bs.size();
 		}
 		else {
@@ -620,7 +620,7 @@ namespace Regression {
 
 		std::vector<double> as = {};
 		for (int i = 0; i < xs.size(); i++) {
-			as.push_back(ys[i] - b * std::cos(xs[i]));
+			as.push_back(ys[i] - b * std::cos(n * xs[i]));
 		}
 
 		a = std::sum(as) / as.size();

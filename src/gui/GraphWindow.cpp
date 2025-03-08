@@ -55,7 +55,7 @@ void GraphWindow::onRender() {
 	const ImGuiWindow* window = GetCurrentWindow();
 	const ImRect titlebar = window->TitleBarRect();
 	SetWindowFontScale(1.0f);
-	SetWindowSize(ImVec2(1200.0f, 800.0f), ImGuiCond_FirstUseEver);
+	SetWindowSize(ImVec2(1200.0f, 1000.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("graphs_tabs")) {
 		for (int i_ = 0; i_ < project->graphs.size(); i_++) {
@@ -133,17 +133,12 @@ void GraphWindow::onRender() {
 									g.model->expr_str = y + "=a*(1+cos(" + x + "))";
 									g.model->refresh();
 								}
-								if (Selectable((const char*)u8"Limaçon of Pascal (r=a+b*cos(θ))")) {
-									g.model->type = ModelType::LP;
-									g.model->expr_str = y + "=a+b*cos(" + x + ")";
+								if (Selectable((const char*)u8"Epicycloid or Hypocycloid (r=a+b*cos(n*θ))")) {
+									g.model->type = ModelType::EH;
+									g.model->expr_str = y + "=a+b*cos(n*" + x + ")";
 									g.model->refresh();
 								}
 								/*to do
-								if (Selectable((const char*)u8"Epicycloid or Hypocycloid (r=a+b*cos(c*θ))")) {
-									g.model->type = ModelType::EH;
-									g.model->expr_str = y + "=a+b*cos(c*" + x + ")";
-									g.model->refresh();
-								}
 								if (Selectable((const char*)u8"Lissajous Curve (r=a*sin(b*θ+c)")) {
 									g.model->type = ModelType::LC;
 									g.model->expr_str = y + "=a*sin(b*" + x + "+c)";
@@ -151,7 +146,7 @@ void GraphWindow::onRender() {
 								}
 								if (Selectable((const char*)u8"Cassini Oval (r=sqrt(b^2*cos(2*θ)±sqrt(b^4*cos(2*θ)^2+(a^4-c^4))))")) {
 									g.model->type = ModelType::CO;
-									g.model->expr_str = y + "sqrt(b^2*cos(2*" + x + ")±sqrt(b ^ 4 * cos(2 * " + x + ") ^ 2 + (a ^ 4 - c ^ 4)))";
+									g.model->expr_str = y + "=sqrt(b^2*cos(2*" + x + ")±sqrt(b ^ 4 * cos(2 * " + x + ") ^ 2 + (a ^ 4 - c ^ 4)))";
 									g.model->refresh();
 								}
 								*/
@@ -233,7 +228,7 @@ void GraphWindow::onRender() {
 						if (g.model->type == CUSTOM) {
 							InputText("##model", &g.model->expr_str);
 						}
-						else if (g.model->type == EXPN || g.model->type == LOGN || g.model->type == RHO) {
+						else if (g.model->type == EXPN || g.model->type == LOGN || g.model->type == RHO || g.model->type == EH) {
 							InputText("##model", &g.model->expr_str, ImGuiInputTextFlags_ReadOnly);
 							Text("n = ");
 							SameLine();
@@ -465,8 +460,8 @@ void GraphWindow::onRender() {
 									model_text = "a = " + std::to_string(g.model->a) + "\n";
 								}
 							}
-							else if (g.model->type == CARD) {
-								if (Regression::limacon(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
+							else if (g.model->type == EH) {
+								if (Regression::epicycloid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b, g.model->c)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
