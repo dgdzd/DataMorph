@@ -90,4 +90,18 @@ namespace files {
 		}
 		return new char[] { "" };
 	}
+
+	char8_t* get_u8content(const std::string& filepath) {
+		std::ifstream file(filepath, std::ios::in | std::ios::binary | std::ios::ate);
+		if (file.is_open()) {
+			file.seekg(0, std::ios::end);
+			int size = file.tellg();
+			file.seekg(0, std::ios::beg);
+			char8_t* file_data = new char8_t[size];
+			file.read((char*)file_data, size);
+
+			return file_data;
+		}
+		return new char8_t[] { u8"" };
+	}
 }

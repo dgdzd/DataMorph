@@ -1,4 +1,4 @@
-![[resources/icon.png]]
+<img src="resources/icon.png" width="200"></img>
 # DataMorph
 
 ⚠⚠⚠ CURRENTLY UNDER DEVELOPMENT ⚠⚠⚠
