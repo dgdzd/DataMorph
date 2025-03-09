@@ -83,7 +83,8 @@ namespace files {
 			file.seekg(0, std::ios::end);
 			int size = file.tellg();
 			file.seekg(0, std::ios::beg);
-			char* file_data = new char[size];
+			char* file_data = new char[size+1];
+			file_data[size] = '\0';
 			file.read(file_data, size);
 
 			return file_data;
@@ -97,7 +98,8 @@ namespace files {
 			file.seekg(0, std::ios::end);
 			int size = file.tellg();
 			file.seekg(0, std::ios::beg);
-			char8_t* file_data = new char8_t[size];
+			char8_t* file_data = new char8_t[size+1];
+			file_data[size] = '\0';
 			file.read((char*)file_data, size);
 
 			return file_data;

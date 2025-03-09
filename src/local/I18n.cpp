@@ -61,21 +61,24 @@ I18n::I18n(int lang, Lang fallback) {
 	std::vector<std::string> lines = std::split(content, '\n');
 
 	for (const std::string& line : lines) {
-		std::vector<std::string> args = std::split(line, '=');
+		std::vector<std::string> args = std::split(line, '=', 1);
 		if (args.size() > 1) {
 			translations[args[0]] = args[1];
 		}
 	}
 }
 
-const char* I18n::t(const std::string& key) {
+const char* I18n::t(const std::string& key, const std::string& id) {
+	std::string append = id.empty() ? "" : "###" + id;
 	if (translations.contains(key)) {
-		return (const char*)((const char8_t*)translations[key].c_str());
+		return translations[key].c_str();
 	}
 	else if (fallback) {
-		return fallback->t(key);
+		return fallback->t(key, id);
 	}
 	else {
-		return key.c_str();
+		char* result = new char[key.size()];
+		strcpy(result, key.c_str());
+		return result;
 	}
 }

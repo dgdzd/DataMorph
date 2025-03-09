@@ -1,6 +1,10 @@
 ok=Ok
 cancel=Annuler
+remove=Supprimer
 browse=Chercher...
+symbol=Symbole
+unit=Unité
+unit_optional=Unité (optionnel)
 
 file=Fichier
 file.new_project=Nouveau projet...
@@ -36,13 +40,13 @@ help=Aide
 help.about=A propos...
 
 general=Général
-general.desc=options générales
+general.desc=Options générales.
 general.lang=Langue
 general.lang.desc=Choisissez une langue à utiliser.
 general.autocheck_updates=Chercher automatiquement des mises à jour
 general.autocheck_updates.desc=Choisissez si DataMorph devrait faire des recherches de mises à jour indépendamment.
 styles=Styles
-styles.desc=Toutes les options concernant l'apparence de DataMorph sont ici
+styles.desc=Toutes les options concernant l'apparence de DataMorph sont ici.
 styles.main_theme=Thème principal
 styles.main_theme.desc=Choisissez entre un thème sombre et un thème clair.
 styles.dark=Sombre
@@ -55,3 +59,19 @@ python=Python
 python.desc=Gérez toutes les options concernant Python ici.
 python.interp_path=Chemin de l'interpréteur Python
 python.interp_path.desc=Entrez un chemin vers un interpréteur Python.
+
+manual_data_entry=Entrée de données manuelle
+manual_data_entry.note=Note : Vous pourrez modifier et ajouter des variables même après la création du projet. Chaque variable sera assignée à une colonne dans un tableau.
+enter_name_unit=Entrez le nom et l'unité
+add_or_modify=Ajouter/Modifier
+no_unit_paren=(Pas d'unité)
+import=Importer
+import.desc=Importer un fichier de données (.csv, .txt)
+import.note=Note : La première ligne doit contenir le nom des variables.
+selected_data_file=Fichier de données sélectionné : {0}
+file_size=Taille du fichier : {0}
+imported_vars=Les variables importées
+from_video=Depuis une vidéo (.avi)
+from_sound=Depuis un son (.wav)
+enter_project_name=Entrez le nom du projet
+create_project=Créer un projet

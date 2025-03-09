@@ -1,6 +1,10 @@
 ok=Ok
 cancel=Cancel
+remove=Remove
 browse=Browse...
+symbol=Symbol
+unit=Unit
+unit_optional=Unit (optional)
 
 file=File
 file.new_project=New project...
@@ -55,3 +59,19 @@ python=Python
 python.desc=Manage all the settings related to Python here.
 python.interp_path=Python interpreter path
 python.interp_path.desc=Enter path to a Python interpreter
+
+manual_data_entry=Manual data entry
+manual_data_entry.note=Note : You will be able to modify or add more symbols and units even after the project creation. Since then, each variable will be assigned a column in a table.
+enter_name_unit=Enter name and unit
+add_or_modify=Add/Modify
+no_unit_paren=(No unit)
+import=Import
+import.desc=Import a data file (.csv, .txt)
+import.note=Note : The first line of the file must contain the name of the variables.
+selected_data_file=Selected data file : {0}
+file_size=File size : {0}
+imported_vars=Imported variables
+from_video=From video (.avi)
+from_sound=From sound (.wav)
+enter_project_name=Enter project name
+create_project=Create project

@@ -1,7 +1,5 @@
 #include <gui/SettingsWindow.h>
 
-#include <App.h>
-#include <core/imgui_extension.h>
 #include <core/Settings.h>
 #include <FontManager.h>
 #include <imgui_stdlib.h>
@@ -57,8 +55,8 @@ void SettingsWindow::onRender() {
 	SetWindowFontScale(1.0f);
 	SetWindowSize(ImVec2(1200.0f, 500.0f), ImGuiCond_FirstUseEver);
 
-	if (BeginTabBar("stats_tabs")) {
-		if (BeginTabItem(i18n.t("general"))) {
+	if (BeginTabBar("settings")) {
+		if (BeginTabItem(i18n.t("general", "general"))) {
 			if (BeginChild(i18n.t("general"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("general"), "font64b", 0.5f);
 				Text(i18n.t("general.desc"));
@@ -90,7 +88,7 @@ void SettingsWindow::onRender() {
 			}
 			EndTabItem();
 		}
-		if (BeginTabItem(i18n.t("styles"))) {
+		if (BeginTabItem(i18n.t("styles", "styles"))) {
 			if (BeginChild(i18n.t("styles"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("styles"), "font64b", 0.5f);
 				Text(i18n.t("styles.desc"));
@@ -152,7 +150,7 @@ void SettingsWindow::onRender() {
 			}
 			EndTabItem();
 		}
-		if (BeginTabItem(i18n.t("python"))) {
+		if (BeginTabItem(i18n.t("python", "python"))) {
 			if (BeginChild(i18n.t("python"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("python"), "font64b", 0.5f);
 				Text(i18n.t("python.desc"));

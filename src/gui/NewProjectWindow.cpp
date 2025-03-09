@@ -15,7 +15,7 @@ using namespace ImGui;
 
 NewProjectWindow* NewProjectWindow::current = nullptr;
 
-NewProjectWindow::NewProjectWindow() {
+NewProjectWindow::NewProjectWindow() : i18n(DataMorph::i18n) {
 	this->name = "Create a new project";
 	this->font20 = nullptr;
 	this->font23 = nullptr;
@@ -29,6 +29,7 @@ NewProjectWindow::NewProjectWindow() {
 	this->symbols = { {}, {} };
 	this->units = { {}, {} };
 	this->graphics = 0;
+	this->project_name = "New project";
 
 	NewProjectWindow::current = this;
 }
@@ -62,21 +63,21 @@ void NewProjectWindow::onRender() {
 
 	int tab = -1;
 	if (BeginTabBar("##tabs", ImGuiTabBarFlags_None)) {
-		if (BeginTabItem("Manual data entry")) {
+		if (BeginTabItem(i18n.t("manual_data_entry"))) {
 			tab = 0;
 
 			SetCurrentFont(this->font64);
 			SetWindowFontScale(0.4f);
-			Text("Enter name and unit :");
+			Text(i18n.t("enter_name_unit"));
 
 			SetCurrentFont(this->font23);
 			SetWindowFontScale(1.0f);
 
-			InputText("Symbol", this->inputs[0], 64);
-			InputText("Unit (optional)", this->inputs[1], 64);
+			InputText(i18n.t("symbol"), this->inputs[0], 64);
+			InputText(i18n.t("unit_optional"), this->inputs[1], 64);
 			BeginDisabled(this->inputs[0][0] == '\0');
 			{
-				if (Button("Add/Modify")) {
+				if (Button(i18n.t("add_or_modify"))) {
 					auto found_it = std::find(symbols[tab].begin(), symbols[tab].end(), std::string(this->inputs[0]));
 					if (found_it == symbols[tab].end()) {
 						std::string magnitude = std::string(this->inputs[0]);
@@ -99,18 +100,18 @@ void NewProjectWindow::onRender() {
 				for (int i = 0; i < symbols[tab].size(); i++) {
 					std::string magnitude = symbols[tab][i];
 					std::string unit = units[tab][i];
-					Text("%s : %s", magnitude, unit == "" ? "(No unit)" : unit);
+					Text("%s : %s", magnitude, unit == "" ? i18n.t("no_unit_paren") : unit);
 					SameLine();
 
 					ImVec4 col1 = ImVec4(0.7f, 0.2f, 0.2f, 1.0f);
 					ImVec4 col2 = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
 					ImVec4 col3 = ImVec4(0.85f, 0.2f, 0.2f, 1.0f);
-					bool dark = this->settings->get_string("theme") == "Dark";
+					bool dark = this->settings->get_string("theme") == "dark";
 
 					PushStyleColor(ImGuiCol_Button, dark ? col1 : col2);
 					PushStyleColor(ImGuiCol_ButtonHovered, dark ? col2 : col3);
 					PushStyleColor(ImGuiCol_ButtonActive, dark ? col3 : col1);
-					if (Button(("Remove##" + std::to_string(i)).c_str())) {
+					if (Button(i18n.t("remove", "Remove"+std::to_string(i)))) {
 						this->symbols[tab].erase(this->symbols[tab].begin() + i);
 						this->units[tab].erase(this->units[tab].begin() + i);
 					}
@@ -121,17 +122,15 @@ void NewProjectWindow::onRender() {
 				EndChild();
 			}
 
-			TextWrapped("Note : You will be able to modify or add more symbols and units even after the project creation. "
-						"Since then, each variable will be assigned a column in a table.");
-
+			TextWrapped(i18n.t("manual_data_entry.note"));
 
 			EndTabItem();
 		}
 
-		if (BeginTabItem("Import")) {
+		if (BeginTabItem(i18n.t("import"))) {
 			tab = 1;
-			Text("Import a data file (.csv, .txt, .dat)");
-			if (Button("Browse")) {
+			Text(i18n.t("import.desc"));
+			if (Button(i18n.t("browse"))) {
 				NFD::UniquePath outPath;
 				outPath;
 
@@ -157,15 +156,13 @@ void NewProjectWindow::onRender() {
 			}
 
 			if (this->symbols[tab].empty()) {
-				TextWrapped("Note : The first line of the file must contain the headers of the columns. "
-					"Each column will be assigned a variable in the project. "
-					"Each row will be assigned a line in the table.");
+				TextWrapped(i18n.t("import.note"));
 			}
 			else {
-				Text("Selected data file : %s", this->filename.c_str());
-				Text("File size : %s", std::format_num(this->filesize, "b"));
+				Text(i18n.tf("selected_data_file", "", this->filename.c_str()));
+				Text(i18n.tf("file_size", "", std::format_num(this->filesize, "b")));
 
-				if (BeginChild("Imported headers", ImVec2(0, 130), ImGuiChildFlags_Border)) {
+				if (BeginChild(i18n.t("imported_vars"), ImVec2(0, 130), ImGuiChildFlags_Border)) {
 					for (int i = 0; i < symbols[tab].size(); i++) {
 						std::string& symbol = symbols[tab][i];
 						InputText(("##input_" + std::to_string(i)).c_str(), &symbol);
@@ -176,13 +173,13 @@ void NewProjectWindow::onRender() {
 			EndTabItem();
 		}
 
-		if (BeginTabItem("From video (.avi)")) {
+		if (BeginTabItem(i18n.t("from_video"))) {
 			tab = 2;
 			Text("idk");
 			EndTabItem();
 		}
 
-		if (BeginTabItem("From sound (.wav)")) {
+		if (BeginTabItem(i18n.t("from_sound"))) {
 			tab = 3;
 			Text("idk");
 			EndTabItem();
@@ -190,12 +187,12 @@ void NewProjectWindow::onRender() {
 
 		EndTabBar();
 
-		Text("Enter Project Name");
-		InputText("32 characters max", this->project_name, 32, ImGuiInputTextFlags_AlwaysOverwrite);
+		Text(i18n.t("enter_project_name"));
+		InputText("##project_name", &this->project_name, ImGuiInputTextFlags_AlwaysOverwrite);
 
-		BeginDisabled(this->project_name[0] == '\0' || this->symbols[tab].empty());
+		BeginDisabled(this->project_name.empty() || this->symbols[tab].empty());
 		{
-			if (Button("Create Project")) {
+			if (Button(i18n.t("create_project"))) {
 				this->p_open = false;
 				std::string m_header = "";
 				switch (tab) {

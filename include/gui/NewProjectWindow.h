@@ -1,6 +1,7 @@
 #ifndef DM_NEWPROJECTWINDOW_H
 #define DM_NEWPROJECTWINDOW_H
 
+#include <App.h>
 #include <core/gui/Window.h>
 #include <string>
 #include <vector>
@@ -19,10 +20,11 @@ class NewProjectWindow : public Window {
 	std::string filename;
 	int filesize;
 	int graphics;
-	char project_name[32] = "New project";
+	std::string project_name;
 
 public:
 	static NewProjectWindow* current;
+	I18n& i18n;
 
 	NewProjectWindow();
 
