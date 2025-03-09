@@ -315,52 +315,14 @@ namespace Regression {
 		return true;
 	}
 
-	bool logarithmic10(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b) {
+	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n) {
 		if (xs.size() != ys.size()) {
 			return false;
 		}
 		if (xs.size() < 2) {
 			return false;
 		}
-
-		double X = 0;
-		int n = xs.size();
-		for (int i = 0; i < n; i++) {
-			X += std::log10(xs[i]);
-		}
-		X /= n;
-
-		double Y = 0;
-		for (int i = 0; i < n; i++) {
-			Y += ys[i];
-		}
-		Y /= n;
-
-		double a_up = 0;
-		for (int i = 0; i < n; i++) {
-			a_up += (std::log10(xs[i]) - X) * (ys[i] - Y);
-		}
-		
-		double a_down = 0;
-		for (int i = 0; i < n; i++) {
-			a_down += std::pow((std::log10(xs[i]) - X), 2);
-		}
-
-		a = a_up / a_down;
-
-		b = Y - a * X;
-
-		return true;
-	}
-
-	bool logarithmic(const std::vector<double>& xs, const std::vector<double>& ys, double& a, double& b, double n_) {
-		if (xs.size() != ys.size()) {
-			return false;
-		}
-		if (xs.size() < 2) {
-			return false;
-		}
-		if (n_ <= 0) {
+		if (n <= 0) {
 			return false;
 		}
 
@@ -368,32 +330,26 @@ namespace Regression {
 			return std::log(x)/std::log(n);	
 			};
 
-		double X = 0;
-		int n = xs.size();
-		for (int i = 0; i < n; i++) {
-			X += log(xs[i], n_);
-		}
-		X /= n;
-
-		double Y = 0;
-		for (int i = 0; i < n; i++) {
-			Y += ys[i];
-		}
-		Y /= n;
-
-		double a_up = 0;
-		for (int i = 0; i < n; i++) {
-			a_up += (log(xs[i], n_) - X) * (ys[i] - Y);
+		std::vector<double> as = {};
+		for (int i = 0; i < xs.size() - 1; i++) {
+			if (xs[i + 1] != xs[i]) {
+				as.push_back((ys[i + 1] - ys[i]) / (log(xs[i + 1], n) - log(xs[i], n)));
+			}
 		}
 
-		double a_down = 0;
-		for (int i = 0; i < n; i++) {
-			a_down += std::pow((log(xs[i], n_) - X), 2);
+		if (as.size() != 0) {
+			a = std::sum(as) / as.size();
+		}
+		else {
+			return false;
 		}
 
-		a = a_up / a_down;
+		std::vector<double> bs = {};
+		for (int i = 0; i < xs.size(); i++) {
+			bs.push_back(ys[i] - a * log(xs[i], n));
+		}
 
-		b = Y - a * X;
+		a = std::sum(bs) / bs.size();
 
 		return true;
 	}
@@ -611,7 +567,9 @@ namespace Regression {
 		for (int i = 0; i < xs.size() - 1; i++) {
 			if (xs[i] != xs[i + 1]) {
 				bs.push_back(f(ys[i], ys[i + 1], xs[i], xs[i + 1], n));
+
 			}
+			std::cout << f(ys[i], ys[i + 1], xs[i], xs[i + 1], n);
 		}
 
 		if (bs.size() != 0) {

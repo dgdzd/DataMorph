@@ -387,7 +387,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == AS) {
-								if (Regression::affine(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b)) {
+								if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -398,7 +398,7 @@ void GraphWindow::onRender() {
 							}
 							else if (g.model->type == LS) {
 								g.model->n = 2.71828;
-								if (Regression::exponential(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b, g.model->n)) {
+								if (Regression::exponential(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -408,7 +408,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == HS) {
-								if (Regression::inverse(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::inverse(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -418,7 +418,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == LIS) {
-								if (Regression::lituus(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::lituus(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -428,7 +428,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == COCH) {
-								if (Regression::cochleoid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::cochleoid(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -438,7 +438,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == RHO) {
-								if (Regression::rhodonea(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->n)) {
+								if (Regression::rhodonea(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->n)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -448,7 +448,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == BL) {
-								if (Regression::lemniscate(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::lemniscate(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -458,7 +458,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == CARD) {
-								if (Regression::cardioid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a)) {
+								if (Regression::cardioid(g.xHeader->values, g.model->dataset->header->values, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -468,7 +468,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == EH) {
-								if (Regression::epicycloid(g.model->dataset->xPolar, g.model->dataset->yPolar, g.model->a, g.model->b, g.model->c)) {
+								if (Regression::epicycloid(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
