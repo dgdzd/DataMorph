@@ -43,6 +43,8 @@ struct Model {
 	std::string expr_str;
 	double a, b, c, d, n, x;
 	double u;
+	std::vector<double> xPolar;
+	std::vector<double> yPolar;
 	Line* dataset;
 	std::string xlabel;
 	std::vector<double> values;

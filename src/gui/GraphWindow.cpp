@@ -377,7 +377,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == AS) {
-								if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b)) {
+								if (Regression::affine(g.xHeader->values, g.model->dataset->header->values, g.model->b, g.model->a)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {
@@ -525,11 +525,20 @@ void GraphWindow::onRender() {
 									}, (void*)&g, 2);
 							}
 							else {
-								ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
-									Graph& g = *(Graph*)data;
-									double x = g.limits.Min().x + (idx / 100.0f) * abs(g.limits.Max().x - g.limits.Min().x);
-									return ImPlotPoint(x, g.model->value(x));
-									}, (void*)&g, 101);
+								if (g.isPolar) {
+									ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
+										Graph& g = *(Graph*)data;
+										double x = idx * (std::max(g.lines[0].xPolar) - std::min(g.lines[0].xPolar)) / 50 + std::min(g.lines[0].xPolar);
+										return ImPlotPoint(x * std::cos(g.model->value(x)), x * std::sin(g.model->value(x)));
+										}, (void*)&g, 51);
+								}
+								else {
+									ImPlot::PlotLineG("Model##Plot", [](int idx, void* data) -> ImPlotPoint {
+										Graph& g = *(Graph*)data;
+										double x = idx * (std::max(g.xHeader->values) - std::min(g.xHeader->values)) / 50 + std::min(g.xHeader->values);
+										return ImPlotPoint(x, g.model->value(x));
+										}, (void*)&g, 51);
+								}
 							}
 						}
 						ImPlot::EndPlot();

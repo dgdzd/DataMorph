@@ -509,7 +509,7 @@ namespace Regression {
 
 		std::vector<double> as = {};
 		for (int i = 0; i < xs.size(); i++) {
-			if (std::cos(2 * xs[i] != 0)) {
+			if (std::cos(2 * xs[i] != 0) && !std::isnan(ys[i])) {
 				as.push_back(ys[i] / std::sqrt(2 * std::cos(2 * xs[i])));
 			}
 		}
