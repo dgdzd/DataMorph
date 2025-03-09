@@ -15,7 +15,7 @@ using namespace ImGui;
 
 SettingsWindow* SettingsWindow::current = nullptr;
 
-SettingsWindow::SettingsWindow() : local_settings(local_settings) {
+SettingsWindow::SettingsWindow() : local_settings(local_settings), i18n(DataMorph::i18n) {
 	this->name = "Settings";
 	this->font20 = nullptr;
 	this->font23 = nullptr;
@@ -58,16 +58,16 @@ void SettingsWindow::onRender() {
 	SetWindowSize(ImVec2(1200.0f, 500.0f), ImGuiCond_FirstUseEver);
 
 	if (BeginTabBar("stats_tabs")) {
-		if (BeginTabItem("General")) {
-			if (BeginChild("General", ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
-				HeaderText("General", "font64b", 0.5f);
-				Text("General options.");
+		if (BeginTabItem(i18n.t("general"))) {
+			if (BeginChild(i18n.t("general"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+				HeaderText(i18n.t("general"), "font64b", 0.5f);
+				Text(i18n.t("general.desc"));
 				Dummy(ImVec2(0, 15));
 				Separator();
 				Dummy(ImVec2(0, 15));
 
-				HeaderText("Language", "font64b", 0.4f);
-				Text("Choose a language to use.");
+				HeaderText(i18n.t("general.lang"), "font64b", 0.4f);
+				Text(i18n.t("general.lang.desc"));
 				int& lang = local_settings.get_int("lang");
 				if (BeginCombo("##Lines color map", LangToString(lang).c_str())) {
 					for (int i = 0; i < LANG_COUNT; i++) {
@@ -80,9 +80,9 @@ void SettingsWindow::onRender() {
 				}
 				Dummy(ImVec2(0, 10));
 
-				HeaderText("Automatic updates check", "font64b", 0.4f);
-				TextWrapped("Choose whether or not DataMorph should independantly search for updates.");
-				if (Checkbox("Automatic updates check", &local_settings.get_bool("autocheck_updates"))) {
+				HeaderText(i18n.t("general.autocheck_updates"), "font64b", 0.4f);
+				TextWrapped(i18n.t("general.autocheck_updates.desc"));
+				if (Checkbox(i18n.t("general.autocheck_updates"), &local_settings.get_bool("autocheck_updates"))) {
 					this->applied = false;
 				}
 
@@ -90,24 +90,24 @@ void SettingsWindow::onRender() {
 			}
 			EndTabItem();
 		}
-		if (BeginTabItem("Styles")) {
-			if (BeginChild("Styles", ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
-				HeaderText("Styles", "font64b", 0.5f);
-				Text("All options related to DataMorph's appearance is here.");
+		if (BeginTabItem(i18n.t("styles"))) {
+			if (BeginChild(i18n.t("styles"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+				HeaderText(i18n.t("styles"), "font64b", 0.5f);
+				Text(i18n.t("styles.desc"));
 				Dummy(ImVec2(0, 15));
 				Separator();
 				Dummy(ImVec2(0, 15));
 
-				HeaderText("Main theme", "font64b", 0.4f);
-				TextWrapped("Choose between a dark or light theme.\nNote : you should restart DataMorph in order for the changes to apply.");
+				HeaderText(i18n.t("styles.main_theme"), "font64b", 0.4f);
+				TextWrapped(i18n.t("styles.main_theme.desc"));
 				std::string& theme = this->local_settings.get_string("theme");
-				if (BeginCombo("##Main theme", theme.c_str())) {
-					if (Selectable("Dark", theme == "Dark")) {
-						theme = "Dark";
+				if (BeginCombo("##Main theme", i18n.t("styles."+theme))) {
+					if (Selectable(i18n.t("styles.dark"), theme == "dark")) {
+						theme = "dark";
 						this->applied = false;
 					}
-					if (Selectable("Light", theme == "Light")) {
-						theme = "Light";
+					if (Selectable(i18n.t("styles.light"), theme == "light")) {
+						theme = "light";
 						this->applied = false;
 					}
 					EndCombo();
@@ -115,8 +115,8 @@ void SettingsWindow::onRender() {
 				Dummy(ImVec2(0, 10));
 				Separator();
 				Dummy(ImVec2(0, 10));
-				HeaderText("Graph plots colormap", "font64b", 0.4f);
-				Text("Choose a colormap to use for plot lines' default colors.");
+				HeaderText(i18n.t("styles.graphs_plots_cmap"), "font64b", 0.4f);
+				Text(i18n.t("styles.graphs_plots_cmap.desc"));
 				int& cmap = local_settings.get_int("graphs_cmap");
 				if (BeginCombo("##Lines color map", ImPlotColormapToString(cmap))) {
 					for (int i = 0; i < 16; i++) {
@@ -135,8 +135,8 @@ void SettingsWindow::onRender() {
 					EndChild();
 				}
 				Dummy(ImVec2(0, 10));
-				HeaderText("Default plots marker", "font64b", 0.4f);
-				Text("Choose a shape to use as default marker for plots points");
+				HeaderText(i18n.t("styles.default_plots_marker"), "font64b", 0.4f);
+				Text(i18n.t("styles.default_plots_marker.desc"));
 				int& mker = local_settings.get_int("default_marker");
 				if (BeginCombo("##Default marker", ImPlotMarkerToString(mker))) {
 					for (int i = -1; i < ImPlotMarker_COUNT; i++) {
@@ -152,21 +152,21 @@ void SettingsWindow::onRender() {
 			}
 			EndTabItem();
 		}
-		if (BeginTabItem("Python")) {
-			if (BeginChild("Python", ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
-				HeaderText("Python", "font64b", 0.5f);
-				Text("Manage all settings related to Python here.");
+		if (BeginTabItem(i18n.t("python"))) {
+			if (BeginChild(i18n.t("python"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+				HeaderText(i18n.t("python"), "font64b", 0.5f);
+				Text(i18n.t("python.desc"));
 				Dummy(ImVec2(0, 15));
 				Separator();
 				Dummy(ImVec2(0, 15));
 
-				HeaderText("Python interpreter path", "font64b", 0.4f);
-				TextWrapped("Enter path to a Python interpreter.");
+				HeaderText(i18n.t("python.interp_path"), "font64b", 0.4f);
+				TextWrapped(i18n.t("python.interp_path.desc"));
 				if (InputText("##Python interpreter path", &local_settings.get_string("python_exec_path"))) {
 					this->applied = false;
 				}
 				SameLine();
-				if (Button("Browse...")) {
+				if (Button(i18n.t("browse"))) {
 					NFD::UniquePath outPath;
 					outPath;
 
@@ -174,7 +174,7 @@ void SettingsWindow::onRender() {
 
 					nfdresult_t result = NFD::OpenDialog(outPath, filterItem, 1, "C:\\Users");
 					if (result == NFD_OKAY) {
-						local_settings.set_string("Python executable path", outPath.get());
+						local_settings.set_string("python_exec_path", outPath.get());
 						this->applied = false;
 					}
 					else if (result == NFD_CANCEL) {
@@ -266,7 +266,7 @@ void SettingsWindow::onRender() {
 				DataMorph::settings->write_options();
 				this->applied = true;
 
-				if (this->settings->get_string("theme") == "Dark") {
+				if (this->settings->get_string("theme") == "dark") {
 					ImGui::StyleColorsDark();
 					DataMorph::getInstance()->defaultStyle = ImGui::GetStyle();
 				}
@@ -274,6 +274,7 @@ void SettingsWindow::onRender() {
 					ImGui::StyleColorsLight();
 					DataMorph::getInstance()->defaultStyle = ImGui::GetStyle();
 				}
+				i18n = I18n(this->settings->get_int("lang"));
 			}
 		}
 		EndDisabled();

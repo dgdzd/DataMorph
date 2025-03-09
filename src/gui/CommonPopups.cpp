@@ -615,7 +615,7 @@ void NewGraphPopup::removeInstance() {
 
 ResolveEquation::ResolveEquation(MainWindow* parent) {
 	this->parent = parent;
-	this->name = "Resolve Equation";
+	this->name = "Resolve an Equation";
 	this->p_open = true;
 	this->showCloseButton = true;
 	this->style = ImGui::GetStyle();

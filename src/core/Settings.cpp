@@ -65,7 +65,7 @@ void Settings::init_defaults() {
 	set_int("lang", 0);
 	set_bool("autocheck_updates", 1);
 
-	set_string("theme", "Dark");
+	set_string("theme", "dark");
 	set_int("graphs_cmap", 1);
 	set_int("default_marker", 1);
 

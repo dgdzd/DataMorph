@@ -113,7 +113,7 @@ int DataMorph::initialize() {
 	Settings::instance = this->settings;
 	i18n = I18n(this->settings->get_int("lang"));
 
-	if (this->settings->get_string("theme") == "Dark") {
+	if (this->settings->get_string("theme") == "dark") {
 		ImGui::StyleColorsDark();
 	}
 	else {

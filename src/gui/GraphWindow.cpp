@@ -239,7 +239,14 @@ void GraphWindow::onRender() {
 						}
 						TextColored(ImVec4(0.5, 0.5, 0.5, 1), "(?)");
 						if (IsItemHovered()) {
-							SetTooltip("Select a model from the options above. \n The computer will automaticly determine the values of a, c and b. \n Warning : \n - The experimental data musn't reverse the order of the model \n - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash \n - Any unfit model for your experimental data may cause errors \n - Any constant like e is not usable \n Polar models may be not self explanatory, i recommand learning about them before using them");
+							SetTooltip("Select a model from the options above.\n"
+								"The computer will automaticly determine the values of a, c and b.\n"
+								"Warning : \n"
+								" - The experimental data musn't reverse the order of the model\n"
+								" - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash\n"
+								" - Any unfit model for your experimental data may cause errors\n"
+								" - Any constant like e is currently not usable (may be added in the next updates)\n"
+								"Polar graphs might not be self explanatory, we recommand learning about these before using them.");
 						}
 
 						if (Button("Update model")) {

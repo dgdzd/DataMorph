@@ -134,10 +134,10 @@ void MainWindow::onRender() {
 		}
 		if (pr) {
 			if (BeginMenu(i18n.t("table"))) {
-				if (MenuItem("Add Variable...")) {
+				if (MenuItem(i18n.t("table.add_var"))) {
 					state->popups["Add a column"] = true;
 				}
-				if (BeginMenu("Delete Variable")) {
+				if (BeginMenu(i18n.t("table.del_var"))) {
 					for (int i = 0; i < pr->symbols.size(); i++) {
 						std::string symbol = pr->symbols[i];
 						if (MenuItem(symbol.c_str())) {
@@ -146,16 +146,16 @@ void MainWindow::onRender() {
 					}
 					ImGui::EndMenu();
 				}
-				if (BeginMenu("Add Row")) {
-					if (MenuItem("Add 1 Row")) { 
+				if (BeginMenu(i18n.t("table.add_row"))) {
+					if (MenuItem(i18n.t("table.add_row.1"))) {
 						pr->addRow(); 
 					}
-					if (MenuItem("Add 10 Rows")) {
+					if (MenuItem(i18n.t("table.add_row.10"))) {
 						for (int i = 0; i < 10; i++) {
 							pr->addRow();
 						}
 					}
-					if (MenuItem("Add 100 Rows")) {
+					if (MenuItem(i18n.t("table.add_row.100"))) {
 						for (int i = 0; i < 100; i++) {
 							pr->addRow();
 						}
@@ -164,11 +164,11 @@ void MainWindow::onRender() {
 				}
 				ImGui::EndMenu();
 			}
-			if (BeginMenu("Graphs & Stats")) {
-				if (MenuItem("Manage graphs...")) {
+			if (BeginMenu(i18n.t("graphs"))) {
+				if (MenuItem(i18n.t("graphs.manage"))) {
 					state->popups["Manage graphs"] = true;
 				}
-				if (MenuItem("View graphs")) {
+				if (MenuItem(i18n.t("graphs.view"))) {
 					if (!GraphWindow::current) {
 						DataMorph::getInstance()->addLayer(new GraphWindow(pr));
 					}
@@ -179,11 +179,11 @@ void MainWindow::onRender() {
 				ImGui::EndMenu();
 			}
 		}
-		if (BeginMenu("Tools")) {
-			if (MenuItem("Resolve an Equation")) {
-				state->popups["Resolve Equation"] = true;
+		if (BeginMenu(i18n.t("tools"))) {
+			if (MenuItem(i18n.t("tools.res_equ"))) {
+				state->popups["Resolve an Equation"] = true;
 			}
-			if (MenuItem("Open Python IDE")) {
+			if (MenuItem(i18n.t("tools.open_py_ide"))) {
 				if (!PythonWindow::current) {
 					DataMorph::getInstance()->addLayer(new PythonWindow(pr));
 				}
@@ -191,7 +191,7 @@ void MainWindow::onRender() {
 					SetWindowFocus(PythonWindow::current->name.c_str());
 				}
 			}
-			if (MenuItem("Start Fluid Simulation")) {
+			if (MenuItem(i18n.t("tools.start_fluid_sim"))) {
 				if (!FluidWindow::current) {
 					DataMorph::getInstance()->addLayer(new FluidWindow());
 				}
@@ -201,8 +201,8 @@ void MainWindow::onRender() {
 			}
 			ImGui::EndMenu();
 		}
-		if (BeginMenu("View")) {
-			if (MenuItem("Show console")) {
+		if (BeginMenu(i18n.t("view"))) {
+			if (MenuItem(i18n.t("view.show_console"))) {
 				if (!ConsoleWindow::current) {
 					DataMorph::getInstance()->addLayer(new ConsoleWindow());
 				}
@@ -212,8 +212,8 @@ void MainWindow::onRender() {
 			}
 			ImGui::EndMenu();
 		}
-		if (BeginMenu("Help")) {
-			if (MenuItem("About")) {}
+		if (BeginMenu(i18n.t("help"))) {
+			if (MenuItem(i18n.t("help.about"))) {}
 			ImGui::EndMenu();
 		}
 		EndMenuBar();

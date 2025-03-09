@@ -53,7 +53,7 @@ std::string LangToCode(int lang) {
 I18n::I18n(int lang, Lang fallback) {
 	this->lang = lang;
 	this->fallback = nullptr;
-	if (fallback != None) {
+	if (fallback != None && lang != fallback) {
 		this->fallback = new I18n(fallback, None);
 	}
 
@@ -64,14 +64,13 @@ I18n::I18n(int lang, Lang fallback) {
 		std::vector<std::string> args = std::split(line, '=');
 		if (args.size() > 1) {
 			translations[args[0]] = args[1];
-			std::cout << args[0] << " is : " << args[1] << std::endl;
 		}
 	}
 }
 
 const char* I18n::t(const std::string& key) {
 	if (translations.contains(key)) {
-		return translations[key].c_str();
+		return (const char*)((const char8_t*)translations[key].c_str());
 	}
 	else if (fallback) {
 		return fallback->t(key);

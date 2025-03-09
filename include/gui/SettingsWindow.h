@@ -21,6 +21,7 @@ class SettingsWindow : public Window {
 
 public:
 	static SettingsWindow* current;
+	I18n& i18n;
 
 	SettingsWindow();
 
