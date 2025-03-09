@@ -349,7 +349,7 @@ namespace Regression {
 			bs.push_back(ys[i] - a * log(xs[i], n));
 		}
 
-		a = std::sum(bs) / bs.size();
+		b = std::sum(bs) / bs.size();
 
 		return true;
 	}
@@ -509,8 +509,8 @@ namespace Regression {
 
 		std::vector<double> as = {};
 		for (int i = 0; i < xs.size(); i++) {
-			if (std::cos(2 * xs[i] > 0)) {
-				as.push_back(ys[i] / std::sqrt(std::cos(2 * xs[i])));
+			if (std::cos(2 * xs[i] != 0)) {
+				as.push_back(ys[i] / std::sqrt(2 * std::cos(2 * xs[i])));
 			}
 		}
 

@@ -123,9 +123,9 @@ void GraphWindow::onRender() {
 									g.model->expr_str = y + "=a*sin(n*" + x + ")";
 									g.model->refresh();
 								}
-								if (Selectable((const char*)u8"Bernoulli's Lemniscate (r=sqrt(a^2*cos(2*θ)))")) {
+								if (Selectable((const char*)u8"Bernoulli's Lemniscate (r=sqrt(2*a^2*cos(2*θ)))")) {
 									g.model->type = ModelType::BL;
-									g.model->expr_str = y + "sqrt(a^2*cos(2*" + x + ")";
+									g.model->expr_str = y + "=sqrt(2*a^2*cos(2*" + x + "))";
 									g.model->refresh();
 								}
 								if (Selectable((const char*)u8"Cardioid (r=a(1+cos(θ)))")) {
@@ -246,6 +246,7 @@ void GraphWindow::onRender() {
 								" - Avoid dividing by 0 (ex: x/a) \n - Sketchy custom models will make the software crash\n"
 								" - Any unfit model for your experimental data may cause errors\n"
 								" - Any constant like e is currently not usable (may be added in the next updates)\n"
+								" - To determine the value n for the Rhodonea Curve/Rose model, count the petals, if n is odd, there is k petal but if n is even, there is 2k petal "
 								"Polar graphs might not be self explanatory, we recommand learning about these before using them.");
 						}
 
@@ -313,19 +314,8 @@ void GraphWindow::onRender() {
 									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n" + "c = " + std::to_string(g.model->c) + "\n";
 								}
 							}
-							else if (g.model->type == LOG10) {
-								g.model->n = 10;
-								if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
-									Model* m = g.model;
-									m->values = {};
-									for (int i = 0; i < g.xHeader->values.size(); i++) {
-										m->values.push_back(m->value(g.xHeader->values[i]));
-									}
-									model_text = "a = " + std::to_string(g.model->a) + "\n" + "b = " + std::to_string(g.model->b) + "\n";
-								}
-							}
 							else if (g.model->type == LOG) {
-								g.model->n = 1;
+								g.model->n = 2.71828;
 								if (Regression::logarithmic(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 									Model* m = g.model;
 									m->values = {};
@@ -468,7 +458,7 @@ void GraphWindow::onRender() {
 								}
 							}
 							else if (g.model->type == EH) {
-								if (Regression::epicycloid(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->c)) {
+								if (Regression::epicycloid(g.xHeader->values, g.model->dataset->header->values, g.model->a, g.model->b, g.model->n)) {
 									Model* m = g.model;
 									m->values = {};
 									for (int i = 0; i < g.xHeader->values.size(); i++) {

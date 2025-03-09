@@ -246,6 +246,8 @@ std::string ModelTypeToString(ModelType type) {
 		return "Rhodonea Curve";
 	case ModelType::BL:
 		return "Bernoulli's Lemniscate";
+	case ModelType::COCH:
+		return "Cochleoid";
 	case ModelType::CARD:
 		return "Limaçon of Pascal";
 	case ModelType::LP:
