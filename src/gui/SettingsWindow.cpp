@@ -57,7 +57,7 @@ void SettingsWindow::onRender() {
 
 	if (BeginTabBar("settings")) {
 		if (BeginTabItem(i18n.t("general", "general"))) {
-			if (BeginChild(i18n.t("general"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+			if (BeginChild(i18n.t("general"), ImVec2(0, GetContentRegionAvail().y - 37), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("general"), "font64b", 0.5f);
 				Text(i18n.t("general.desc"));
 				Dummy(ImVec2(0, 15));
@@ -89,7 +89,7 @@ void SettingsWindow::onRender() {
 			EndTabItem();
 		}
 		if (BeginTabItem(i18n.t("styles", "styles"))) {
-			if (BeginChild(i18n.t("styles"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+			if (BeginChild(i18n.t("styles"), ImVec2(0, GetContentRegionAvail().y - 37), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("styles"), "font64b", 0.5f);
 				Text(i18n.t("styles.desc"));
 				Dummy(ImVec2(0, 15));
@@ -151,7 +151,7 @@ void SettingsWindow::onRender() {
 			EndTabItem();
 		}
 		if (BeginTabItem(i18n.t("python", "python"))) {
-			if (BeginChild(i18n.t("python"), ImVec2(0, GetContentRegionAvail().y - 35), ImGuiChildFlags_Border)) {
+			if (BeginChild(i18n.t("python"), ImVec2(0, GetContentRegionAvail().y - 37), ImGuiChildFlags_Border)) {
 				HeaderText(i18n.t("python"), "font64b", 0.5f);
 				Text(i18n.t("python.desc"));
 				Dummy(ImVec2(0, 15));

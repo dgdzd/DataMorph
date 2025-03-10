@@ -71,13 +71,17 @@ I18n::I18n(int lang, Lang fallback) {
 const char* I18n::t(const std::string& key, const std::string& id) {
 	std::string append = id.empty() ? "" : "###" + id;
 	if (translations.contains(key)) {
-		return translations[key].c_str();
+		std::string s = translations[key] + append;
+		char* result = new char[s.size()+1];
+		strcpy(result, s.c_str());
+		return result;
 	}
 	else if (fallback) {
 		return fallback->t(key, id);
 	}
 	else {
-		char* result = new char[key.size()];
+		char* result = new char[key.size()+1];
+		result[key.size()] = '\0';
 		strcpy(result, key.c_str());
 		return result;
 	}
